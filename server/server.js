@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
+const db = require("./config/dbConnect");
 require("dotenv").config();
+const initRoutes = require("./routes");
 
 const app = express();
 const PORT = process.env.PORT || 8888;
@@ -9,6 +11,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+db.connect();
+initRoutes(app);
 app.get("/", (req, res) => {
 	res.send("Hello World");
 });
