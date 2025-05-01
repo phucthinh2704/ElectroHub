@@ -4,7 +4,6 @@ const notFound = (req, res, next) => {
 	next(error);
 };
 
-
 // Express yêu cầu middleware có bốn tham số (error, req, res, next) được coi là middleware xử lý lỗi. 
 // Nếu middleware không có bốn tham số, Express có thể không xem nó là một middleware xử lý lỗi và không gọi nó khi có lỗi xảy ra. 
 // Thêm tham số next vào errorHandler giúp đảm bảo rằng nó được xem là middleware xử lý lỗi và được gọi khi cần thiết.
