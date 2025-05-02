@@ -2,16 +2,14 @@ const User = require("../model/user");
 const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
+require("dotenv").config();
+const sendMail = require("../utils/sendMail");
 const {
 	generateAccessToken,
 	generateRefreshToken,
 } = require("../middlewares/jwt");
-
-const hashPassword = async (password) => {
-	const salt = await bcrypt.genSalt(10);
-	const hash = await bcrypt.hash(password, salt);
-	return hash;
-};
+const { hashPassword, createPasswordResetToken } = require("../utils/password");
 
 const register = asyncHandler(async (req, res) => {
 	const { firstName, lastName, email, mobile, password } = req.body || {};
@@ -134,15 +132,17 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 	});
 });
 
-
 const logout = asyncHandler(async (req, res) => {
-	// const { _id } = req.user;
 	// Kiểm tra xem refresh token có tồn tại trong cookie không
 	const cookies = req.cookies;
-	if(!cookies.refresh_token) throw new Error("No refresh token in cookies");
-	// console.log(req.cookies.refresh_token);
+	if (!cookies.refresh_token) throw new Error("No refresh token in cookies");
+
 	// Xóa refresh token trong db
-	await User.findOneAndUpdate({ refreshToken: cookies.refresh_token }, { refreshToken: "" }, { new: true });
+	await User.findOneAndUpdate(
+		{ refreshToken: cookies.refresh_token },
+		{ refreshToken: "" },
+		{ new: true }
+	);
 
 	// Xóa refresh token trong cookie
 	res.clearCookie("refresh_token", {
@@ -155,10 +155,82 @@ const logout = asyncHandler(async (req, res) => {
 	});
 });
 
+const forgotPassword = asyncHandler(async (req, res) => {
+	const { email } = req.query;
+	if (!email) throw new Error("Missing required fields");
+
+	// Kiểm tra xem email có tồn tại trong db không
+	const user = await User.findOne({ email });
+	if (!user) throw new Error("User not found");
+
+	// Tạo token reset password
+	const [resetToken, tokenSaveDb] = createPasswordResetToken();
+	// resetToken là token gửi qua email
+	// tokenSaveDb là resetToken đã được mã hóa bằng sha256, lưu vào db 
+	// Lưu token vào db
+	await User.updateOne(
+		{ email },
+		{
+			passwordResetToken: tokenSaveDb,
+			passwordResetExpires: Date.now() + 15 * 60 * 1000, // 15 phút
+		}
+	);
+	
+	const html = `<p>Vui lòng click vào link dưới đây để thay đổi mật khẩu của bạn. Link sẽ hết hạn sau 15 phút kể từ bây giờ. <a href="${process.env.URL_SERVER}/api/user/reset-password/${resetToken}">Click here</a></p>`;
+	const data = {
+		email: "thinhb2203636@student.ctu.edu.vn",
+		html,
+	};
+
+	const rs = await sendMail(data);
+	if (!rs) {
+		return res.status(400).json({
+			success: false,
+			message: "Something went wrong",
+		});
+	}
+	return res.status(200).json({
+		success: true,
+		message: "Reset password link sent to your email",
+	});
+});
+
+const resetPassword = asyncHandler(async (req, res) => {
+	const { password } = req.body;
+	const { token } = req.params;
+
+	if (!password) throw new Error("Missing required fields");
+
+	// Kiểm tra xem token có tồn tại trong db không
+	const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+	const user = await User.findOne({
+		passwordResetToken: hashedToken,
+		passwordResetExpires: { $gt: Date.now() },
+	});
+	if (!user) throw new Error("Token is invalid or has expired");
+
+	const passwordHash = await hashPassword(password);
+	await User.updateOne(
+		{ passwordResetToken: hashedToken },
+		{
+			password: passwordHash,
+			passwordResetToken: null,
+			passwordResetExpires: null,
+		}
+	);
+
+	return res.status(200).json({
+		success: user ? true : false,
+		message: user ? "Password reset successfully" : "Something went wrong",
+	});
+});
+
 module.exports = {
 	register,
 	login,
 	getCurrent,
 	refreshAccessToken,
 	logout,
+	forgotPassword,
+	resetPassword,
 };
