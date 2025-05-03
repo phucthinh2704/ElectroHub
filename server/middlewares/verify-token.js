@@ -7,7 +7,7 @@ const verifyAccessToken = asyncHandler(async (req, res, next) => {
 	if (!authHeader) {
 		return res.status(401).json({
 			success: false,
-			message: "You are not authenticated!",
+			message: "Require authentication!",
 		});
 	}
 
@@ -25,4 +25,14 @@ const verifyAccessToken = asyncHandler(async (req, res, next) => {
 	}
 });
 
-module.exports = { verifyAccessToken };
+const isAdmin = asyncHandler(async (req, res, next) => {
+	if (req.user.role !== "admin") {
+		return res.status(403).json({
+			success: false,
+			message: "You are not admin!",
+		});
+	}
+	next();
+});
+
+module.exports = { verifyAccessToken, isAdmin };

@@ -73,6 +73,7 @@ const login = asyncHandler(async (req, res) => {
 	const userObject = user.toObject();
 	delete userObject.password;
 	delete userObject.role;
+	delete userObject.refreshToken;
 
 	const accessToken = generateAccessToken(user._id, user.role);
 	const refreshToken = generateRefreshToken(user._id);
@@ -166,7 +167,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
 	// Tạo token reset password
 	const [resetToken, tokenSaveDb] = createPasswordResetToken();
 	// resetToken là token gửi qua email
-	// tokenSaveDb là resetToken đã được mã hóa bằng sha256, lưu vào db 
+	// tokenSaveDb là resetToken đã được mã hóa bằng sha256, lưu vào db
 	// Lưu token vào db
 	await User.updateOne(
 		{ email },
@@ -175,7 +176,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
 			passwordResetExpires: Date.now() + 15 * 60 * 1000, // 15 phút
 		}
 	);
-	
+
 	const html = `<p>Vui lòng click vào link dưới đây để thay đổi mật khẩu của bạn. Link sẽ hết hạn sau 15 phút kể từ bây giờ. <a href="${process.env.URL_SERVER}/api/user/reset-password/${resetToken}">Click here</a></p>`;
 	const data = {
 		email: "thinhb2203636@student.ctu.edu.vn",
@@ -216,12 +217,106 @@ const resetPassword = asyncHandler(async (req, res) => {
 			password: passwordHash,
 			passwordResetToken: null,
 			passwordResetExpires: null,
+			passwordChangedAt: Date.now(),
 		}
 	);
 
 	return res.status(200).json({
 		success: user ? true : false,
 		message: user ? "Password reset successfully" : "Something went wrong",
+	});
+});
+
+const getAllUsers = asyncHandler(async (req, res) => {
+	const users = await User.find().select("-refreshToken -password -role");
+	if (!users) throw new Error("No users found");
+
+	return res.status(200).json({
+		success: true,
+		message: "Get all users successfully",
+		users,
+	});
+});
+
+const deleteUser = asyncHandler(async (req, res) => {
+	const { id } = req.params;
+	if (!id) throw new Error("Missing id");
+
+	const user = await User.findByIdAndDelete(id);
+	if (!user) throw new Error("User not found");
+
+	return res.status(200).json({
+		success: true,
+		message: "Delete user successfully",
+		deletedUser: `User ${user.email} deleted`,
+	});
+});
+
+const updateUser = asyncHandler(async (req, res) => {
+	const { _id } = req.user;
+
+	if (!_id) throw new Error("Missing id");
+	if (!req.body) throw new Error("Missing body");
+
+	const user = await User.findById(_id);
+	if (!user) throw new Error("User not found");
+
+	// Kiểm tra định dạng email
+	if (req.body.email) {
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		if (!emailRegex.test(req.body.email))
+			throw new Error("Invalid email format");
+	}
+
+	// Kiểm tra định dạng số điện thoại (ví dụ)
+	if (req.body.mobile) {
+		const mobileRegex = /^[0-9]{10}$/;
+		if (!mobileRegex.test(req.body.mobile))
+			throw new Error("Invalid mobile number format");
+	}
+
+	const updatedUser = await User.findByIdAndUpdate(_id, req.body, {
+		new: true,
+	}).select("-refreshToken -password -role"); // new:true là trả về data sau khi update
+
+	return res.status(200).json({
+		success: true,
+		message: "Update user successfully",
+		updatedUser,
+	});
+});
+
+const updateUserByAdmin = asyncHandler(async (req, res) => {
+	const { id } = req.params;
+
+	if (!id) throw new Error("Missing id");
+	if (!req.body) throw new Error("Missing body");
+
+	const user = await User.findById(id);
+	if (!user) throw new Error("User not found");
+
+	// Kiểm tra định dạng email
+	if (req.body.email) {
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		if (!emailRegex.test(req.body.email))
+			throw new Error("Invalid email format");
+	}
+
+	// Kiểm tra định dạng số điện thoại (ví dụ)
+	if (req.body.mobile) {
+		const mobileRegex = /^[0-9]{10}$/;
+		if (!mobileRegex.test(req.body.mobile))
+			throw new Error("Invalid mobile number format");
+	}
+
+	const updatedUser = await User.findByIdAndUpdate(id, req.body, {
+		new: true,
+	}).select("-refreshToken -password -role"); // new:true là trả về data sau khi update
+
+	return res.status(200).json({
+		success: true,
+		message: "Update user successfully",
+		updatedUser,
 	});
 });
 
@@ -233,4 +328,8 @@ module.exports = {
 	logout,
 	forgotPassword,
 	resetPassword,
+	getAllUsers,
+	deleteUser,
+	updateUser,
+	updateUserByAdmin,
 };
