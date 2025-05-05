@@ -1,6 +1,7 @@
 const Product = require("../model/product");
 const asyncHandler = require("express-async-handler");
 const slugify = require("slugify");
+const convertQueryFormat = require("../utils/convertQuery");
 require("dotenv").config();
 
 const createProduct = asyncHandler(async (req, res) => {
@@ -43,37 +44,6 @@ const getProductById = asyncHandler(async (req, res) => {
 	});
 });
 
-function convertQueryFormat(params) {
-	const result = {};
-
-	for (const key in params) {
-		// Kiểm tra xem key có chứa cú pháp toán tử không (ví dụ: "price[$gte]")
-		const operatorMatch = key.match(/(\w+)\[([$\w]+)\]/);
-
-		if (operatorMatch) {
-			// Lấy tên trường (price) và toán tử ($gte)
-			const fieldName = operatorMatch[1];
-			const operator = operatorMatch[2];
-
-			// Chuyển đổi giá trị từ string sang số nếu cần
-			const value = isNaN(params[key])
-				? params[key]
-				: Number(params[key]);
-
-			// Tạo hoặc cập nhật cấu trúc lồng nhau
-			if (!result[fieldName]) {
-				result[fieldName] = {};
-			}
-
-			result[fieldName][operator] = value;
-		} else {
-			// Xử lý các trường thông thường không có toán tử
-			result[key] = params[key];
-		}
-	}
-
-	return result;
-}
 //filtering, sorting, pagination
 const getAllProducts = asyncHandler(async (req, res) => {
 	// Example routes to test in Postman:
@@ -97,19 +67,10 @@ const getAllProducts = asyncHandler(async (req, res) => {
 	);
 	let formattedQueries = JSON.parse(queryString);
 	formattedQueries = convertQueryFormat(formattedQueries); // convert from {price[$gte]: 1000} ==> {price: {$gte: 1000}}
-	
+
 	// Filtering
 	if (queries?.title)
 		formattedQueries.title = { $regex: queries.title, $options: "i" };
-
-	// Price filtering
-	// if (queries?.price) {
-	// 	// Handle price[gte] and price[lte]
-	// 	const priceQuery = {};
-	// 	if (queries.price.gte) priceQuery.$gte = Number(queries.price.gte);
-	// 	if (queries.price.lte) priceQuery.$lte = Number(queries.price.lte);
-	// 	formattedQueries.price = priceQuery;
-	// }
 
 	let queryCommand = Product.find(formattedQueries);
 
@@ -127,8 +88,8 @@ const getAllProducts = asyncHandler(async (req, res) => {
 
 	// Pagination
 	const page = parseInt(req.query.page) || 1;
-	const limit = parseInt(req.query.limit) || 10;
-	const skip = (page - 1) * limit;
+	const limit = parseInt(req.query.limit) || process.env.LIMIT_PRODUCTS;
+	const skip = (page - 1) * limit; // tương tự như offset trong SQL
 	queryCommand = queryCommand.skip(skip).limit(limit);
 
 	// Execute query
@@ -175,10 +136,56 @@ const deleteProduct = asyncHandler(async (req, res) => {
 	});
 });
 
+const ratingProduct = asyncHandler(async (req, res) => {
+	const { _id } = req.user;
+	const { rating, comment, pid } = req.body;
+
+	if (!rating) throw new Error("Please fill all the fields");
+	if (rating < 1 || rating > 5)
+		throw new Error("Rating must be between 1 and 5");
+
+	const product = await Product.findById(pid);
+	if (!product) throw new Error("Product not found");
+
+	const alreadyRated = product.ratings.some(
+		(rating) => rating.postedBy.toString() === _id
+	);
+
+	// Check if user has already rated the product
+	if (alreadyRated) {
+		// Update existing rating
+		product.ratings = product.ratings.map((item) => {
+			if (item.postedBy.toString() === _id) {
+				return {
+					...item,
+					star: rating,
+					comment: comment || item.comment
+				};
+			}
+			return item;
+		});
+	} else {
+		// Add new rating
+		product.ratings.push({ star: rating, postedBy: _id, comment });
+	}
+
+	// Calculate average rating
+	const totalRating = product.ratings.reduce((sum, item) => sum + item.star, 0);
+	product.totalRatings = totalRating / product.ratings.length;
+
+	await product.save();
+	res.status(200).json({
+		success: true,
+		message: "Rating updated successfully",
+		product,
+	});
+});
+
 module.exports = {
 	createProduct,
 	getProductById,
 	getAllProducts,
 	updateProduct,
 	deleteProduct,
+	ratingProduct,
 };
