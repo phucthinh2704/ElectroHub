@@ -159,7 +159,7 @@ const ratingProduct = asyncHandler(async (req, res) => {
 				return {
 					...item,
 					star: rating,
-					comment: comment || item.comment
+					comment: comment || item.comment,
 				};
 			}
 			return item;
@@ -170,7 +170,10 @@ const ratingProduct = asyncHandler(async (req, res) => {
 	}
 
 	// Calculate average rating
-	const totalRating = product.ratings.reduce((sum, item) => sum + item.star, 0);
+	const totalRating = product.ratings.reduce(
+		(sum, item) => sum + item.star,
+		0
+	);
 	product.totalRatings = totalRating / product.ratings.length;
 
 	await product.save();
@@ -181,6 +184,27 @@ const ratingProduct = asyncHandler(async (req, res) => {
 	});
 });
 
+const uploadImageProduct = asyncHandler(async (req, res) => {
+	console.log("ok");
+	res.status(200).json({
+		success: true,
+		message: "Image uploaded successfully",
+	});
+	// 	const file = req.files.file;
+	// 	if (!file) throw new Error("Please upload an image");
+	// 	if (file.size > 1024 * 1024) throw new Error("File size too large");
+	//
+	// 	const imagePath = `${process.env.BASE_URL}/uploads/products/${file.name}`;
+	// 	file.mv(imagePath, (err) => {
+	// 		if (err) throw new Error("Error uploading image");
+	// 		return res.status(200).json({
+	// 			success: true,
+	// 			message: "Image uploaded successfully",
+	// 			imagePath,
+	// 		});
+	// 	});
+});
+
 module.exports = {
 	createProduct,
 	getProductById,
@@ -188,4 +212,5 @@ module.exports = {
 	updateProduct,
 	deleteProduct,
 	ratingProduct,
+	uploadImageProduct,
 };
