@@ -1,4 +1,5 @@
 const mongoose = require("mongoose"); // Erase if already required
+const product = require("./product");
 
 // Declare the Schema of the Mongo model
 var userSchema = new mongoose.Schema(
@@ -9,8 +10,20 @@ var userSchema = new mongoose.Schema(
 		mobile: { type: String, required: true, unique: true },
 		password: { type: String, required: true },
 		role: { type: String, default: "user" },
-		cart: { type: Array, default: [] },
-		address: [{ type: mongoose.Schema.Types.ObjectId, ref: "Address" }],
+		cart: [
+			{
+				product: {
+					type: mongoose.Schema.Types.ObjectId,
+					ref: "Product",
+				},
+				quantity: { type: Number, default: 1 },
+				color: { type: String, default: "black" },
+			},
+		],
+		address: {
+			type: Array,
+			default: [],
+		},
 		wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
 		isBlocked: { type: Boolean, default: false },
 		refreshToken: { type: String },

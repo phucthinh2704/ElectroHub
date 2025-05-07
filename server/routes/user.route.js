@@ -10,6 +10,8 @@ router.post("/logout", user.logout);
 router.get("/forgot-password", user.forgotPassword);
 router.put("/reset-password/:token", user.resetPassword);
 router.put("/current", verifyAccessToken, user.updateUser);
+router.put("/address", verifyAccessToken, user.updateUserAddress);
+router.put("/cart", verifyAccessToken, user.updateCart);
 
 // Admin routes
 router.get("/", [verifyAccessToken, isAdmin], user.getAllUsers);

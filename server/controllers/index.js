@@ -5,7 +5,7 @@ const blog = require("./blog.controller");
 const blogCategory = require("./blogCategory.controller");
 const brand = require("./brand.controller");
 const coupon = require("./coupon.controller");
-
+const order = require("./order.controller");
 
 module.exports = {
 	user,
@@ -15,4 +15,5 @@ module.exports = {
 	blog,
 	brand,
 	coupon,
+	order,
 };

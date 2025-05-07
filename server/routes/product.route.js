@@ -11,7 +11,11 @@ router.put("/ratings", verifyAccessToken, product.ratingProduct);
 router.post("/", [verifyAccessToken, isAdmin], product.createProduct);
 router.put("/:pid", [verifyAccessToken, isAdmin], product.updateProduct);
 router.delete("/:pid", [verifyAccessToken, isAdmin], product.deleteProduct);
-router.put("/upload-image/:id", [verifyAccessToken, isAdmin], uploader.single("image"), product.uploadImageProduct);
+router.put(
+	"/upload-image/:id",
+	[verifyAccessToken, isAdmin],
+	uploader.array("images", 10),
+	product.uploadImagesProduct
+);
 
 module.exports = router;
-

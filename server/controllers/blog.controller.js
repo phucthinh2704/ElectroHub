@@ -34,8 +34,8 @@ const getBlogById = asyncHandler(async (req, res) => {
 		.populate("dislikes", fields);
 	if (!blog) throw new Error("No blog found");
 
-   blog.numberViews += 1;
-   await blog.save();
+	blog.numberViews += 1;
+	await blog.save();
 
 	return res.status(200).json({
 		success: true,
@@ -60,16 +60,16 @@ const updateBlog = asyncHandler(async (req, res) => {
 });
 
 const deleteBlog = asyncHandler(async (req, res) => {
-   const { blogId } = req.params;
+	const { blogId } = req.params;
 
-   const deletedBlog = await Blog.findByIdAndDelete(blogId);
-   if (!deletedBlog) throw new Error("No blog found");
+	const deletedBlog = await Blog.findByIdAndDelete(blogId);
+	if (!deletedBlog) throw new Error("No blog found");
 
-   return res.status(200).json({
-      success: true,
-      message: "Blog deleted successfully",
-      deletedBlog,
-   });
+	return res.status(200).json({
+		success: true,
+		message: "Blog deleted successfully",
+		deletedBlog,
+	});
 });
 
 const likeBlog = asyncHandler(async (req, res) => {
@@ -130,12 +130,28 @@ const dislikeBlog = asyncHandler(async (req, res) => {
 	});
 });
 
+const uploadImageBlog = asyncHandler(async (req, res) => {
+	if (!req.file) throw new Error("Please upload image");
+	const blog = await Blog.findByIdAndUpdate(
+		req.params.blogId,
+		{ image: req.file.path },
+		{ new: true }
+	);
+	if (!blog) throw new Error("Blog not found");
+	res.status(200).json({
+		success: true,
+		message: "Image uploaded successfully",
+		blog,
+	});
+});
+
 module.exports = {
 	createNewBlog,
 	updateBlog,
-   deleteBlog,
+	deleteBlog,
 	getAllBlogs,
 	getBlogById,
 	likeBlog,
 	dislikeBlog,
+	uploadImageBlog,
 };

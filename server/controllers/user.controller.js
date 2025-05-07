@@ -320,6 +320,61 @@ const updateUserByAdmin = asyncHandler(async (req, res) => {
 	});
 });
 
+const updateUserAddress = asyncHandler(async (req, res) => {
+	const { _id } = req.user;
+	if (!req.body?.address) throw new Error("Missing address");
+	const user = await User.findByIdAndUpdate(
+		_id,
+		{ $push: { address: req.body.address } },
+		{ new: true }
+	).select("-refreshToken -password -role");
+	if (!user) throw new Error("User not found");
+	return res.status(200).json({
+		success: true,
+		message: "Update user address successfully",
+		user,
+	});
+});
+const updateCart = asyncHandler(async (req, res) => {
+	const { _id } = req.user;
+	if (!req.body) throw new Error("Missing request body");
+	const { pid, quantity, color } = req.body;
+	if (!pid || !quantity || !color) throw new Error("Missing required fields");
+	const user = await User.findById(_id).select("cart");
+	const alreadyProduct = user?.cart?.find(
+		(item) => item.product.toString() === pid && item.color === color
+	);
+	if (alreadyProduct) {
+		// Update quantity if product already exists in cart
+		const response = await User.findOneAndUpdate(
+			{ cart: { $elemMatch: alreadyProduct } }, // sẽ cập nhật chính xác dù không cung cấp userId vì mỗi phần tử trong cart đều có id riêng
+			{ $set: { "cart.$.quantity": quantity } }, // cập nhật số lượng sản phẩm cho trường quantity của cart của user tìm được
+			{ new: true }
+		);
+		return res.status(200).json({
+			success: response ? true : false,
+			message: response
+				? "Updated cart successfully"
+				: "Cannot update cart",
+			response,
+		});
+	} else {
+		// Add new product to cart
+		const response = await User.findByIdAndUpdate(
+			_id,
+			{ $push: { cart: { product: pid, quantity, color } } },
+			{ new: true }
+		);
+		return res.status(200).json({
+			success: response ? true : false,
+			message: response
+				? "Added to cart successfully"
+				: "Cannot add to cart",
+			response,
+		});
+	}
+});
+
 module.exports = {
 	register,
 	login,
@@ -332,4 +387,6 @@ module.exports = {
 	deleteUser,
 	updateUser,
 	updateUserByAdmin,
+	updateUserAddress,
+	updateCart,
 };

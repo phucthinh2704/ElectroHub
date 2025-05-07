@@ -184,25 +184,20 @@ const ratingProduct = asyncHandler(async (req, res) => {
 	});
 });
 
-const uploadImageProduct = asyncHandler(async (req, res) => {
-	console.log("ok");
+const uploadImagesProduct = asyncHandler(async (req, res) => {
+	if (!req.files) throw new Error("Please upload images");
+	const product = await Product.findByIdAndUpdate(
+		req.params.id,
+		// push each image path to the images array
+		{ $push: { images: { $each: req.files.map((file) => file.path) } } }, 
+		{ new: true }
+	);
+	if (!product) throw new Error("Product not found");
 	res.status(200).json({
 		success: true,
-		message: "Image uploaded successfully",
+		message: "Images uploaded successfully",
+		product,
 	});
-	// 	const file = req.files.file;
-	// 	if (!file) throw new Error("Please upload an image");
-	// 	if (file.size > 1024 * 1024) throw new Error("File size too large");
-	//
-	// 	const imagePath = `${process.env.BASE_URL}/uploads/products/${file.name}`;
-	// 	file.mv(imagePath, (err) => {
-	// 		if (err) throw new Error("Error uploading image");
-	// 		return res.status(200).json({
-	// 			success: true,
-	// 			message: "Image uploaded successfully",
-	// 			imagePath,
-	// 		});
-	// 	});
 });
 
 module.exports = {
@@ -212,5 +207,5 @@ module.exports = {
 	updateProduct,
 	deleteProduct,
 	ratingProduct,
-	uploadImageProduct,
+	uploadImagesProduct,
 };
