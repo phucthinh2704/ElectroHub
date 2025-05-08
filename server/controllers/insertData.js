@@ -1,14 +1,14 @@
 const Product = require("../models/product");
 const asyncHandler = require("express-async-handler");
 const data = require("../../data/ecommerce.json");
-const slugify = require("slugify");
 const categoryData = require("../../data/cate_brand");
+const generateUniqueSlug = require("../utils/generateUniqueSlug");
 const ProductCategory = require("../models/productCategory");
 
 const fn = async (product) => {
 	await Product.create({
 		title: product?.name,
-		slug: slugify(product?.name) + Math.round(Math.random() * 100) + "",
+		slug: await generateUniqueSlug(product?.name),
 		description: product?.description,
 		brand: product?.brand,
 		price: Math.round(Number(product?.price?.match(/\d/g).join("")) / 100),
@@ -39,6 +39,7 @@ const fn2 = async (cate) => {
 };
 const insertCategory = asyncHandler(async (req, res) => {
 	const promises = [];
+	// console.log(categoryData);
 	for (let cate of categoryData) promises.push(fn2(cate));
 	await Promise.all(promises);
 	return res.json("Done");
