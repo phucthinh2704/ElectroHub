@@ -1,4 +1,4 @@
-const Brand = require("../model/brand");
+const Brand = require("../models/brand");
 const asyncHandler = require("express-async-handler");
 
 const createBrand = asyncHandler(async (req, res) => {

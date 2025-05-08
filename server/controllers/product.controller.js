@@ -1,4 +1,4 @@
-const Product = require("../model/product");
+const Product = require("../models/product");
 const asyncHandler = require("express-async-handler");
 const slugify = require("slugify");
 const convertQueryFormat = require("../utils/convertQuery");

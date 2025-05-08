@@ -1,4 +1,4 @@
-const Blog = require("../model/blog");
+const Blog = require("../models/blog");
 const asyncHandler = require("express-async-handler");
 
 const createNewBlog = asyncHandler(async (req, res) => {

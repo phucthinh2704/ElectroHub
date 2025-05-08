@@ -21,8 +21,7 @@ var userSchema = new mongoose.Schema(
 			},
 		],
 		address: {
-			type: Array,
-			default: [],
+			type: String,
 		},
 		wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
 		isBlocked: { type: Boolean, default: false },
