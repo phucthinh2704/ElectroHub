@@ -1,7 +1,28 @@
+import { Routes, Route } from "react-router-dom";
 import "./App.css";
+import { Home, Public, Login } from "./pages/public";
+import path from "./utils/path";
 
 function App() {
-	return <h1 className="text-[50px] font-bold underline">Hello world!</h1>;
+	return (
+		<div className="min-h-screen font-main">
+			<Routes>
+				<Route
+					path={path.PUBLIC}
+					element={<Public />}>
+					<Route
+						path={path.HOME}
+						element={<Home />}
+					/>
+
+					<Route
+						path={path.LOGIN}
+						element={<Login />}
+					/>
+				</Route>
+			</Routes>
+		</div>
+	);
 }
 
 export default App;
