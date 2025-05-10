@@ -1,9 +1,17 @@
-import { Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { Route, Routes } from "react-router-dom";
 import "./App.css";
-import { Home, Public, Login } from "./pages/public";
+import { Home, Login, Public } from "./pages/public";
+import { getCategories } from "./store/asyncActions";
 import path from "./utils/path";
 
 function App() {
+	const dispatch = useDispatch();
+	useEffect(() => {
+		dispatch(getCategories());
+	}, [dispatch]);
+	
 	return (
 		<div className="min-h-screen font-main">
 			<Routes>
