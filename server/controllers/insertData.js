@@ -39,7 +39,6 @@ const fn2 = async (cate) => {
 };
 const insertCategory = asyncHandler(async (req, res) => {
 	const promises = [];
-	// console.log(categoryData);
 	for (let cate of categoryData) promises.push(fn2(cate));
 	await Promise.all(promises);
 	return res.json("Done");

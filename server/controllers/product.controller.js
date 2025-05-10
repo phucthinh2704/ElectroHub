@@ -10,19 +10,6 @@ const createProduct = asyncHandler(async (req, res) => {
 	if (req.body.title) req.body.slug = slugify(req.body.title);
 
 	const newProduct = await Product.create(req.body);
-	// 	const { name, description, price, imageUrl } = req.body;
-	//
-	// 	if (!name || !description || !price || !imageUrl) {
-	// 		res.status(400);
-	// 		throw new Error("Please fill all the fields");
-	// 	}
-	//
-	// 	const product = await Product.create({
-	// 		name,
-	// 		description,
-	// 		price,
-	// 		imageUrl,
-	// 	});
 
 	res.status(201).json({
 		success: newProduct ? true : false,

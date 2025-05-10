@@ -177,7 +177,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
 		}
 	);
 
-	const html = `<p>Vui lòng click vào link dưới đây để thay đổi mật khẩu của bạn. Link sẽ hết hạn sau 15 phút kể từ bây giờ. <a href="${process.env.URL_SERVER}/api/user/reset-password/${resetToken}">Click here</a></p>`;
+	const html = `<p>Vui lòng click vào link dưới đây để thay đổi mật khẩu của bạn. Link sẽ hết hạn sau 15 phút kể từ bây giờ. <a href="${process.env.SERVER_URL}/api/user/reset-password/${resetToken}">Click here</a></p>`;
 	const data = {
 		email: "thinhb2203636@student.ctu.edu.vn",
 		html,
