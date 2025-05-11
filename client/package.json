@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.7.0",
+    "@tailwindcss/line-clamp": "^0.4.4",
     "@tailwindcss/vite": "^4.1.5",
     "axios": "^1.9.0",
     "moment": "^2.30.1",
@@ -19,8 +20,10 @@
     "react-icons": "^5.5.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^6.30.0",
+    "react-slick": "^0.30.3",
     "react-toastify": "^11.0.5",
     "redux-persist": "^6.0.0",
+    "slick-carousel": "^1.8.1",
     "tailwindcss": "^4.1.5"
   },
   "devDependencies": {

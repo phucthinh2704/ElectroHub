@@ -14,7 +14,6 @@ export const appSlice = createSlice({
 				state.isLoading = true;
 			})
 			.addCase(actions.getCategories.fulfilled, (state, action) => {
-				console.log(action);
 				state.isLoading = false;
 				state.categories = action.payload;
 			})

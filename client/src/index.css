@@ -39,3 +39,61 @@
 	/* --color-text: #ffa400; */
 	--font-main: "Poppins", sans-serif;
 }
+
+.slick-list {
+	margin: 0 -5px;
+}
+.slick-slide > div {
+	padding: 0 6px;
+}
+
+button.slick-next {
+	z-index: 10;
+	right: 40.5px;
+}
+button.slick-prev {
+	z-index: 10;
+	left: 7px;
+}
+
+button.slick-next::before {
+	content: "\276F";
+	color: #333;
+	background-color: rgba(179, 176, 176);
+	width: 55px;
+	height: 55px;
+	font-size: 24px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 50%;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	transition: all 0.3s ease;
+}
+
+button.slick-next:hover::before {
+	background-color: #fff;
+	color: var(--color-main);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+button.slick-prev::before {
+	content: "\276E"; 
+	color: #333;
+	background-color: rgba(179, 176, 176);
+	width: 55px;
+	height: 55px;
+	font-size: 24px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 50%;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	transition: all 0.3s ease;
+}
+
+button.slick-prev:hover::before {
+	background-color: #fff;
+	color: var(--color-main);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
