@@ -3,6 +3,8 @@ import Slider from "react-slick";
 
 import { apiGetProducts } from "../apis";
 import ProductCard from "./ProductCard";
+import NextArrow from "./NextArrow";
+import PrevArrow from "./PrevArrow";
 
 const BestSeller = () => {
 	const [bestSeller, setBestSeller] = useState([]);
@@ -23,9 +25,15 @@ const BestSeller = () => {
 	const settings = {
 		dots: false,
 		infinite: true,
-		speed: 500,
+		speed: 800,
 		slidesToShow: 3,
 		slidesToScroll: 1,
+		autoplay: true,
+		autoplaySpeed: 4000,
+		nextArrow: <NextArrow />,
+		prevArrow: <PrevArrow />,
+		// fade: true,
+		cssEase: "cubic-bezier(0.7, 0, 0.3, 1)"
 	};
 
 	useEffect(() => {
@@ -47,15 +55,22 @@ const BestSeller = () => {
 	const renderProducts = () => {
 		if (activeTab === 1 && bestSeller.success) {
 			return bestSeller.products.map((product) => (
-				<div key={product._id} className="">
+				<div
+					key={product._id}
+					className="">
 					<ProductCard data={product} />
 				</div>
 			));
 		}
 		if (activeTab === 2 && newProducts.success) {
 			return newProducts.products.map((product) => (
-				<div key={product._id} className="">
-					<ProductCard data={product} isNew />
+				<div
+					key={product._id}
+					className="">
+					<ProductCard
+						data={product}
+						isNew
+					/>
 				</div>
 			));
 		}
@@ -66,9 +81,8 @@ const BestSeller = () => {
 		<div>
 			<nav className="flex items-center text-[20px] border-b-2 border-main">
 				{tabs.map((tab, index) => (
-					<>
+					<React.Fragment key={tab.id}>
 						<p
-							key={tab.id}
 							className={`font-semibold uppercase px-3 py-2 cursor-pointer ${
 								activeTab === tab.id
 									? "text-black"
@@ -80,13 +94,23 @@ const BestSeller = () => {
 						{index < tabs.length - 1 && (
 							<div className="h-6 w-[1px] bg-gray-300"></div>
 						)}
-					</>
+					</React.Fragment>
 				))}
 			</nav>
 			<div className="mt-4 -mx-2">
-				<Slider {...settings}>
-					{renderProducts()}
-				</Slider>
+				<Slider {...settings}>{renderProducts()}</Slider>
+			</div>
+			<div className="w-full flex mt-4 gap-4">
+				<img
+					src="https://digital-world-2.myshopify.com/cdn/shop/files/banner2-home2_2000x_crop_center.png?v=1613166657"
+					alt=""
+					className="flex-1 object-contain"
+				/>
+				<img
+					src="https://digital-world-2.myshopify.com/cdn/shop/files/banner1-home2_2000x_crop_center.png?v=1613166657"
+					alt=""
+					className="flex-1 object-contain"
+				/>
 			</div>
 		</div>
 	);

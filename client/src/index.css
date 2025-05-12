@@ -59,7 +59,7 @@ button.slick-prev {
 button.slick-next::before {
 	content: "\276F";
 	color: #333;
-	background-color: rgba(179, 176, 176);
+	background-color: rgba(179, 176, 176, 0.7);
 	width: 55px;
 	height: 55px;
 	font-size: 24px;
@@ -78,9 +78,9 @@ button.slick-next:hover::before {
 }
 
 button.slick-prev::before {
-	content: "\276E"; 
+	content: "\276E";
 	color: #333;
-	background-color: rgba(179, 176, 176);
+	background-color: rgba(179, 176, 176, 0.7);
 	width: 55px;
 	height: 55px;
 	font-size: 24px;
@@ -97,3 +97,4 @@ button.slick-prev:hover::before {
 	color: var(--color-main);
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
+
