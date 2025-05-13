@@ -28,7 +28,10 @@ const ProductCard = ({ data, isNew }) => {
 					<HoverOption icon={<IoMdMenu />} />
 				</div>
 				<img
-					src={data.thumb || "https://niteair.co.uk/wp-content/uploads/2023/08/default-product-image.png"}
+					src={
+						data.thumb ||
+						"https://niteair.co.uk/wp-content/uploads/2023/08/default-product-image.png"
+					}
 					alt="image product"
 					className="h-[243px] object-cover"
 				/>
@@ -42,8 +45,22 @@ const ProductCard = ({ data, isNew }) => {
 				<p className="line-clamp-1">{data.title}</p>
 				<span className="flex">
 					{renderRatingStar(data.totalRatings)}
+					<span className="text-xs text-gray-500 ml-1">
+						({data.ratingCount || 0})
+					</span>
 				</span>
-				<p className="text-gray-700">{formatMoney(data.price)} VND</p>
+
+				<div>
+					{data.originalPrice &&
+						data.originalPrice > data.price && (
+							<p className="text-gray-400 text-xs line-through">
+								{formatMoney(data.originalPrice)} VND
+							</p>
+						)}
+					<p className="text-main font-semibold">
+						{formatMoney(data.price)} VND
+					</p>
+				</div>
 			</div>
 		</div>
 	);

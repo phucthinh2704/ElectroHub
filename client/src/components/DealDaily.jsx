@@ -107,7 +107,7 @@ const DealDaily = () => {
 			const now = Date.now();
 			const distance = expireTime - now;
 
-         // Nếu thời gian còn lại lớn hơn 0 (nghĩa là còn ở tương lai) => cập nhật countdown
+			// Nếu thời gian còn lại lớn hơn 0 (nghĩa là còn ở tương lai) => cập nhật countdown
 			if (distance > 0) {
 				const hours = Math.floor(
 					(distance % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000)
@@ -122,7 +122,7 @@ const DealDaily = () => {
 				// Đặt lại countdown về 0 khi hết thời gian
 				setCountdown({ hour: 0, minute: 0, second: 0 });
 
-            // Set lại thời gian hết hạn mới
+				// Set lại thời gian hết hạn mới
 				const newExpireTime = Date.now() + DEFAULT_TIMER_DURATION;
 				localStorage.setItem(STORAGE_KEYS.EXPIRE_TIME, newExpireTime);
 				setExpireTime(newExpireTime);
@@ -131,8 +131,8 @@ const DealDaily = () => {
 				fetchRandomProduct();
 			}
 		};
-      
-      // Cập nhật countdown ngay khi component mount
+
+		// Cập nhật countdown ngay khi component mount
 		updateCountdown();
 
 		// Cập nhật countdown mỗi giây
@@ -142,7 +142,7 @@ const DealDaily = () => {
 	}, [expireTime, fetchRandomProduct]);
 
 	return (
-		<div className="border p-4 mt-2">
+		<div className="border border-gray-400 rounded-3xl p-4 mt-2 flex-1">
 			<div className="flex justify-between items-center">
 				<AiFillStar
 					size={20}
@@ -195,7 +195,7 @@ const DealDaily = () => {
 
 			{/* Options button */}
 			<button
-				className="bg-main w-full p-2 flex justify-center items-center gap-2 rounded-md text-white mt-4 hover:bg-gray-700 transition-all duration-200 cursor-pointer"
+				className="bg-main w-full p-2 flex justify-center items-center gap-2 rounded-md text-white mt-6 hover:bg-gray-700 transition-all duration-200 cursor-pointer"
 				type="button">
 				<IoMdMenu
 					size={22}

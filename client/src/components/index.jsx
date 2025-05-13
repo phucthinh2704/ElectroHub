@@ -7,3 +7,8 @@ export { default as ProductCard } from "./ProductCard";
 export { default as HoverOption } from "./HoverOption";
 export { default as DealDaily } from "./DealDaily";
 export { default as CountDown } from "./CountDown";
+export { default as FeaturedProducts } from "./FeaturedProducts";
+export { default as ProductFeaturedItem } from "./ProductFeaturedItem";
+export { default as NewArrivals } from "./NewArrivals";
+export { default as HotCollections } from "./HotCollections";
+export { default as BlogPosts } from "./BlogPosts";

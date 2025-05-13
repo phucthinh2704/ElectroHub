@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import { Home, Login, Public } from "./pages/public";
-import { getCategories } from "./store/asyncActions";
+import { getCategories } from "./store/app/asyncActions";
 import path from "./utils/path";
 
 function App() {
