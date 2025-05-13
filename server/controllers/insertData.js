@@ -6,12 +6,22 @@ const generateUniqueSlug = require("../utils/generateUniqueSlug");
 const ProductCategory = require("../models/productCategory");
 
 const fn = async (product) => {
+	const originalPrice = Math.round(
+		Number(product?.price?.match(/\d/g).join("")) / 100
+	)
+	const discount = Math.round(Math.random() * 40);
+	const price = Math.round(originalPrice - originalPrice * (discount / 100));
 	await Product.create({
 		title: product?.name,
 		slug: await generateUniqueSlug(product?.name),
 		description: product?.description,
 		brand: product?.brand,
-		price: Math.round(Number(product?.price?.match(/\d/g).join("")) / 100),
+		originalPrice,
+		discount,
+		stock: Math.round(Math.random() * 1000),
+		// price: Math.round(Number(product?.price?.match(/\d/g).join("")) / 100),
+		price,
+		ratingCount: Math.round(Math.random() * 100),
 		category: product?.category[1],
 		quantity: Math.round(Math.random() * 1000),
 		sold: Math.round(Math.random() * 100),
