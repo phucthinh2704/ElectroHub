@@ -4,6 +4,8 @@ import { apiGetProducts, apiGetProductById } from "../apis";
 import renderRatingStar from "../utils/renderRatingStar";
 import formatMoney from "../utils/formatMoney";
 import CountDown from "./CountDown";
+import { Link } from "react-router-dom";
+import path from "../utils/path";
 
 const { AiFillStar, IoMdMenu } = icons;
 
@@ -154,28 +156,37 @@ const DealDaily = () => {
 				<div></div>
 			</div>
 
-			<div className="flex flex-col gap-2 border-t border-gray-400 pt-6">
-				{/* Product image */}
-				<img
-					src={
-						dealDaily?.thumb ||
-						"https://niteair.co.uk/wp-content/uploads/2023/08/default-product-image.png"
-					}
-					alt="Product image"
-					className="object-cover"
-				/>
+			<Link
+				to={`/${path.PREFIX_PRODUCT}/${dealDaily?._id}/${dealDaily?.slug}`}>
+				<div className="flex flex-col gap-2 border-t border-gray-400 pt-6">
+					{/* Product image */}
+					<img
+						src={
+							dealDaily?.thumb ||
+							"https://niteair.co.uk/wp-content/uploads/2023/08/default-product-image.png"
+						}
+						alt="Product image"
+						className="object-cover"
+					/>
 
-				{/* Product details */}
-				<div className="flex flex-col gap-2 mt-8 border-t border-gray-400 pt-2 text-center">
-					<p className="line-clamp-1">{dealDaily?.title}</p>
-					<p className="flex justify-center">
-						{renderRatingStar(dealDaily?.totalRatings, 22)}
-					</p>
-					<p className="text-gray-700">
-						{formatMoney(dealDaily?.price)} VND
-					</p>
+					{/* Product details */}
+					<div className="flex flex-col gap-2 mt-6 border-t border-gray-400 pt-2 text-center">
+						<p className="line-clamp-1 text-lg">{dealDaily?.title}</p>
+						<p className="flex justify-center items-center">
+							{renderRatingStar(dealDaily?.totalRatings, 21)}{" "}
+							<span className="text-[15px] ml-1">
+								({dealDaily?.totalRatings})
+							</span>
+						</p>
+						<p className="text-gray-400 text-xs line-through">
+							{formatMoney(dealDaily?.originalPrice)} VND
+						</p>
+						<p className="font-semibold text-main">
+							{formatMoney(dealDaily?.price)} VND
+						</p>
+					</div>
 				</div>
-			</div>
+			</Link>
 
 			{/* Countdown timer */}
 			<div className="flex justify-between items-center mt-4">

@@ -12,3 +12,5 @@ export { default as ProductFeaturedItem } from "./ProductFeaturedItem";
 export { default as NewArrivals } from "./NewArrivals";
 export { default as HotCollections } from "./HotCollections";
 export { default as BlogPosts } from "./BlogPosts";
+export { default as TopHeader } from "./TopHeader";
+export { default as Footer } from "./Footer";

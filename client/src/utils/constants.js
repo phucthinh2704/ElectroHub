@@ -1,43 +1,13 @@
-import { IoMdHome } from "react-icons/io";
-import {
-	RiCustomerServiceFill,
-	RiProductHuntFill,
-} from "react-icons/ri";
-import {
-	FaBlog,
-	FaQuestionCircle,
-} from "react-icons/fa";
 import path from "./path";
+import { Heart, Home, ShoppingCart, User, MailQuestionIcon, Rss, ContactRound } from "lucide-react";
 
 export const navigation = [
-	{
-		id: 1,
-		value: "HOME",
-		path: `/${path.HOME}`,
-		icon: IoMdHome,
-	},
-	{
-		id: 2,
-		value: "PRODUCTS", 
-		path: `/${path.PRODUCTS}`,
-		icon: RiProductHuntFill,
-	},
-	{
-		id: 3,
-		value: "BLOGS",
-		path: `/${path.BLOGS}`,
-		icon: FaBlog,
-	},
-	{
-		id: 4,
-		value: "OUR SERVICES",
-		path: `/${path.OUR_SERVICES}`,
-		icon: RiCustomerServiceFill,
-	},
-	{
-		id: 5,
-		value: "FAQs",
-		path: `/${path.FAQ}`,
-		icon: FaQuestionCircle,
-	},
+	{ id: 1, path: `/${path.HOME}`, value: "Home", icon: Home },
+	{ id: 2, path: `/${path.PRODUCTS}`, value: "Products", icon: ShoppingCart },
+	{ id: 3, path: `/${path.BLOGS}`, value: "Blogs", icon: Rss },
+	{ id: 4, path: `/${path.OUR_SERVICES}`, value: "Our Services", icon: ContactRound },
+	{ id: 5, path: `/${path.FAVORITE}`, value: "Favorites", icon: Heart },
+	{ id: 6, path: `/${path.FAQ}`, value: "FAQs", icon: MailQuestionIcon },
+	{ id: 7, path: `/${path.ACCOUNT}`, value: "Account", icon: User },
 ];
+

@@ -19,7 +19,7 @@ const Home = () => {
 	}, [dispatch]);
 	const { newProducts } = useSelector((state) => state.products);
 	const { categories } = useSelector((state) => state.app);
-	console.log(categories);
+	
 	return (
 		<>
 			<div className="w-(--main-width) flex gap-5">
@@ -44,7 +44,7 @@ const Home = () => {
 			<div className="my-16">
 				<BlogPosts></BlogPosts>
 			</div>
-			<div className="h-[1000px]"></div>
+			<div className="h-[100px]"></div>
 		</>
 	);
 };

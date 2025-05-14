@@ -109,7 +109,7 @@ const BestSeller = () => {
 					</React.Fragment>
 				))}
 			</nav>
-			<div className="mt-4 -mx-2">
+			<div className="mt-4 -mx-4">
 				{loading ? (
 					<div className="flex items-center justify-center py-16">
 						<Loader2
