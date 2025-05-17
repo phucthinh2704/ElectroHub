@@ -1,13 +1,12 @@
-const mongoose = require("mongoose"); // Erase if already required
+const mongoose = require("mongoose");
 const product = require("./product");
 
 // Declare the Schema of the Mongo model
 var userSchema = new mongoose.Schema(
 	{
-		firstName: { type: String, required: true },
-		lastName: { type: String, required: true },
+		name: { type: String, required: true },
 		email: { type: String, required: true, unique: true },
-		mobile: { type: String, required: true, unique: true },
+		mobile: { type: String, required: true },
 		password: { type: String, required: true },
 		role: { type: String, default: "user" },
 		cart: [
@@ -30,6 +29,7 @@ var userSchema = new mongoose.Schema(
 		passwordChangedAt: { type: Date },
 		passwordResetToken: { type: String },
 		passwordResetExpires: { type: Date },
+		registerToken: { type: String },
 	},
 	{ timestamps: true }
 );

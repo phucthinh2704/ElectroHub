@@ -3,6 +3,7 @@ const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
+const createToken = require("uniqid");
 require("dotenv").config();
 const sendMail = require("../utils/sendMail");
 const {
@@ -12,9 +13,9 @@ const {
 const { hashPassword, createPasswordResetToken } = require("../utils/password");
 
 const register = asyncHandler(async (req, res) => {
-	const { firstName, lastName, email, mobile, password } = req.body || {};
+	const { name, email, mobile, password } = req.body || {};
 
-	if (!firstName || !lastName || !email || !mobile || !password) {
+	if (!name || !email || !mobile || !password) {
 		return res.status(400).json({
 			success: false,
 			message: "Missing required fields",
@@ -26,7 +27,7 @@ const register = asyncHandler(async (req, res) => {
 	if (user) {
 		return res.status(400).json({
 			success: false,
-			message: "User already exists",
+			message: `User with email ${email} already exists`,
 		});
 	}
 	// Kiểm tra định dạng email
@@ -43,19 +44,56 @@ const register = asyncHandler(async (req, res) => {
 		throw new Error("Password must be at least 6 characters");
 
 	const passwordHash = await hashPassword(password);
+	const token = createToken();
+
+	// Tam thời lưu thông tin người dùng vào cookie, nếu người dùng click vào link xác thực thì mới lưu vào db
+	res.cookie(
+		"dataRegister",
+		{
+			name,
+			email,
+			mobile,
+			password: passwordHash,
+			token,
+		},
+		{ httpOnly: true, maxAge: 15 * 60 * 1000 }
+	); // 15 phút
+
+	const html = `<p>Vui lòng click vào link dưới đây để hoàn tất quá trình đăng ký. Link sẽ hết hạn sau 15 phút kể từ bây giờ. <a href="${process.env.SERVER_URL}/api/user/auth-register/${token}">Click here</a></p>`;
+
+	await sendMail({
+		email,
+		html,
+		subject: "Xác thực tài khoản Electro Hub",
+	});
+	// Gửi email xác thực tài khoản
+	return res.status(200).json({
+		success: true,
+		message:
+			"Register successfully. Please check your email to verify your account.",
+	});
+});
+
+const authRegister = asyncHandler(async (req, res) => {
+	const { token } = req.params;
+	const cookies = req.cookies;
+
+	if (
+		!cookies ||
+		!cookies?.dataRegister ||
+		cookies?.dataRegister?.token != token
+	)
+		throw new Error("Invalid token! Register failed. Please try again");
+	const { name, email, mobile, password } = cookies.dataRegister || {};
 	const newUser = await User.create({
-		firstName,
-		lastName,
+		name,
 		email,
 		mobile,
-		password: passwordHash,
+		password,
 	});
 
-	return res.status(201).json({
-		success: newUser ? true : false,
-		message: newUser ? "Register successfully" : "Something went wrong",
-		newUser,
-	});
+	return res.redirect(
+		`${process.env.CLIENT_URL}/login?message=Register successfully. Please log in!&email=${email}`)
 });
 
 const login = asyncHandler(async (req, res) => {
@@ -77,7 +115,7 @@ const login = asyncHandler(async (req, res) => {
 
 	const accessToken = generateAccessToken(user._id, user.role);
 	const refreshToken = generateRefreshToken(user._id);
-	// Lưu access token vào cookie và refresh token vào db
+	// Lưu refresh token vào cookie và db
 	await User.findByIdAndUpdate(user._id, { refreshToken }, { new: true }); // new:true là trả về data sau khi update
 	res.cookie("refresh_token", refreshToken, {
 		httpOnly: true,
@@ -181,6 +219,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
 	const data = {
 		email: "thinhb2203636@student.ctu.edu.vn",
 		html,
+		subject: "Reset password",
 	};
 
 	const rs = await sendMail(data);
@@ -389,4 +428,5 @@ module.exports = {
 	updateUserByAdmin,
 	updateUserAddress,
 	updateCart,
+	authRegister,
 };

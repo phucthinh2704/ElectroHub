@@ -3,7 +3,7 @@ require("dotenv").config();
 const asyncHandler = require("express-async-handler");
 
 // async..await is not allowed in global scope, must use a wrapper
-const sendMail = asyncHandler(async ({ email, html }) => {
+const sendMail = asyncHandler(async ({ email, html, subject }) => {
 	const transporter = nodemailer.createTransport({
 		host: "smtp.gmail.com",
 		port: 587,
@@ -18,7 +18,7 @@ const sendMail = asyncHandler(async ({ email, html }) => {
 	const info = await transporter.sendMail({
 		from: '"Electro Hub" <no-reply@electrohub.com>', // sender address
 		to: email, // list of receivers
-		subject: "Forgot Password", // Subject line
+		subject: subject, // Subject line
 		html: html, // html body
 	});
 
