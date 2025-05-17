@@ -52,7 +52,7 @@ const Footer = () => {
 						</h4>
 						<div className="flex items-start gap-3 text-gray-300 hover:text-white transition-colors duration-200 group">
 							<MapPin
-								size={16}
+								size={22}
 								className="mt-1 text-main"
 							/>
 							<div>
@@ -76,7 +76,7 @@ const Footer = () => {
 						</div>
 						<div className="flex items-center gap-3 text-gray-300 hover:text-white transition-colors duration-200 group">
 							<Mail
-								size={16}
+								size={22}
 								className="text-main"
 							/>
 							<span className="font-medium text-white">
@@ -169,7 +169,7 @@ const Footer = () => {
 					{/* Digital World Store Section */}
 					<div className="flex flex-col gap-5">
 						<h4 className="uppercase text-base font-medium mb-3 border-l-4 pl-3 border-main">
-							#DIGITALWORLDSTORE
+							#ELECTROHUBSTORE
 						</h4>
 						<div className="grid grid-cols-2 gap-2">
 							{socials.map((item, index) => (

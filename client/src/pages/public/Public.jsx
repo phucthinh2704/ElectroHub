@@ -7,7 +7,7 @@ import path from "../../utils/path";
 const Public = () => {
 	const location = useLocation();
 	const isLoginPage = location.pathname === `/${path.LOGIN}`;
-	console.log(location.pathname);
+	
 	return (
 		<div className="w-full flex flex-col items-center">
 			<TopHeader />
