@@ -8,7 +8,7 @@ router.post("/login", user.login);
 router.get("/current", verifyAccessToken, user.getCurrent);
 router.post("/refresh-token", user.refreshAccessToken);
 router.post("/logout", user.logout);
-router.get("/forgot-password", user.forgotPassword);
+router.post("/forgot-password", user.forgotPassword);
 router.put("/reset-password/:token", user.resetPassword);
 router.put("/current", verifyAccessToken, user.updateUser);
 router.put("/address", verifyAccessToken, user.updateUserAddress);

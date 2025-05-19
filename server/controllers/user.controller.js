@@ -82,8 +82,13 @@ const authRegister = asyncHandler(async (req, res) => {
 		!cookies ||
 		!cookies?.dataRegister ||
 		cookies?.dataRegister?.token != token
-	)
-		throw new Error("Invalid token! Register failed. Please try again");
+	) {
+		res.clearCookie("dataRegister");
+		// throw new Error("Invalid token! Register failed. Please try again");
+		return res.redirect(
+			`${process.env.CLIENT_URL}/login?error=An error occurred during authentication. Please try again later!`
+		);
+	}
 	const { name, email, mobile, password } = cookies.dataRegister || {};
 	const newUser = await User.create({
 		name,
@@ -91,9 +96,10 @@ const authRegister = asyncHandler(async (req, res) => {
 		mobile,
 		password,
 	});
-
+	res.clearCookie("dataRegister");
 	return res.redirect(
-		`${process.env.CLIENT_URL}/login?message=Register successfully. Please log in!&email=${email}`)
+		`${process.env.CLIENT_URL}/login?message=Register successfully. Please log in!&email=${email}`
+	);
 });
 
 const login = asyncHandler(async (req, res) => {
@@ -195,12 +201,12 @@ const logout = asyncHandler(async (req, res) => {
 });
 
 const forgotPassword = asyncHandler(async (req, res) => {
-	const { email } = req.query;
+	const { email } = req.body;
 	if (!email) throw new Error("Missing required fields");
 
 	// Kiểm tra xem email có tồn tại trong db không
 	const user = await User.findOne({ email });
-	if (!user) throw new Error("User not found");
+	if (!user) throw new Error("Email not found. Please check the email address and try again!");
 
 	// Tạo token reset password
 	const [resetToken, tokenSaveDb] = createPasswordResetToken();
@@ -215,11 +221,11 @@ const forgotPassword = asyncHandler(async (req, res) => {
 		}
 	);
 
-	const html = `<p>Vui lòng click vào link dưới đây để thay đổi mật khẩu của bạn. Link sẽ hết hạn sau 15 phút kể từ bây giờ. <a href="${process.env.SERVER_URL}/api/user/reset-password/${resetToken}">Click here</a></p>`;
+	const html = `<p>Vui lòng click vào link dưới đây để thay đổi mật khẩu của bạn. Link sẽ hết hạn sau 15 phút kể từ bây giờ. <a href="${process.env.CLIENT_URL}/reset-password/${resetToken}">Click here</a></p>`;
 	const data = {
-		email: "thinhb2203636@student.ctu.edu.vn",
+		email,
 		html,
-		subject: "Reset password",
+		subject: "Đặt Lại Mật Khẩu",
 	};
 
 	const rs = await sendMail(data);
@@ -231,7 +237,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
 	}
 	return res.status(200).json({
 		success: true,
-		message: "Reset password link sent to your email",
+		message: "A reset link has been sent to your email. Please check it!",
 	});
 });
 
