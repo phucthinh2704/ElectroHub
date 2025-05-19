@@ -59,12 +59,57 @@ const register = asyncHandler(async (req, res) => {
 		{ httpOnly: true, maxAge: 15 * 60 * 1000 }
 	); // 15 phút
 
-	const html = `<p>Vui lòng click vào link dưới đây để hoàn tất quá trình đăng ký. Link sẽ hết hạn sau 15 phút kể từ bây giờ. <a href="${process.env.SERVER_URL}/api/user/auth-register/${token}">Click here</a></p>`;
+	const html = `<div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);">
+        <div style="background: linear-gradient(135deg, #4776E6, #8E54E9); padding: 30px 20px; text-align: center;">
+            <div style="font-size: 28px; font-weight: bold; color: white; letter-spacing: 1px; margin-bottom: 5px;">ELECTRO HUB</div>
+            <div style="color: rgba(255, 255, 255, 0.8); font-size: 14px; font-weight: 300;">Your Digital Electronics Destination</div>
+        </div>
+
+		  <div style="text-align: center; padding: 20px 0; border-bottom: 1px solid #eaeaea;">
+            <p style="font-size: 22px; font-weight: 600; color: #4776E6; margin: 0; text-transform: uppercase; letter-spacing: 1px; position: relative; display: inline-block;">Electro Hub Account Verification</p>
+        </div>
+        
+        <div style="padding: 35px 30px; color: #333; line-height: 1.6;">
+            <p style="font-size: 20px; font-weight: 500; margin-bottom: 20px; color: #333;">Dear ${name},</p>
+            
+            <p style="margin-bottom: 25px; font-size: 15px;">
+                Thank you for registering with Electro Hub. We're excited to have you join our community of tech enthusiasts!
+            </p>
+            
+            <div style="text-align: center; margin: 30px 0;">
+                <a href="${process.env.SERVER_URL}/api/user/auth-register/${token}" style="display: inline-block; background: linear-gradient(135deg, #4776E6, #8E54E9); color: white; text-decoration: none; padding: 12px 30px; border-radius: 50px; font-weight: 500; font-size: 16px; box-shadow: 0 4px 10px rgba(142, 84, 233, 0.3);">Verify Your Account</a>
+            </div>
+            
+            <p style="font-size: 14px; color: #666; margin-bottom: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 8px; border-left: 4px solid #8E54E9;">
+                ⏱️ This verification link is valid for <strong>15 minutes</strong> from the time of receipt. If you don't verify your account within this period, you'll need to request a new verification link.
+            </p>
+            
+            <p style="font-size: 14px; color: #666;">
+                If you have any questions or need assistance, our support team is here to help at <a href="mailto:electrohub-digital@support.com" style="color: #4776E6; text-decoration: none; font-weight: 500;">electrohub-digital@support.com</a>
+            </p>
+            
+            <div style="height: 1px; background-color: #eaeaea; margin: 25px 0;"></div>
+            
+            <p style="font-weight: 500; margin-bottom: 5px; color: #333;">Best regards,</p>
+            <p>The Electro Hub Team</p>
+            
+            <div style="margin-top: 15px;">
+                <a href="#" style="display: inline-block; width: 32px; height: 32px; background-color: #4776E6; border-radius: 50%; margin: 0 5px; color: white; line-height: 32px; text-align: center; font-size: 16px; text-decoration: none;">f</a>
+                <a href="#" style="display: inline-block; width: 32px; height: 32px; background-color: #4776E6; border-radius: 50%; margin: 0 5px; color: white; line-height: 32px; text-align: center; font-size: 16px; text-decoration: none;">in</a>
+                <a href="#" style="display: inline-block; width: 32px; height: 32px; background-color: #4776E6; border-radius: 50%; margin: 0 5px; color: white; line-height: 32px; text-align: center; font-size: 16px; text-decoration: none;">t</a>
+            </div>
+        </div>
+        
+        <div style="background-color: #f8f9fa; padding: 20px; text-align: center; font-size: 13px; color: #666;">
+            © 2025 Electro Hub. All rights reserved.<br>
+            This is an automated message, please do not reply directly to this email.
+        </div>
+    </div>`;
 
 	await sendMail({
 		email,
 		html,
-		subject: "Xác thực tài khoản Electro Hub",
+		subject: "Electro Hub Account Verification",
 	});
 	// Gửi email xác thực tài khoản
 	return res.status(200).json({
@@ -84,7 +129,6 @@ const authRegister = asyncHandler(async (req, res) => {
 		cookies?.dataRegister?.token != token
 	) {
 		res.clearCookie("dataRegister");
-		// throw new Error("Invalid token! Register failed. Please try again");
 		return res.redirect(
 			`${process.env.CLIENT_URL}/login?error=An error occurred during authentication. Please try again later!`
 		);
@@ -206,7 +250,10 @@ const forgotPassword = asyncHandler(async (req, res) => {
 
 	// Kiểm tra xem email có tồn tại trong db không
 	const user = await User.findOne({ email });
-	if (!user) throw new Error("Email not found. Please check the email address and try again!");
+	if (!user)
+		throw new Error(
+			"Email not found. Please check the email address and try again!"
+		);
 
 	// Tạo token reset password
 	const [resetToken, tokenSaveDb] = createPasswordResetToken();
@@ -221,11 +268,40 @@ const forgotPassword = asyncHandler(async (req, res) => {
 		}
 	);
 
-	const html = `<p>Vui lòng click vào link dưới đây để thay đổi mật khẩu của bạn. Link sẽ hết hạn sau 15 phút kể từ bây giờ. <a href="${process.env.CLIENT_URL}/reset-password/${resetToken}">Click here</a></p>`;
+	const html = `<div style="max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);">
+
+        <div style="background: linear-gradient(135deg, #4776E6, #8E54E9); padding: 30px 20px; text-align: center;">
+            <div style="font-size: 28px; font-weight: bold; color: white; letter-spacing: 1px; margin-bottom: 5px;">ELECTRO HUB</div>
+            <div style="color: rgba(255, 255, 255, 0.8); font-size: 14px; font-weight: 300;">Your Digital Electronics Destination</div>
+        </div>
+        
+        <div style="padding: 30px; line-height: 1.6;">
+            <h1 style="font-size: 24px; font-weight: 600; margin-bottom: 20px; color: #202124;">Password Reset</h1>
+            
+            <p style="font-size: 16px; margin-bottom: 25px; color: #5f6368;">Hello,</p>
+            
+            <p style="font-size: 16px; margin-bottom: 25px; color: #5f6368;">We received a request to reset your password. Please click the button below to create a new password. This link will expire in 15 minutes from now.</p>
+            
+            <div style="text-align: center; margin: 30px 0;">
+                <a href="${process.env.CLIENT_URL}/reset-password/${resetToken}" style="display: inline-block; background-image: linear-gradient(to right, #4568dc, #b06ab3); color: white; font-weight: 500; text-decoration: none; padding: 12px 24px; border-radius: 5px; font-size: 16px; transition: background-color 0.3s ease;">Reset Password</a>
+            </div>
+            
+            <p style="font-size: 14px; color: #666; margin-bottom: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 8px; border-left: 4px solid #8E54E9;">
+                ⏱️ This verification link is valid for <strong>15 minutes</strong> from the time of receipt. If you don't verify your account within this period, you'll need to request a new verification link.
+            </p>
+            
+            <p style="font-size: 16px; margin-bottom: 25px; color: #5f6368;">If you didn't request a password reset, please ignore this email or contact support if you have any questions.</p>
+        </div>
+        
+        <div style="background-color: #f8f9fa; padding: 20px; text-align: center; font-size: 13px; color: #666;">
+            © 2025 Electro Hub. All rights reserved.<br>
+            This is an automated message, please do not reply directly to this email.
+        </div>
+    </div>`;
 	const data = {
 		email,
 		html,
-		subject: "Đặt Lại Mật Khẩu",
+		subject: "Password Reset",
 	};
 
 	const rs = await sendMail(data);
