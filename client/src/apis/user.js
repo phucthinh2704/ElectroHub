@@ -12,4 +12,17 @@ export const apiLogin = async (data) =>
 		method: "POST",
 		url: `/user/login`,
       data,
+		withCredentials: true,
+	});
+export const apiForgotPassword = async (data) =>
+	axios({
+		method: "POST",
+		url: `/user/forgot-password`,
+      data,
+	});
+export const apiResetPassword = async (data) =>
+	axios({
+		method: "PUT",
+		url: `/user/reset-password/${data.token}`,
+      data,
 	});

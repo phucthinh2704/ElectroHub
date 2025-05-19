@@ -11,6 +11,8 @@ const path = {
 	FAVORITE: "favorites",
 	PREFIX_PRODUCT: "products",
 	DETAIL_PRODUCT: "products/:productId/:slug",
+	FORGOT_PASSWORD: "forgot-password",
+	RESET_PASSWORD: "reset-password/:token"
 };
 
 export default path;

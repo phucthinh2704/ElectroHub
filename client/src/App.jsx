@@ -12,6 +12,8 @@ import {
   Services,
   DetailProduct,
   FAQ,
+  ForgotPassword,
+  ResetPassword
 } from "./pages/public";
 import { getCategories } from "./store/app/asyncActions";
 import path from "./utils/path";
@@ -34,6 +36,8 @@ function App() {
           <Route path={path.FAQ} element={<FAQ />} />
           <Route path={path.DETAIL_PRODUCT} element={<DetailProduct />} />
           <Route path={path.LOGIN} element={<Login />} />
+          <Route path={path.FORGOT_PASSWORD} element={<ForgotPassword />} />
+          <Route path={path.RESET_PASSWORD} element={<ResetPassword />} />
         </Route>
       </Routes>
     </div>

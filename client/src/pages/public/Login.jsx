@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { 
   Mail, 
   Lock, 
@@ -52,6 +52,16 @@ const Login = () => {
     const queryParams = new URLSearchParams(location.search);
     const message = queryParams.get("message");
     const email = queryParams.get("email");
+    const error = queryParams.get("error");
+
+    if(error) {
+      Swal.fire({
+        title: "Error",
+        text: error,
+        icon: "error",
+      });
+      navigate("/login", { replace: true });  // replace: true để không lưu lại lịch sử, không cho bấm nút back
+    }
     
     if (message) {
       Swal.fire({
@@ -68,7 +78,7 @@ const Login = () => {
         }
       }));
 
-      navigate("/login", { replace: true });
+      navigate("/login", { replace: true });  // replace: true để không lưu lại lịch sử, không cho bấm nút back
     }
   }, [location, navigate]);
 
@@ -178,7 +188,6 @@ const Login = () => {
         title: "Success",
         text: response.message,
         icon: "success",
-        confirmButtonColor: "#6366f1"
       });
       setFormData({
         ...formData,
@@ -298,12 +307,7 @@ const Login = () => {
                   >
                     Password
                   </label>
-                  <a
-                    href="#"
-                    className="text-xs font-medium text-indigo-600 hover:text-indigo-500"
-                  >
-                    Forgot password?
-                  </a>
+                  
                 </div>
                 <div className="relative mt-2">
                   <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -333,17 +337,25 @@ const Login = () => {
               </div>
 
               {/* Remember Me */}
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                  checked={formData.login.rememberMe}
-                  onChange={(e) => handleInputChange("login", "rememberMe", e.target.checked)}
-                />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
-                  Remember me
-                </label>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <input
+                    id="remember-me"
+                    type="checkbox"
+                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                    checked={formData.login.rememberMe}
+                    onChange={(e) => handleInputChange("login", "rememberMe", e.target.checked)}
+                  />
+                  <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
+                    Remember me
+                  </label>
+                </div>
+                <Link
+                    to={`/${path.FORGOT_PASSWORD}`}
+                    className="text-[14px] font-medium text-indigo-600 hover:text-indigo-500 cursor-pointer"
+                  >
+                    Forgot password?
+                  </Link>
               </div>
 
               {/* Submit Button */}

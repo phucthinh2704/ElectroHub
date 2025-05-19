@@ -21,6 +21,10 @@ const store = configureStore({
 		products: productSlice,
 		user: persistReducer(userConfig, userSlice), // Wrap the user slice with persistReducer
 	},
+	middleware: (getDefaultMiddleware) =>
+		getDefaultMiddleware({
+			serializableCheck: false,
+		}),
 });
 export const persistor = persistStore(store);
 export default store;
