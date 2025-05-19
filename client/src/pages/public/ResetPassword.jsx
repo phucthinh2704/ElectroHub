@@ -105,7 +105,7 @@ export default function ResetPassword() {
 											? "border-red-500"
 											: "border-gray-400"
 									} px-4 py-3 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-20`}
-									placeholder="••••••••"
+									placeholder="Type your password"
 								/>
 								<button
 									type="button"
@@ -144,7 +144,7 @@ export default function ResetPassword() {
 											? "border-red-500"
 											: "border-gray-400"
 									} px-4 py-3 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-20`}
-									placeholder="••••••••"
+									placeholder="Re-enter your password"
 								/>
 								{errors.confirmPassword && (
 									<p className="mt-1 text-xs text-red-500">

@@ -12,7 +12,7 @@ const commonConfig = {
 
 const userConfig = {
 	...commonConfig,
-	whitelist: ["isLoggedIn", "token"],		// là những trường localStorage sẽ lưu
+	whitelist: ["isLoggedIn", "token", "current"],		// là những trường localStorage sẽ lưu
 }
 
 const store = configureStore({

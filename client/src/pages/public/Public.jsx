@@ -7,7 +7,7 @@ import path from "../../utils/path";
 const Public = () => {
 	const location = useLocation();
 	const isLoginPage = location.pathname === `/${path.LOGIN}`;
-	const isForgotPasswordPage = location.pathname === `/${path.FORGOT_PASSWORD}`;
+	const isForgotPasswordPage = location.pathname.includes("password");
 	
 	return (
 		<div className="w-full flex flex-col items-center">

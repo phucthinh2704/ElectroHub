@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useNavigate, useLocation, Link, Navigate  } from "react-router-dom";
 import { 
   Mail, 
   Lock, 
@@ -16,8 +16,8 @@ import {
 import Swal from "sweetalert2";
 import path from "../../utils/path";
 import { apiLogin, apiRegister } from "../../apis/user";
-import { register } from "../../store/user/userSlice"
-import { useDispatch } from "react-redux";
+import { login } from "../../store/user/userSlice"
+import { useDispatch, useSelector } from "react-redux";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -47,7 +47,7 @@ const Login = () => {
     login: {},
     register: {}
   });
-
+  
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const message = queryParams.get("message");
@@ -158,7 +158,7 @@ const Login = () => {
       }
       setIsSubmitting(false);
       Swal.fire("Success", response.message, "success");
-      dispatch(register({ isLoggedIn: true, user: response.user, token: response.access_token }));
+      dispatch(login({ isLoggedIn: true, user: response.user, token: response.access_token }));
       navigate(`/${path.HOME}`);
     }, 500);
   };
@@ -221,6 +221,12 @@ const Login = () => {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+
+  const { isLoggedIn, current } = useSelector((state) => state.user);
+  if (isLoggedIn && current) {
+    // Nếu đã đăng nhập và có thông tin người dùng, chuyển hướng đến trang chủ
+    return <Navigate to={`/${path.HOME}`} replace />;
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-indigo-50 to-purple-100 p-4">
@@ -319,7 +325,7 @@ const Login = () => {
                     className={`w-full rounded-lg border ${
                       errors.login.password ? "border-red-500" : "border-gray-300"
                     } pl-10 pr-10 py-3 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-20`}
-                    placeholder="••••••••"
+                    placeholder="Type your password"
                     value={formData.login.password}
                     onChange={(e) => handleInputChange("login", "password", e.target.value)}
                   />
@@ -511,7 +517,7 @@ const Login = () => {
                     className={`w-full rounded-lg border ${
                       errors.register.password ? "border-red-500" : "border-gray-300"
                     } pl-10 pr-10 py-3 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-20`}
-                    placeholder="••••••••"
+                    placeholder="Type your password"
                     value={formData.register.password}
                     onChange={(e) => handleInputChange("register", "password", e.target.value)}
                   />
@@ -546,7 +552,7 @@ const Login = () => {
                     className={`w-full rounded-lg border ${
                       errors.register.confirmPassword ? "border-red-500" : "border-gray-300"
                     } pl-10 pr-4 py-3 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-20`}
-                    placeholder="••••••••"
+                    placeholder="Re-enter your password"
                     value={formData.register.confirmPassword}
                     onChange={(e) => handleInputChange("register", "confirmPassword", e.target.value)}
                   />
