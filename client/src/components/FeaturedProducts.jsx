@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { apiGetProducts } from "../apis";
 import ProductFeaturedItem from "./ProductFeaturedItem";
+import { BadgeCheck } from "lucide-react";
 
 const FeaturedProducts = () => {
 	const [products, setProducts] = useState([]);
@@ -18,9 +19,19 @@ const FeaturedProducts = () => {
 	}, []);
 	return (
 		<>
-			<h3 className="text-[22px] mb-6 font-semibold uppercase pb-2 border-b-2 border-main">
-				Featured products
-			</h3>
+			<div className="relative overflow-hidden rounded-lg shadow-sm bg-gradient-to-r from-amber-50 to-white p-4 border-l-4 border-amber-500 mb-2">
+				<div className="flex items-center">
+					<BadgeCheck
+						className="text-amber-500 mr-3"
+						size={22}
+					/>
+					<h3 className="text-xl font-bold uppercase text-gray-800">
+						Featured Products
+					</h3>
+				</div>
+				<div className="absolute top-0 right-0 w-16 h-16 -mt-8 -mr-8 bg-amber-100 rounded-full opacity-50"></div>
+				<div className="absolute bottom-0 right-0 w-8 h-8 mb-1 mr-1 bg-amber-100 rounded-full opacity-70"></div>
+			</div>
 			<div className="grid grid-cols-3 gap-4">
 				{products?.map((product) => (
 					<ProductFeaturedItem

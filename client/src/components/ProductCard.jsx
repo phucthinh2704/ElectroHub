@@ -1,24 +1,25 @@
 import React, { useState } from "react";
-import formatMoney from "../utils/formatMoney";
+import { Link } from "react-router-dom";
 import newLabel from "../assets/new.png";
 import trendingLabel from "../assets/trending.png";
+import formatMoney from "../utils/formatMoney";
+import icons from "../utils/icons";
 import renderRatingStar from "../utils/renderRatingStar";
 import HoverOption from "./HoverOption";
-import icons from "../utils/icons";
-import { Link } from "react-router-dom";
-import path from "../utils/path";
 
 const { AiFillEye, BsFillSuitHeartFill, IoMdMenu } = icons;
 
-const ProductCard = ({ data, isNew }) => {
+const ProductCard = ({ data, isNew, normal }) => {
 	const [isShowOptions, setIsShowOptions] = useState(false);
 
 	return (
 		<div
-			className="w-full text-base border border-main p-4"
+			className="w-full text-base border-2 border-gray-300 p-4 rounded-2xl "
 			onMouseEnter={() => setIsShowOptions(true)}
 			onMouseLeave={() => setIsShowOptions(false)}>
-			<Link to={`/${path.PREFIX_PRODUCT}/${data._id}/${data.slug}`} className="display-block">
+			<Link
+				to={`/${data.category.toLowerCase()}/${data._id}/${data.slug}`}
+				className="display-block">
 				<div className="relative">
 					<div
 						className={`absolute bottom-[-20px] left-0 right-0 flex justify-center gap-3 transition-all duration-200 ${
@@ -38,13 +39,15 @@ const ProductCard = ({ data, isNew }) => {
 						alt="image product"
 						className="h-[243px] object-cover"
 					/>
-					<img
-						src={isNew ? newLabel : trendingLabel}
-						alt="label"
-						className={`absolute top-[0px] right-[-17px] h-[30px] w-[90px] object-cover`}
-					/>
+					{!normal && (
+						<img
+							src={isNew ? newLabel : trendingLabel}
+							alt="label"
+							className={`absolute top-[0px] right-[-17px] h-[30px] w-[90px] object-cover`}
+						/>
+					)}
 				</div>
-				<div className="flex flex-col gap-2 mt-8 border-t border-gray-400 pt-2">
+				<div className="flex flex-col gap-2 mt-8 border-t border-gray-500 pt-2">
 					<p className="line-clamp-1">{data.title}</p>
 					<span className="flex">
 						{renderRatingStar(data.totalRatings)}
@@ -60,9 +63,14 @@ const ProductCard = ({ data, isNew }) => {
 									{formatMoney(data.originalPrice)} VND
 								</p>
 							)}
-						<p className="text-main font-semibold">
-							{formatMoney(data.price)} VND
-						</p>
+						<div className="flex justify-between items-center">
+							<p className="text-main font-semibold">
+								{formatMoney(data.price)} VND
+							</p>
+							<p className="text-[14px] text-black font-semibold">
+								Sold: {data.sold}
+							</p>
+						</div>
 					</div>
 				</div>
 			</Link>

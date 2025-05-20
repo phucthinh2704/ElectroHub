@@ -14,7 +14,7 @@ const Public = () => {
 			<TopHeader />
 			<Header />
 			{!isLoginPage && !isForgotPasswordPage && <Navigation />}
-			<div className="w-(--main-width)">
+			<div className="w-full">
 				<Outlet />
 			</div>
 			<Footer />

@@ -9,8 +9,7 @@ const path = {
 	FAQ: "faqs",
 	ACCOUNT: "account",
 	FAVORITE: "favorites",
-	PREFIX_PRODUCT: "products",
-	DETAIL_PRODUCT: "products/:productId/:slug",
+	DETAIL_PRODUCT: ":category/:productId/:slug",
 	FORGOT_PASSWORD: "forgot-password",
 	RESET_PASSWORD: "reset-password/:token"
 };

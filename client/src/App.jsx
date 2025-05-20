@@ -17,6 +17,7 @@ import {
 } from "./pages/public";
 import { getCategories } from "./store/app/asyncActions";
 import path from "./utils/path";
+import { ScrollToTop } from "./components";
 
 function App() {
   const dispatch = useDispatch();
@@ -27,6 +28,7 @@ function App() {
   
   return (
     <div className="min-h-screen font-main">
+      <ScrollToTop />
       <Routes>
         <Route path={path.PUBLIC} element={<Public />}>
           <Route path={path.HOME} element={<Home />} />

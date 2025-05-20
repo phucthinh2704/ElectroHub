@@ -14,3 +14,7 @@ export { default as HotCollections } from "./HotCollections";
 export { default as BlogPosts } from "./BlogPosts";
 export { default as TopHeader } from "./TopHeader";
 export { default as Footer } from "./Footer";
+export { default as Breadcrumbs } from "./Breadcrumbs";
+export { default as InformationDetail } from "./InformationDetail";
+export { default as OthersProduct } from "./OthersProduct";
+export { default as ScrollToTop } from "./ScrollToTop";

@@ -1,11 +1,10 @@
-import React, { memo, useEffect, useState, useCallback } from "react";
-import icons from "../utils/icons";
-import { apiGetProducts, apiGetProductById } from "../apis";
-import renderRatingStar from "../utils/renderRatingStar";
-import formatMoney from "../utils/formatMoney";
-import CountDown from "./CountDown";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import path from "../utils/path";
+import { apiGetProductById, apiGetProducts } from "../apis";
+import formatMoney from "../utils/formatMoney";
+import icons from "../utils/icons";
+import renderRatingStar from "../utils/renderRatingStar";
+import CountDown from "./CountDown";
 
 const { AiFillStar, IoMdMenu } = icons;
 
@@ -144,7 +143,7 @@ const DealDaily = () => {
 	}, [expireTime, fetchRandomProduct]);
 
 	return (
-		<div className="border border-gray-400 rounded-3xl p-4 mt-2 flex-1">
+		<div className="border-2 border-gray-300 rounded-3xl p-4 mt-2 flex-1">
 			<div className="flex justify-between items-center">
 				<AiFillStar
 					size={20}
@@ -157,7 +156,7 @@ const DealDaily = () => {
 			</div>
 
 			<Link
-				to={`/${path.PREFIX_PRODUCT}/${dealDaily?._id}/${dealDaily?.slug}`}>
+				to={`/${dealDaily?.category.toLowerCase()}/${dealDaily?._id}/${dealDaily?.slug}`}>
 				<div className="flex flex-col gap-2 border-t border-gray-400 pt-6">
 					{/* Product image */}
 					<img

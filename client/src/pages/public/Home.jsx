@@ -21,8 +21,8 @@ const Home = () => {
 	const { categories } = useSelector((state) => state.app);
 	
 	return (
-		<>
-			<div className="w-(--main-width) flex gap-5">
+		<div className="w-(--main-width) mx-auto">
+			<div className=" flex gap-5">
 				<div className="flex flex-col gap-5 w-[25%] flex-auto">
 					<Sidebar></Sidebar>
 					<DealDaily></DealDaily>
@@ -45,7 +45,7 @@ const Home = () => {
 				<BlogPosts></BlogPosts>
 			</div>
 			<div className="h-[100px]"></div>
-		</>
+		</div>
 	);
 };
 

@@ -1,18 +1,28 @@
 import React from "react";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Trophy } from "lucide-react";
 
 const HotCollections = ({ categories }) => {
 	return (
 		<div>
-			<h3 className="text-[22px] font-semibold uppercase pb-2 mb-6 relative border-b-2 border-main">
-				Hot Collections
-			</h3>
+			<div className="relative overflow-hidden rounded-lg shadow-sm bg-gradient-to-r from-red-50 to-white p-4 border-l-4 border-red-500 mb-3">
+				<div className="flex items-center">
+					<Trophy
+						className="text-red-500 mr-3"
+						size={22}
+					/>
+					<h3 className="text-xl font-bold uppercase text-gray-800">
+						Hot Collections
+					</h3>
+				</div>
+				<div className="absolute top-0 right-0 w-16 h-16 -mt-8 -mr-8 bg-red-100 rounded-full opacity-50"></div>
+				<div className="absolute bottom-0 right-0 w-8 h-8 mb-1 mr-1 bg-red-100 rounded-full opacity-70"></div>
+			</div>
 
 			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 ">
 				{categories?.map((category) => (
 					<div
 						key={category._id}
-						className="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100">
+						className="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-gray-200">
 						<div className="p-4 flex flex-col items-center">
 							{/* Image with hover effect */}
 							<div className="w-full overflow-hidden mb-4 rounded-md flex justify-center items-center">

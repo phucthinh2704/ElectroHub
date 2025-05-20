@@ -4,7 +4,7 @@ import PrevArrow from "../components/PrevArrow";
 const settings = {
 	dots: false,
 	infinite: true,
-	speed: 800,
+	speed: 500,
 	slidesToShow: 3,
 	slidesToScroll: 1,
 	autoplay: true,

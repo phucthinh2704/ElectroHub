@@ -5,8 +5,6 @@ import Slider from "react-slick";
 import { apiGetProducts } from "../apis";
 import settings from "../utils/settingsSlider";
 import ProductCard from "./ProductCard";
-import NextArrow from "./NextArrow";
-import PrevArrow from "./PrevArrow";
 
 const BestSeller = () => {
 	const [products, setProducts] = useState({
@@ -109,7 +107,7 @@ const BestSeller = () => {
 					</React.Fragment>
 				))}
 			</nav>
-			<div className="mt-4 -mx-4">
+			<div className="mt-4 -mx-3">
 				{loading ? (
 					<div className="flex items-center justify-center py-16">
 						<Loader2
@@ -118,7 +116,11 @@ const BestSeller = () => {
 						/>
 					</div>
 				) : (
-					<Slider {...settings} slidesToShow={3}>{renderProducts()}</Slider>
+					<Slider
+						{...settings}
+						slidesToShow={3}>
+						{renderProducts()}
+					</Slider>
 				)}
 			</div>
 			<div className="w-full flex mt-4 gap-4">

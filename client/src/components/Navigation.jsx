@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { Home, ShoppingCart, User, Heart, Settings } from "lucide-react";
 import { navigation } from "../utils/constants";
 
 const Navigation = () => {
