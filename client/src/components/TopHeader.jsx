@@ -11,6 +11,14 @@ const TopHeader = () => {
 	const { isLoggedIn, current } = useSelector((state) => state.user);
 	const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
+	// Không sử dụng vì khi render lại sẽ hiện giao diện khi chưa đăng nhập
+	// Khi component được mount mới gọi action getCurrent và render lại giao diện đã đăng nhập
+	// useEffect(() => {
+	// 	if (isLoggedIn && !current) {
+	// 		dispatch(getCurrent());
+	// 	}
+	// }, [current, dispatch, isLoggedIn]);
+
 	const handleLogoutClick = () => {
 		setShowLogoutConfirm(true);
 	};
@@ -84,7 +92,9 @@ const TopHeader = () => {
 								<span>My Orders</span>
 							</Link>
 							<div className="border-t border-gray-100 my-1"></div>
-							<button className="flex items-center gap-2 px-4 py-2 cursor-pointer text-red-600 hover:bg-gray-100 w-full text-left text-sm" onClick={handleLogoutClick}>
+							<button
+								className="flex items-center gap-2 px-4 py-2 cursor-pointer text-red-600 hover:bg-gray-100 w-full text-left text-sm"
+								onClick={handleLogoutClick}>
 								<LogOut size={14} />
 								<span>Logout</span>
 							</button>
@@ -116,25 +126,25 @@ const TopHeader = () => {
 								Xác nhận đăng xuất
 							</h3>
 						</div>
-						
+
 						{/* Content */}
 						<div className="p-6">
 							<p className="text-gray-600 text-center mb-8 leading-relaxed">
-								Bạn có chắc chắn muốn đăng xuất khỏi tài khoản của mình không? Bạn sẽ cần đăng nhập lại để tiếp tục sử dụng dịch vụ.
+								Bạn có chắc chắn muốn đăng xuất khỏi tài khoản
+								của mình không? Bạn sẽ cần đăng nhập lại để tiếp
+								tục sử dụng dịch vụ.
 							</p>
-							
+
 							{/* Buttons */}
 							<div className="flex gap-3">
 								<button
 									onClick={handleCancelLogout}
-									className="flex-1 py-3 px-4 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all duration-200 font-medium border border-gray-200 hover:border-gray-300 cursor-pointer"
-								>
+									className="flex-1 py-3 px-4 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all duration-200 font-medium border border-gray-200 hover:border-gray-300 cursor-pointer">
 									Hủy bỏ
 								</button>
 								<button
 									onClick={handleConfirmLogout}
-									className="flex-1 py-3 px-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:from-red-600 hover:to-red-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105 cursor-pointer"
-								>
+									className="flex-1 py-3 px-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:from-red-600 hover:to-red-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105 cursor-pointer">
 									Đăng xuất
 								</button>
 							</div>

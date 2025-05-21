@@ -32,11 +32,11 @@ function App() {
       <Routes>
         <Route path={path.PUBLIC} element={<Public />}>
           <Route path={path.HOME} element={<Home />} />
-          <Route path={path.PRODUCTS} element={<Products />} />
+          <Route path={path.PRODUCTS_CATEGORY} element={<Products />} />
           <Route path={path.BLOGS} element={<Blogs />} />
           <Route path={path.OUR_SERVICES} element={<Services />} />
           <Route path={path.FAQ} element={<FAQ />} />
-          <Route path={path.DETAIL_PRODUCT} element={<DetailProduct />} />
+          <Route path={path.PRODUCTS_DETAIL} element={<DetailProduct />} />
           <Route path={path.LOGIN} element={<Login />} />
           <Route path={path.FORGOT_PASSWORD} element={<ForgotPassword />} />
           <Route path={path.RESET_PASSWORD} element={<ResetPassword />} />

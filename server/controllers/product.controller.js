@@ -59,7 +59,24 @@ const getAllProducts = asyncHandler(async (req, res) => {
 	if (queries?.title)
 		formattedQueries.title = { $regex: queries.title, $options: "i" };
 
-	let queryCommand = Product.find(formattedQueries);
+	if (queries?.category)
+		formattedQueries.category = { $regex: queries.category, $options: "i" };
+
+	const colorQueryObject = queries.color
+		? {
+				$or: queries.color
+					.split(",")
+					.map((color) => ({ color: { $regex: color, $options: "i" } })),
+		  }
+		: {};
+
+	if (queries.color) {
+		delete formattedQueries.color;
+	}
+
+	// Combine queries
+	const newQuery = { ...colorQueryObject, ...formattedQueries };
+	let queryCommand = Product.find(newQuery);
 
 	// Sorting
 	if (req.query.sort) {
@@ -176,7 +193,7 @@ const uploadImagesProduct = asyncHandler(async (req, res) => {
 	const product = await Product.findByIdAndUpdate(
 		req.params.id,
 		// push each image path to the images array
-		{ $push: { images: { $each: req.files.map((file) => file.path) } } }, 
+		{ $push: { images: { $each: req.files.map((file) => file.path) } } },
 		{ new: true }
 	);
 	if (!product) throw new Error("Product not found");

@@ -56,7 +56,7 @@ const DetailProduct = () => {
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				{/* Breadcrumbs */}
 				<div className="mb-2 bg-white rounded-lg">
-					<nav className="flex items-center text-sm font-medium text-gray-500">
+					<nav className="flex items-center text-sm font-medium text-gray-500 ml-2">
 						<Breadcrumbs
 							title={product.title?.toUpperCase()}
 							category={product.category?.toUpperCase()}></Breadcrumbs>
@@ -68,7 +68,7 @@ const DetailProduct = () => {
 						{/* Product Images Section */}
 						<div className="md:w-1/2 p-6">
 							<div className="relative w-full rounded-lg mb-10">
-								{product.images && product.images.length > 0 ? (
+								{product.images ? (
 									<Zoom>
 										<img
 											src={

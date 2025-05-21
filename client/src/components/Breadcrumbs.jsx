@@ -16,7 +16,7 @@ const Breadcrumbs = ({ title, category }) => {
 			),
 		},
 		{
-			path: "/:category",
+			path: "products/:category",
 			breadcrumb: () => (
 				<div className="flex items-center gap-1">
 					<Tag size={15} />
@@ -24,7 +24,7 @@ const Breadcrumbs = ({ title, category }) => {
 				</div>
 			),
 		},
-		{ path: "/:category/:pid/:title", breadcrumb: title },
+		{ path: "products/:category/:productId/:slug", breadcrumb: title },
 	];
 
 	const breadcrumbs = useBreadCrumbs(routes);

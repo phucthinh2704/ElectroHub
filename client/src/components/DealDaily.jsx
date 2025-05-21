@@ -156,7 +156,7 @@ const DealDaily = () => {
 			</div>
 
 			<Link
-				to={`/${dealDaily?.category.toLowerCase()}/${dealDaily?._id}/${dealDaily?.slug}`}>
+				to={`/products/${dealDaily?.category.toLowerCase()}/${dealDaily?._id}/${dealDaily?.slug}`}>
 				<div className="flex flex-col gap-2 border-t border-gray-400 pt-6">
 					{/* Product image */}
 					<img

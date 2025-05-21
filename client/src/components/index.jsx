@@ -18,3 +18,4 @@ export { default as Breadcrumbs } from "./Breadcrumbs";
 export { default as InformationDetail } from "./InformationDetail";
 export { default as OthersProduct } from "./OthersProduct";
 export { default as ScrollToTop } from "./ScrollToTop";
+export { default as FilterItem } from "./FilterItem";

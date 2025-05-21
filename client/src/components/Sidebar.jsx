@@ -1,18 +1,18 @@
+import {
+  Camera,
+  ChevronRight,
+  Headphones,
+  Laptop,
+  Printer,
+  Smartphone,
+  Speaker,
+  Tablet,
+  Tv
+} from "lucide-react";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 import { createSlug } from "../utils/slug";
-import { 
-  ChevronRight,
-  Tablet,
-  Laptop,
-  Smartphone,
-  Tv,
-  Printer,
-  Speaker,
-  Camera,
-  Headphones 
-} from "lucide-react";
 
 // Hàm để lấy icon dựa trên tiêu đề danh mục
 const getCategoryIcon = (title) => {
@@ -48,7 +48,7 @@ const Sidebar = () => {
           return (
             <NavLink
               key={category._id}
-              to={createSlug(category.title)}
+              to={`products/${createSlug(category.title)}`}
               className={({ isActive }) =>
                 isActive
                   ? "bg-main text-white text-base font-medium px-6 py-3 border-b border-gray-100 flex items-center justify-between transition-all duration-300"

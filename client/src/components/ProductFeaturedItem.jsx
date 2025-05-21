@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 const ProductFeaturedItem = ({ product }) => {
 	return (
 		<Link
-			to={`/${product.category.toLowerCase()}/${product._id}/${
+			to={`/products/${product.category.toLowerCase()}/${product._id}/${
 				product.slug
 			}`}
 			className="w-full">

@@ -18,7 +18,7 @@ const ProductCard = ({ data, isNew, normal }) => {
 			onMouseEnter={() => setIsShowOptions(true)}
 			onMouseLeave={() => setIsShowOptions(false)}>
 			<Link
-				to={`/${data.category.toLowerCase()}/${data._id}/${data.slug}`}
+				to={`/products/${data.category.toLowerCase()}/${data._id}/${data.slug}`}
 				className="display-block">
 				<div className="relative">
 					<div
@@ -37,7 +37,7 @@ const ProductCard = ({ data, isNew, normal }) => {
 							"https://niteair.co.uk/wp-content/uploads/2023/08/default-product-image.png"
 						}
 						alt="image product"
-						className="h-[243px] object-cover"
+						className="h-[243px] object-cover display-block mx-auto"
 					/>
 					{!normal && (
 						<img

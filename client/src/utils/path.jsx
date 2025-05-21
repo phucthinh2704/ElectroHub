@@ -3,13 +3,13 @@ const path = {
 	LOGIN: "login",
 	HOME: "",
 	ALL: "*",
-	PRODUCTS: "products",
+	PRODUCTS_CATEGORY: "products/:category",
+	PRODUCTS_DETAIL: "products/:category/:productId/:slug",
 	BLOGS: "blogs",
 	OUR_SERVICES: "services",
 	FAQ: "faqs",
 	ACCOUNT: "account",
 	FAVORITE: "favorites",
-	DETAIL_PRODUCT: ":category/:productId/:slug",
 	FORGOT_PASSWORD: "forgot-password",
 	RESET_PASSWORD: "reset-password/:token"
 };

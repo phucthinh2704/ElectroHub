@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { ChevronRight, Trophy } from "lucide-react";
 
 const HotCollections = ({ categories }) => {
@@ -54,7 +55,10 @@ const HotCollections = ({ categories }) => {
 							</div>
 
 							<button className="w-full mt-auto py-2 bg-gray-100 text-gray-700 rounded-md font-medium text-sm uppercase tracking-wide transition-all duration-200 hover:bg-main hover:text-white cursor-pointer">
-								View Collection
+								<Link
+									to={`/products/${category.title.toLowerCase()}`}>
+									View Collection
+								</Link>
 							</button>
 						</div>
 					</div>
