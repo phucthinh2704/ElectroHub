@@ -47,14 +47,15 @@ const getAllProducts = asyncHandler(async (req, res) => {
 	excludeFields.forEach((el) => delete queries[el]);
 
 	// Format lại các operators ($gt, $gte, etc)
-	let queryString = JSON.stringify(queries);
-	queryString = queryString.replace(
-		/\b(gte|gt|lt|lte)\b/g,
-		(match) => `$${match}`
-	);
-	let formattedQueries = JSON.parse(queryString);
-	formattedQueries = convertQueryFormat(formattedQueries); // convert from {price[$gte]: 1000} ==> {price: {$gte: 1000}}
+	// let queryString = JSON.stringify(queries);
+	// queryString = queryString.replace(
+	// 	/\b(gte|gt|lt|lte)\b/g,
+	// 	(match) => `$${match}`
+	// );
+	// queryString = JSON.parse(queryString);
+	// queryString = convertQueryFormat(queryString); // convert from {price[$gte]: 1000} ==> {price: {$gte: 1000}}
 
+	let formattedQueries = {};
 	// Filtering
 	if (queries?.title)
 		formattedQueries.title = { $regex: queries.title, $options: "i" };
@@ -62,21 +63,35 @@ const getAllProducts = asyncHandler(async (req, res) => {
 	if (queries?.category)
 		formattedQueries.category = { $regex: queries.category, $options: "i" };
 
+	if (queries?.minPrice) {
+		if (queries?.maxPrice) {
+			formattedQueries.price = {
+				$gte: queries.minPrice,
+				$lte: queries.maxPrice,
+			};
+			// delete formattedQueries.maxPrice;
+		} else {
+			formattedQueries.price = { $gte: queries.minPrice };
+		}
+		// delete formattedQueries.minPrice;
+	}
+
 	const colorQueryObject = queries.color
 		? {
-				$or: queries.color
-					.split(",")
-					.map((color) => ({ color: { $regex: color, $options: "i" } })),
+				$or: queries.color.split(",").map((color) => ({
+					color: { $regex: color, $options: "i" },
+				})),
 		  }
 		: {};
 
-	if (queries.color) {
-		delete formattedQueries.color;
-	}
+	// if (queries.color) {
+	// 	delete formattedQueries.color;
+	// }
 
 	// Combine queries
-	const newQuery = { ...colorQueryObject, ...formattedQueries };
-	let queryCommand = Product.find(newQuery);
+	formattedQueries = { ...colorQueryObject, ...formattedQueries };
+	// console.log(formattedQueries);
+	let queryCommand = Product.find(formattedQueries);
 
 	// Sorting
 	if (req.query.sort) {

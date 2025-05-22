@@ -7,14 +7,14 @@ import { Breadcrumbs, FilterItem, ProductCard } from "../../components";
 
 const Products = () => {
 	const dispatch = useDispatch();
-	const { category } = useParams();
-	const [params] = useSearchParams();
 	const [products, setProducts] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [isOpen, setIsOpen] = useState(null);
 	const [sortOption, setSortOption] = useState("newest");
 	const [gridView, setGridView] = useState(4); // 3 or 4 columns
 	const [showFilters, setShowFilters] = useState(false);
+	const { category } = useParams();
+	const [params] = useSearchParams();
 
 	useEffect(() => {
 		const fetchProductsByCategory = async (queries) => {
@@ -29,18 +29,48 @@ const Products = () => {
 			}
 			setLoading(false);
 		};
-		const param = [];
-		for (const [key, value] of params.entries()) {
-			param.push({ key, value });
-		}
+
+		// const param = [];
+		// for (const [key, value] of params.entries()) {
+		// 	param.push({ key, value });
+		// }
+		// param là mảng có 1 phần tử {
+		// key: "color",
+		// value: "green,red,blue"
+		// }
 
 		const queries = {};
-		param.forEach((item) => {
-			if (item.key === "color") {
-				queries[item.key] = item.value;
+		// param.forEach((item) => {
+		// 	if (item.key === "color") {
+		// 		queries[item.key] = item.value;
+		// 	}
+		// });
+		// queries.color = param[param.length - 1]?.value;
+		for (const [key, value] of params.entries()) {
+			switch (key) {
+				case "color":
+					queries.color = value; // "green,blue,red"
+					break;
+				case "price": // Handle price range: "100-500" or "100-" or "-500"
+				{
+					const [min, max] = value.split("-");
+					if (min) queries.minPrice = parseInt(min);
+					if (max) queries.maxPrice = parseInt(max);
+					break;
+				}
+				case "brand":
+					queries.brand = value;
+					break;
+				case "sort":
+					queries.sort = value;
+					break;
+				default:
+					// Add other supported parameters
+					if (["page", "limit", "fields"].includes(key)) {
+						queries[key] = value;
+					}
 			}
-		});
-		console.log(queries);
+		}
 		queries.category = category.charAt(0).toUpperCase() + category.slice(1);
 		// queries.title = "htc";
 		// queries.sort = "price";

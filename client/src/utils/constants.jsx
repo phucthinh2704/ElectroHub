@@ -32,9 +32,18 @@ export const colors = [
 	"White",
 	"Yellow",
 	"Gray",
-	"Orange",
+	"Gold",
 	"Pink",
 	"Brown",
+];
+
+export const priceRanges = [
+	{ label: "0 - 2.000.000", min: 0, max: 2000000 },
+	{ label: "2.000.000 - 4.000.000", min: 2000000, max: 4000000 },
+	{ label: "4.000.000 - 6.000.000", min: 4000000, max: 6000000 },
+	{ label: "6.000.000 - 8.000.000", min: 6000000, max: 8000000 },
+	{ label: "8.000.000 - 10.000.000", min: 8000000, max: 10000000 },
+	{ label: "Over 10.000.000", min: 10000000, max: null }
 ];
 
 export const tabs = [
