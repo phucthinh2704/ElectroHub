@@ -69,11 +69,9 @@ const getAllProducts = asyncHandler(async (req, res) => {
 				$gte: queries.minPrice,
 				$lte: queries.maxPrice,
 			};
-			// delete formattedQueries.maxPrice;
 		} else {
 			formattedQueries.price = { $gte: queries.minPrice };
 		}
-		// delete formattedQueries.minPrice;
 	}
 
 	const colorQueryObject = queries.color
@@ -84,13 +82,8 @@ const getAllProducts = asyncHandler(async (req, res) => {
 		  }
 		: {};
 
-	// if (queries.color) {
-	// 	delete formattedQueries.color;
-	// }
 
-	// Combine queries
 	formattedQueries = { ...colorQueryObject, ...formattedQueries };
-	// console.log(formattedQueries);
 	let queryCommand = Product.find(formattedQueries);
 
 	// Sorting

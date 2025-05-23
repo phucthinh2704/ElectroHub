@@ -27,7 +27,7 @@ const register = asyncHandler(async (req, res) => {
 	if (user) {
 		return res.status(400).json({
 			success: false,
-			message: `User with email ${email} already exists`,
+			message: `This email is already registered. Please log in or use a different email.`,
 		});
 	}
 	// Kiểm tra định dạng email
@@ -152,10 +152,10 @@ const login = asyncHandler(async (req, res) => {
 	if (!email || !password) throw new Error("Missing required fields");
 
 	const user = await User.findOne({ email });
-	if (!user) throw new Error("User not found");
+	if (!user) throw new Error("Login failed: User not found. Please check your username and try again.");
 
 	const isMatch = await bcrypt.compare(password, user.password);
-	if (!isMatch) throw new Error("Invalid password");
+	if (!isMatch) throw new Error("The password that you've entered is incorrect.");
 
 	// Chuyển về Object thuần và loại bỏ các trường không cần thiết
 	const userObject = user.toObject();
