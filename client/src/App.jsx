@@ -17,6 +17,8 @@ import {
 } from "./pages/public";
 import { getCategories } from "./store/app/asyncActions";
 import path from "./utils/path";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { ScrollToTop } from "./components";
 
 function App() {
@@ -42,6 +44,18 @@ function App() {
           <Route path={path.RESET_PASSWORD} element={<ResetPassword />} />
         </Route>
       </Routes>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
     </div>
   );
 }

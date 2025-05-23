@@ -25,20 +25,20 @@ export const navigation = [
 ];
 
 export const colors = [
-	"Red",
-	"Blue",
-	"Green",
-	"Black",
-	"White",
-	"Yellow",
-	"Gray",
-	"Gold",
-	"Pink",
-	"Brown",
+	"red",
+	"blue",
+	"green",
+	"black",
+	"white",
+	"yellow",
+	"gray",
+	"gold",
+	"pink",
+	"brown",
 ];
 
 export const priceRanges = [
-	{ label: "0 - 2.000.000", min: 0, max: 2000000 },
+	{ label: "Under 2.000.000", min: 0, max: 2000000 },
 	{ label: "2.000.000 - 4.000.000", min: 2000000, max: 4000000 },
 	{ label: "4.000.000 - 6.000.000", min: 4000000, max: 6000000 },
 	{ label: "6.000.000 - 8.000.000", min: 6000000, max: 8000000 },

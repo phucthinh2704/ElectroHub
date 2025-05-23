@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { logout } from "../store/user/userSlice";
 import path from "../utils/path";
+import { apiLogout } from "../apis";
+import { toast } from "react-toastify";
 
 const TopHeader = () => {
 	const dispatch = useDispatch();
@@ -23,7 +25,12 @@ const TopHeader = () => {
 		setShowLogoutConfirm(true);
 	};
 
-	const handleConfirmLogout = () => {
+	const handleConfirmLogout = async () => {
+		const response = await apiLogout();
+		if (!response.success) {
+			return toast.error(response.message);
+		}
+		toast.success(response.message);
 		dispatch(logout());
 		navigate(`/${path.LOGIN}`);
 		setShowLogoutConfirm(false);
@@ -34,7 +41,7 @@ const TopHeader = () => {
 	};
 
 	return (
-		<div className="bg-gradient-to-r from-blue-600 to-purple-600 py-3 w-full text-white">
+		<div className="bg-gradient-to-r from-blue-600 to-purple-600 py-2 w-full text-white">
 			<div className="max-w-screen-xl mx-auto flex justify-between items-center px-4">
 				{/* Left side - Contact info */}
 				<div className="flex items-center gap-2">
@@ -55,7 +62,7 @@ const TopHeader = () => {
 				{/* Right side - User section */}
 				{isLoggedIn && current ? (
 					<div className="flex items-center gap-3 group relative">
-						<div className="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-1 hover:bg-white/30 transition-all cursor-pointer">
+						<div className="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2 hover:bg-white/30 transition-all cursor-pointer">
 							<div className="h-6 w-6 rounded-full bg-blue-200 flex items-center justify-center text-blue-700 font-semibold text-xs">
 								{current.name.charAt(0).toUpperCase()}
 							</div>
@@ -65,7 +72,7 @@ const TopHeader = () => {
 							<ChevronDown size={14} />
 						</div>
 
-						{/* Dropdown menu (optional) */}
+						{/* Dropdown menu */}
 						<div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-10 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all">
 							<Link
 								to="/profile"

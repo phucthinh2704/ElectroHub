@@ -16,6 +16,13 @@ export const apiLogin = async (data) =>
 		withCredentials: true,
 	});
 
+export const apiLogout = async () =>
+	axios({
+		method: "POST",
+		url: `/user/logout`,
+		withCredentials: true,
+	});
+
 export const apiForgotPassword = async (data) =>
 	axios({
 		method: "POST",

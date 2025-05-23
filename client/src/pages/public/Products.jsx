@@ -1,9 +1,17 @@
-import { ChevronDown, Filter, Grid2x2, Grid3x3, Loader2 } from "lucide-react";
+import {
+	ChevronDown,
+	Filter,
+	Grid2x2,
+	Grid3x3,
+	Loader2,
+	X
+} from "lucide-react";
 import React, { memo, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useParams, useSearchParams } from "react-router-dom";
 import { apiGetProducts } from "../../apis";
 import { Breadcrumbs, FilterItem, ProductCard } from "../../components";
+import formatMoney from "../../utils/formatMoney";
 
 const Products = () => {
 	const dispatch = useDispatch();
@@ -12,7 +20,8 @@ const Products = () => {
 	const [isOpen, setIsOpen] = useState(null);
 	const [sortOption, setSortOption] = useState("newest");
 	const [gridView, setGridView] = useState(4); // 3 or 4 columns
-	const [showFilters, setShowFilters] = useState(false);
+	const [showFilters, setShowFilters] = useState(false); // for mobile view
+	const [activeFilters, setActiveFilters] = useState({});
 	const { category } = useParams();
 	const [params] = useSearchParams();
 
@@ -30,36 +39,24 @@ const Products = () => {
 			setLoading(false);
 		};
 
-		// const param = [];
-		// for (const [key, value] of params.entries()) {
-		// 	param.push({ key, value });
-		// }
-		// param là mảng có 1 phần tử {
-		// key: "color",
-		// value: "green,red,blue"
-		// }
-
 		const queries = {};
-		// param.forEach((item) => {
-		// 	if (item.key === "color") {
-		// 		queries[item.key] = item.value;
-		// 	}
-		// });
-		// queries.color = param[param.length - 1]?.value;
+		const filters = {};
 		for (const [key, value] of params.entries()) {
 			switch (key) {
 				case "color":
 					queries.color = value; // "green,blue,red"
+					filters.color = value.split(",");
 					break;
-				case "price": // Handle price range: "100-500" or "100-" or "-500"
-				{
+				case "price": { // Handle price range: "100-500" or "100-" or "-500"
 					const [min, max] = value.split("-");
 					if (min) queries.minPrice = parseInt(min);
 					if (max) queries.maxPrice = parseInt(max);
+					filters.price = { min: min || "", max: max || "" };
 					break;
 				}
 				case "brand":
 					queries.brand = value;
+					filters.brand = value.split(",");
 					break;
 				case "sort":
 					queries.sort = value;
@@ -71,6 +68,7 @@ const Products = () => {
 					}
 			}
 		}
+		setActiveFilters(filters);
 		queries.category = category.charAt(0).toUpperCase() + category.slice(1);
 		// queries.title = "htc";
 		// queries.sort = "price";
@@ -85,6 +83,9 @@ const Products = () => {
 		let sortedProducts = [...products];
 
 		switch (sortOption) {
+			case "best-seller":
+				sortedProducts.sort((a, b) => b.sold - a.sold);
+				break;
 			case "price-asc":
 				sortedProducts.sort((a, b) => a.price - b.price);
 				break;
@@ -105,6 +106,16 @@ const Products = () => {
 		}
 		return sortedProducts;
 	};
+
+	const getActiveFilterCount = () => {
+		let count = 0;
+		if (activeFilters.color?.length > 0) count++;
+		if (activeFilters.price?.min || activeFilters.price?.max) count++;
+		if (activeFilters.brand?.length > 0) count++;
+		return count;
+	};
+
+	const activeFilterCount = getActiveFilterCount();
 
 	// Toggle mobile filters
 	const toggleFilters = () => {
@@ -133,6 +144,37 @@ const Products = () => {
 				</nav>
 			</div>
 
+			{activeFilterCount > 0 && (
+				<div className="bg-white rounded-lg shadow-sm p-4 mb-4">
+					<div className="flex flex-wrap items-center gap-2">
+						<span className="text-sm font-medium text-gray-700">
+							Filters applied:
+						</span>
+
+						{/* Color filters */}
+						{activeFilters.color?.map((color) => (
+							<span
+								key={color}
+								className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+								Color:{" "}
+								{color.charAt(0).toUpperCase() + color.slice(1)}
+							</span>
+						))}
+
+						{/* Price filter */}
+						{(activeFilters.price?.min ||
+							activeFilters.price?.max) && (
+							<span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+								Price: {formatMoney(activeFilters.price.min) || "0"} -{" "}
+								{activeFilters.price.max
+									? `${formatMoney(activeFilters.price.max)}`
+									: "Any"}
+							</span>
+						)}
+					</div>
+				</div>
+			)}
+
 			{/* Filters and sorting */}
 			<div className="mb-8">
 				{/* Mobile filter button */}
@@ -153,7 +195,7 @@ const Products = () => {
 
 				{/* Filter and sort container */}
 				<div
-					className={`${
+					className={`animate-fade-in ${
 						showFilters ? "block" : "hidden"
 					} lg:block bg-white rounded-lg shadow-sm p-4`}>
 					<div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
@@ -169,7 +211,6 @@ const Products = () => {
 									isOpen={isOpen}
 									setIsOpen={setIsOpen}
 									name="Price"
-									type="text"
 								/>
 								<FilterItem
 									isOpen={isOpen}
@@ -206,6 +247,9 @@ const Products = () => {
 									}
 									className="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
 									<option value="newest">Newest</option>
+									<option value="best-seller">
+										Best Seller
+									</option>
 									<option value="price-asc">
 										Price: Low to High
 									</option>

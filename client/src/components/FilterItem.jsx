@@ -1,25 +1,67 @@
 import { Check, ChevronDown, ChevronUp, DollarSign, X } from "lucide-react";
 import React, { memo, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import { colors, priceRanges } from "../utils/constants";
+import formatMoney from "../utils/formatMoney";
 
-const FilterItem = ({ name, isOpen, setIsOpen}) => {
+const FilterItem = ({ name, isOpen, setIsOpen }) => {
 	const navigate = useNavigate();
-	const [colorsSelected, setColorsSelected] = useState([]);
-	const [priceRange, setPriceRange] = useState({ min: "", max: "" });
-	const [tempPriceRange, setTempPriceRange] = useState({ min: "", max: "" });
+	const [colorsSelected, setColorsSelected] = useState(() => {
+		const params = new URLSearchParams(window.location.search);
+		const colorParam = params.get("color");
+		if (colorParam) {
+			return colorParam.split(",").map((color) => color.toLowerCase());
+		}
+		return [];
+	});
+	const [priceRange, setPriceRange] = useState(() => {
+		const params = new URLSearchParams(window.location.search);
+		const priceParam = params.get("price");
+		if (priceParam) {
+			const [min, max] = priceParam.split("-");
+			return {
+				min: min || "",
+				max: max || "",
+			};
+		}
+		return { min: "", max: "" };
+	});
+	const [tempPriceRange, setTempPriceRange] = useState(() => {
+		const params = new URLSearchParams(window.location.search);
+		const priceParam = params.get("price");
+		if (priceParam) {
+			const [min, max] = priceParam.split("-");
+			return {
+				min: min || "",
+				max: max || "",
+			};
+		}
+		return { min: "", max: "" };
+	});
 	const { category } = useParams();
 
 	useEffect(() => {
-		const params = new URLSearchParams();
-		
-		// Add color filter
-		if (colorsSelected.length > 0) {
-			params.set('color', colorsSelected.map(color => color.toLowerCase()).join(','));
+		const params = new URLSearchParams(window.location.search);
+
+		if (name === "Color") {
+			if (colorsSelected.length > 0) {
+				params.set(
+					"color",
+					colorsSelected.map((color) => color.toLowerCase()).join(",")
+				);
+			} else {
+				params.delete("color");
+			}
 		}
-		if (priceRange.min || priceRange.max) {
-			const priceValue = `${priceRange.min || 0}-${priceRange.max || ''}`;
-			params.set('price', priceValue);
+
+		if (name === "Price") {
+			if (priceRange.min || priceRange.max) {
+				const priceValue = `${priceRange.min || 0}-${
+					priceRange.max || ""
+				}`;
+				params.set("price", priceValue);
+			}
 		}
 
 		if (params.toString()) {
@@ -30,7 +72,7 @@ const FilterItem = ({ name, isOpen, setIsOpen}) => {
 		} else {
 			navigate(`/products/${category}`);
 		}
-	}, [colorsSelected, priceRange, category, navigate]);
+	}, [colorsSelected, priceRange, category, navigate, name]);
 
 	const handleCheckboxChange = (color) => {
 		setColorsSelected((prev) => {
@@ -45,7 +87,7 @@ const FilterItem = ({ name, isOpen, setIsOpen}) => {
 	const handlePriceRangeSelect = (range) => {
 		const newRange = {
 			min: range.min?.toString() || "",
-			max: range.max?.toString() || ""
+			max: range.max?.toString() || "",
 		};
 		setPriceRange(newRange);
 		setTempPriceRange(newRange);
@@ -53,20 +95,19 @@ const FilterItem = ({ name, isOpen, setIsOpen}) => {
 
 	const handleCustomPriceChange = (field, value) => {
 		// Only allow numbers
-		const numericValue = value.replace(/[^0-9]/g, '');
-		setTempPriceRange(prev => ({
+		const numericValue = value.replace(/[^0-9]/g, "");
+		setTempPriceRange((prev) => ({
 			...prev,
-			[field]: numericValue
+			[field]: numericValue,
 		}));
 	};
 
 	const applyCustomPriceRange = () => {
 		const min = tempPriceRange.min;
 		const max = tempPriceRange.max;
-		
-		// Validate price range
+
 		if (min && max && parseInt(min) > parseInt(max)) {
-			alert("Minimum price cannot be greater than maximum price");
+			toast.warning("Minimum price cannot be greater than maximum price");
 			return;
 		}
 
@@ -75,30 +116,51 @@ const FilterItem = ({ name, isOpen, setIsOpen}) => {
 
 	const handleReset = (e) => {
 		e.stopPropagation();
+
+		const params = new URLSearchParams(window.location.search);
 		if (name === "Color") {
 			setColorsSelected([]);
-		} else if (name === "Price") {
+			params.delete("color");
+		}
+		if (name === "Price") {
 			setPriceRange({ min: "", max: "" });
 			setTempPriceRange({ min: "", max: "" });
+			params.delete("price");
 		}
+		navigate({
+			pathname: `/products/${category}`,
+			search: params.toString(),
+		});
 	};
 
 	const isItemOpen = isOpen === name;
-	const hasActiveFilters = name === "Color" ? colorsSelected.length > 0 : 
-		(priceRange.min || priceRange.max);
+
+	// Kiểm tra xem có bộ lọc nào đang hoạt động hay không
+	// Nếu có màu được chọn thì có bộ lọc đang hoạt động
+	// Nếu có giá min hoặc max thì có bộ lọc đang hoạt động
+	const hasActiveFilters =
+		name === "Color"
+			? colorsSelected.length > 0
+			: name === "Price"
+			? priceRange.min || priceRange.max : false;
 
 	return (
 		<div className="relative inline-block">
 			{/* Button trigger */}
 			<button
 				onClick={() => setIsOpen(isItemOpen ? null : name)}
-				className="flex items-center justify-between px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 transition-all duration-200">
+				className={`flex items-center justify-between px-4 py-2 border rounded-lg shadow-sm cursor-pointer transition-all duration-200 ${
+					hasActiveFilters
+						? "bg-blue-50 border-blue-300 text-blue-800"
+						: "bg-white border-gray-200 hover:bg-gray-50"
+				}`}>
 				<span className="font-medium text-gray-800 mr-2">{name}</span>
-				{colorsSelected.length > 0 && (
-					<span className="mr-2 px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full">
+				{name === "Color" && colorsSelected.length > 0 && (
+					<span className="mr-2 px-2 py-0.5 text-xs bg-blue-500 text-white rounded-full font-medium">
 						{colorsSelected.length}
 					</span>
 				)}
+
 				{isItemOpen ? (
 					<ChevronUp
 						size={16}
@@ -156,26 +218,33 @@ const FilterItem = ({ name, isOpen, setIsOpen}) => {
 											)}
 										</div>
 										<span className="ml-2 text-sm text-gray-700">
-											{color}
+											{color.charAt(0).toUpperCase() +
+												color.slice(1)}
 										</span>
 									</div>
 								))}
 							</div>
 						</div>
 					)}
-					
+
 					{name === "Price" && (
 						<div className="space-y-3">
 							<div className="flex justify-between items-center pb-2 border-b border-gray-100">
 								<span className="text-sm text-gray-500 flex items-center">
-									<DollarSign size={14} className="mr-1" />
+									<DollarSign
+										size={14}
+										className="mr-1"
+									/>
 									Price Range
 								</span>
 								{hasActiveFilters && (
 									<button
 										onClick={handleReset}
 										className="flex items-center text-xs text-red-500 hover:text-red-700 transition-colors cursor-pointer">
-										<X size={14} className="mr-1" />
+										<X
+											size={14}
+											className="mr-1"
+										/>
 										Reset
 									</button>
 								)}
@@ -189,9 +258,11 @@ const FilterItem = ({ name, isOpen, setIsOpen}) => {
 								{priceRanges.map((range, index) => (
 									<div
 										key={index}
-										onClick={() => handlePriceRangeSelect(range)}
+										onClick={() =>
+											handlePriceRangeSelect(range)
+										}
 										className={`p-2 rounded cursor-pointer transition-colors text-sm ${
-											priceRange.min == range.min && priceRange.max == range.max
+											priceRange.min == range.min
 												? "bg-blue-50 text-blue-700 border border-blue-200"
 												: "hover:bg-gray-50"
 										}`}>
@@ -211,7 +282,12 @@ const FilterItem = ({ name, isOpen, setIsOpen}) => {
 											type="text"
 											placeholder="Min"
 											value={tempPriceRange.min}
-											onChange={(e) => handleCustomPriceChange('min', e.target.value)}
+											onChange={(e) =>
+												handleCustomPriceChange(
+													"min",
+													e.target.value
+												)
+											}
 											className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
 										/>
 									</div>
@@ -221,14 +297,19 @@ const FilterItem = ({ name, isOpen, setIsOpen}) => {
 											type="text"
 											placeholder="Max"
 											value={tempPriceRange.max}
-											onChange={(e) => handleCustomPriceChange('max', e.target.value)}
+											onChange={(e) =>
+												handleCustomPriceChange(
+													"max",
+													e.target.value
+												)
+											}
 											className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
 										/>
 									</div>
 								</div>
 								<button
 									onClick={applyCustomPriceRange}
-									className="w-full px-3 py-1.5 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+									className="w-full px-3 py-1.5 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors cursor-pointer">
 									Apply Range
 								</button>
 							</div>
@@ -236,9 +317,14 @@ const FilterItem = ({ name, isOpen, setIsOpen}) => {
 							{/* Current filter display */}
 							{hasActiveFilters && (
 								<div className="mt-3 p-2 bg-gray-50 rounded text-sm">
-									<span className="text-gray-600">Active filter: </span>
+									<span className="text-gray-600">
+										Active filter:{" "}
+									</span>
 									<span className="font-medium">
-										${priceRange.min || '0'} - {priceRange.max ? `$${priceRange.max}` : 'Any'}
+										{formatMoney(priceRange.min) || "0"} -{" "}
+										{priceRange.max
+											? `${formatMoney(priceRange.max)}`
+											: "Any"}
 									</span>
 								</div>
 							)}

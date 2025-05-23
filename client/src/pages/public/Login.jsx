@@ -18,6 +18,7 @@ import path from "../../utils/path";
 import { apiLogin, apiRegister } from "../../apis/user";
 import { login } from "../../store/user/userSlice"
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -153,11 +154,12 @@ const Login = () => {
       const response = await apiLogin(formData.login);
       if(!response.success) {
          Swal.fire("Error", response.message, "error");
-         setIsSubmitting(false);
-         return;
+        setIsSubmitting(false);
+        return;
       }
       setIsSubmitting(false);
-      Swal.fire("Success", response.message, "success");
+      toast.success(response.message);
+      // Swal.fire("Success", response.message, "success");
       dispatch(login({ isLoggedIn: true, user: response.user, token: response.access_token }));
       navigate(`/${path.HOME}`);
     }, 500);
