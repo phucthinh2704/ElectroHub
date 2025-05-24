@@ -187,8 +187,10 @@ const ratingProduct = asyncHandler(async (req, res) => {
 		0
 	);
 	product.totalRatings = totalRating / product.ratings.length;
+	product.ratingCount = product.ratings.length;
 
 	await product.save();
+	await product.populate("ratings.postedBy", "name email");
 	res.status(200).json({
 		success: true,
 		message: "Rating updated successfully",

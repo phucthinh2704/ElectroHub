@@ -24,7 +24,7 @@ const InformationDetail = () => {
 	return (
 		<div className="bg-white rounded-lg shadow-lg overflow-hidden">
 			{/* Modern Card-style Tab Navigation */}
-			<div className="grid grid-cols-5 gap-2 p-4 bg-gray-0 border-b border-gray-200">
+			<div className="grid grid-cols-4 gap-2 p-4 bg-gray-0 border-b border-gray-200">
 				{tabs.map((tab) => (
 					<button
 						key={tab.id}
