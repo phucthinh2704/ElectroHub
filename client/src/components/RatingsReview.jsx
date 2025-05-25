@@ -9,11 +9,17 @@ import {
 	ChevronDown,
 	X,
 	Camera,
+	Clock,
 } from "lucide-react";
 import Swal from "sweetalert2";
-import formatDate from "../utils/formatDate";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import path from "../utils/path";
+import { apiRatings } from "../apis";
+import { ratingLabels } from "../utils/constants";
+import moment from "moment";
 
-const RatingsReview = ({ product = {} }) => {
+const RatingsReview = ({ product = {}, onReviewSubmitted }) => {
 	const [sortBy, setSortBy] = useState("newest");
 	const [filterRating, setFilterRating] = useState("all");
 	const [showAllReviews, setShowAllReviews] = useState(false);
@@ -21,87 +27,23 @@ const RatingsReview = ({ product = {} }) => {
 	const [selectedRating, setSelectedRating] = useState(0);
 	const [hoverRating, setHoverRating] = useState(0);
 	const [reviewComment, setReviewComment] = useState("");
-	// const [reviewerName, setReviewerName] = useState("");
-	// const [reviewerPhone, setReviewerPhone] = useState("");
+	console.log(product);
 
-	const ratingLabels = {
-		1: "Very Poor",
-		2: "Poor",
-		3: "Average",
-		4: "Good",
-		5: "Excellent",
-	};
+	const navigate = useNavigate();
 
-	// Mock review data - in real app, this would come from API
-	// const mockReviews = [
-	// 	{
-	// 		id: 1,
-	// 		userName: "Nguyễn Văn A",
-	// 		rating: 5,
-	// 		date: "2025-05-20",
-	// 		comment:
-	// 			"Sản phẩm rất tốt, chất lượng vượt mong đợi. Giao hàng nhanh, đóng gói cẩn thận. Sẽ mua lại!",
-	// 		helpful: 12,
-	// 		images: [
-	// 			"https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/d/i/dien-thoai-tecno-camon-40-pro_2_.png",
-	// 			"https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/d/i/dien-thoai-tecno-camon-40-pro_2_.png",
-	// 		],
-	// 		verified: true,
-	// 	},
-	// 	{
-	// 		id: 2,
-	// 		userName: "Trần Thị B",
-	// 		rating: 4,
-	// 		date: "2025-05-18",
-	// 		comment:
-	// 			"Sản phẩm đúng như mô tả, chỉ có điều màu sắc hơi khác một chút so với hình ảnh. Nhìn chung vẫn hài lòng.",
-	// 		helpful: 8,
-	// 		verified: true,
-	// 	},
-	// 	{
-	// 		id: 3,
-	// 		userName: "Lê Minh C",
-	// 		rating: 5,
-	// 		date: "2025-05-15",
-	// 		comment:
-	// 			"Tuyệt vời! Chất lượng premium, thiết kế đẹp mắt. Đã giới thiệu cho bạn bè và họ cũng rất thích.",
-	// 		helpful: 15,
-	// 		verified: true,
-	// 	},
-	// 	{
-	// 		id: 4,
-	// 		userName: "Phạm Thị D",
-	// 		rating: 3,
-	// 		date: "2025-05-12",
-	// 		comment:
-	// 			"Sản phẩm ổn nhưng không xuất sắc như kỳ vọng. Giá có hơi cao so với chất lượng thực tế.",
-	// 		helpful: 3,
-	// 		verified: false,
-	// 	},
-	// 	{
-	// 		id: 5,
-	// 		userName: "Hoàng Văn E",
-	// 		rating: 5,
-	// 		date: "2025-05-10",
-	// 		comment:
-	// 			"Mua lần thứ 2 rồi, vẫn rất hài lòng. Dịch vụ khách hàng tốt, hỗ trợ nhiệt tình.",
-	// 		helpful: 6,
-	// 		verified: true,
-	// 	},
-	// ];
+	const { isLoggedIn } = useSelector((state) => state.user);
 
 	// Calculate rating statistics
-	const totalReviews = product.ratingCount || 3;
-	const averageRating = product.totalRatings || 11 / 3;
+	const totalReviews = product.ratingCount;
+	const averageRating = product.totalRatings;
 
-	// Rating distribution (mock data)
 	const ratings = product.ratings;
 
 	const ratingDistribution = {
 		5: ratings?.reduce(
 			(acc, rating) => acc + (rating.star == 5 ? 1 : 0),
 			0
-		), // Example counts
+		),
 		4: ratings?.reduce(
 			(acc, rating) => acc + (rating.star == 4 ? 1 : 0),
 			0
@@ -120,6 +62,8 @@ const RatingsReview = ({ product = {} }) => {
 		),
 	};
 
+	// interactive: allows users to hover and select ratings
+	// hoverRating: for showing the rating on hover
 	const renderStars = (rating, size = "w-4 h-4", interactive = false) => {
 		return [...Array(5)].map((_, index) => (
 			<Star
@@ -141,7 +85,31 @@ const RatingsReview = ({ product = {} }) => {
 		));
 	};
 
-	const handleSubmitReview = () => {
+	const handleWriteReview = () => {
+		if (!isLoggedIn) {
+			Swal.fire({
+				// title: "Error",
+				text: "You need to log in to proceed.",
+				icon: "error",
+				showCancelButton: true,
+				confirmButtonText: "Login",
+				cancelButtonText: "Cancel",
+				customClass: {
+					confirmButton: "bg-blue-600 text-white",
+					cancelButton: "bg-gray-200 text-gray-700",
+				},
+			}).then((result) => {
+				if (result.isConfirmed) {
+					scrollTo(0, 0);
+					navigate(`/${path.LOGIN}`);
+				}
+			});
+			return;
+		}
+		setShowModal(true);
+	};
+
+	const handleSubmitReview = async () => {
 		if (!selectedRating || !reviewComment.trim()) {
 			Swal.fire(
 				"Warning",
@@ -151,31 +119,35 @@ const RatingsReview = ({ product = {} }) => {
 			return;
 		}
 
-		// Handle review submission logic here
-		console.log({
+		const response = await apiRatings({
 			rating: selectedRating,
 			comment: reviewComment,
-			// name: reviewerName,
-			// phone: reviewerPhone,
+			pid: product._id,
 		});
-		Swal.fire({
-			title: "Review Submitted",
-			text: "Thank you for your feedback!",
-			icon: "success",
-		});
+		if (response.success) {
+			Swal.fire({
+				title: "Review Submitted",
+				text: "Thank you for your feedback!",
+				icon: "success",
+			});
+			setSelectedRating(0);
+			setReviewComment("");
+			setShowModal(false);
 
-		// Reset form and close modal
-		setSelectedRating(0);
-		setReviewComment("");
-		// setReviewerName("");
-		// setReviewerPhone("");
-		setShowModal(false);
+			// Gọi callback nếu có để rerender reviews
+			// Hoặc có thể gọi API để lấy lại danh sách đánh giá mới
+			if (onReviewSubmitted) {
+				onReviewSubmitted();
+			}
+		} else {
+			Swal.fire({
+				title: "Error",
+				text: response.message || "Failed to submit review.",
+				icon: "error",
+			});
+		}
 	};
 
-	// const filteredReviews = mockReviews.filter((review) => {
-	// 	if (filterRating === "all") return true;
-	// 	return review.rating === parseInt(filterRating);
-	// });
 	const filteredReviews =
 		product.ratings?.filter((review) => {
 			if (filterRating === "all") return true;
@@ -289,7 +261,7 @@ const RatingsReview = ({ product = {} }) => {
 
 				{/* Reviews List */}
 				<div className="space-y-6">
-					{console.log(displayedReviews)}
+					{/* {console.log(displayedReviews)} */}
 					{displayedReviews.map((review) => (
 						<div
 							key={review._id}
@@ -297,13 +269,14 @@ const RatingsReview = ({ product = {} }) => {
 							{/* Review Header */}
 							<div className="flex items-start justify-between mb-3">
 								<div className="flex items-center">
-									<div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
-										<User className="w-5 h-5" />
+									<div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold">
+										{/* <User className="w-5 h-5" /> */}
+										<img src={review.postedBy.avatar} alt="avatar" className="rounded-full w-full h-full object-cover"/>
 									</div>
 									<div className="ml-3">
 										<div className="flex items-center">
 											<span className="font-medium text-gray-900">
-												{review.postedBy}
+												{review.postedBy.name}
 											</span>
 
 											<span className="ml-2 bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
@@ -315,16 +288,26 @@ const RatingsReview = ({ product = {} }) => {
 												{renderStars(review.star)}
 											</div>
 											<div className="flex items-center text-sm text-gray-500">
-												<Calendar className="w-3 h-3 mr-1" />
-												{formatDate(review.date)}
+												<Clock className="w-3 h-3 mr-1" />
+												{moment(review.date).fromNow()}
 											</div>
+										</div>
+										<div
+											className="flex items-center text-sm text-gray-400 mt-1"
+											title={moment(review.date).format(
+												"HH:mm DD/MM/YYYY"
+											)}>
+											<Calendar className="w-3 h-3 mr-1" />
+											{moment(review.date).format(
+												"HH:mm DD/MM/YYYY"
+											)}
 										</div>
 									</div>
 								</div>
 							</div>
 
 							{/* Review Content */}
-							<p className="text-gray-700 mb-4 leading-relaxed">
+							<p className="text-gray-700 mb-4 leading-relaxed text-lg">
 								{review.comment}
 							</p>
 
@@ -369,10 +352,10 @@ const RatingsReview = ({ product = {} }) => {
 							onClick={() => setShowAllReviews(!showAllReviews)}
 							className="inline-flex items-center px-6 py-3 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors">
 							{showAllReviews
-								? "Thu gọn"
-								: `Xem thêm ${
+								? "Collapse"
+								: `Read more ${
 										sortedReviews.length - 3
-								  } đánh giá`}
+								  } review(s)`}
 							<ChevronDown
 								className={`w-4 h-4 ml-2 transition-transform ${
 									showAllReviews ? "rotate-180" : ""
@@ -391,8 +374,8 @@ const RatingsReview = ({ product = {} }) => {
 						Leave a review to help other customers
 					</p>
 					<button
-						onClick={() => setShowModal(true)}
-						className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-colors">
+						onClick={() => handleWriteReview()}
+						className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-colors cursor-pointer">
 						Write a review
 					</button>
 				</div>
@@ -425,8 +408,6 @@ const RatingsReview = ({ product = {} }) => {
 							{/* Product Info */}
 							<div className="text-center mb-6">
 								<div className="w-3/10 mx-auto mb-4 bg-gray-100 rounded-lg flex items-center justify-center">
-									{/* <div className="w-16 h-12 bg-gray-800 rounded"></div>
-									<div className="w-14 h-10 bg-blue-500 rounded ml-1"></div> */}
 									<img
 										src={product.thumb}
 										alt={product.title}
@@ -475,28 +456,6 @@ const RatingsReview = ({ product = {} }) => {
 									</span>
 								</div>
 							</div>
-
-							{/* Contact Info */}
-							{/* <div className="grid grid-cols-2 gap-3 mb-4">
-								<input
-									type="text"
-									placeholder="Họ tên (bắt buộc)"
-									value={reviewerName}
-									onChange={(e) =>
-										setReviewerName(e.target.value)
-									}
-									className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-								/>
-								<input
-									type="text"
-									placeholder="Số điện thoại (bắt buộc)"
-									value={reviewerPhone}
-									onChange={(e) =>
-										setReviewerPhone(e.target.value)
-									}
-									className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-								/>
-							</div> */}
 
 							{/* Submit Button */}
 							<button

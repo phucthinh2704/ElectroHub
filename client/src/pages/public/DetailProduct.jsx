@@ -30,20 +30,26 @@ const DetailProduct = () => {
 	const [quantity, setQuantity] = useState(1);
 	const [loading, setLoading] = useState(true);
 
+	const fetchProduct = async () => {
+		setLoading(true);
+		try {
+			const response = await apiGetProductById({ pid: productId });
+			setProduct(response.product);
+			setLoading(false);
+		} catch (error) {
+			console.error("Error fetching product:", error);
+			setLoading(false);
+		}
+	};
 	useEffect(() => {
-		const fetchProduct = async () => {
-			setLoading(true);
-			try {
-				const response = await apiGetProductById({ pid: productId });
-				setProduct(response.product);
-				setLoading(false);
-			} catch (error) {
-				console.error("Error fetching product:", error);
-				setLoading(false);
-			}
-		};
 		fetchProduct();
-	}, [productId]);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	const handleReviewSubmitted = () => {
+		// Refresh product data sau khi submit review
+		fetchProduct();
+  };
 
 	// Calculate discount percentage
 	const discountPercentage = product.discount ? product.discount : 0;
@@ -338,7 +344,7 @@ const DetailProduct = () => {
 					<InformationDetail />
 				</div>
 				<div className="mt-8">
-					<RatingsReview product={product} />
+					<RatingsReview product={product} onReviewSubmitted={handleReviewSubmitted}/>
 				</div>
 				<div className="mt-10">
 					<OthersProduct category={product.category} />

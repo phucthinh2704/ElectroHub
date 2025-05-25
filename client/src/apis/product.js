@@ -12,3 +12,9 @@ export const apiGetProductById = async ({ pid }) =>
 		method: "GET",
 		url: `/product/${pid}`,
 	});
+export const apiRatings = async (data) =>
+	axios({
+		method: "PUT",
+		url: `/product/ratings`,
+		data,
+	});

@@ -46,6 +46,14 @@ export const priceRanges = [
 	{ label: "Over 10.000.000", min: 10000000, max: null }
 ];
 
+export const ratingLabels = {
+	1: "Very Poor",
+	2: "Poor",
+	3: "Average",
+	4: "Good",
+	5: "Excellent",
+};
+
 export const tabs = [
 	{
 		id: 1,

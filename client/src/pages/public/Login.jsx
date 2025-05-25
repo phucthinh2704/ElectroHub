@@ -159,7 +159,6 @@ const Login = () => {
       }
       setIsSubmitting(false);
       toast.success(response.message);
-      // Swal.fire("Success", response.message, "success");
       dispatch(login({ isLoggedIn: true, user: response.user, token: response.access_token }));
       navigate(`/${path.HOME}`);
     }, 500);

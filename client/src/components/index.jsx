@@ -20,3 +20,5 @@ export { default as OthersProduct } from "./OthersProduct";
 export { default as ScrollToTop } from "./ScrollToTop";
 export { default as FilterItem } from "./FilterItem";
 export { default as RatingsReview } from "./RatingsReview";
+export { default as Pagination } from "./Pagination";
+export { default as PaginationItem } from "./PaginationItem";

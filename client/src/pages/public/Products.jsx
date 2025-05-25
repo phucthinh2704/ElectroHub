@@ -4,13 +4,18 @@ import {
 	Grid2x2,
 	Grid3x3,
 	Loader2,
-	X
+	X,
 } from "lucide-react";
 import React, { memo, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useParams, useSearchParams } from "react-router-dom";
 import { apiGetProducts } from "../../apis";
-import { Breadcrumbs, FilterItem, ProductCard } from "../../components";
+import {
+	Breadcrumbs,
+	FilterItem,
+	Pagination,
+	ProductCard,
+} from "../../components";
 import formatMoney from "../../utils/formatMoney";
 
 const Products = () => {
@@ -25,6 +30,11 @@ const Products = () => {
 	const { category } = useParams();
 	const [params] = useSearchParams();
 
+	// Pagination
+	const [currentPage, setCurrentPage] = useState(1);
+	const [totalProducts, setTotalProducts] = useState(0);
+	const pageSize = 10;
+
 	useEffect(() => {
 		const fetchProductsByCategory = async (queries) => {
 			setLoading(true);
@@ -32,6 +42,8 @@ const Products = () => {
 				const response = await apiGetProducts(queries);
 				if (response.success) {
 					setProducts(response.products);
+					setTotalProducts(response.count);
+					setCurrentPage(response.currentPage);
 				}
 			} catch (error) {
 				console.error("Error fetching products:", error);
@@ -47,7 +59,8 @@ const Products = () => {
 					queries.color = value; // "green,blue,red"
 					filters.color = value.split(",");
 					break;
-				case "price": { // Handle price range: "100-500" or "100-" or "-500"
+				case "price": {
+					// Handle price range: "100-500" or "100-" or "-500"
 					const [min, max] = value.split("-");
 					if (min) queries.minPrice = parseInt(min);
 					if (max) queries.maxPrice = parseInt(max);
@@ -165,7 +178,8 @@ const Products = () => {
 						{(activeFilters.price?.min ||
 							activeFilters.price?.max) && (
 							<span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-								Price: {formatMoney(activeFilters.price.min) || "0"} -{" "}
+								Price:{" "}
+								{formatMoney(activeFilters.price.min) || "0"} -{" "}
 								{activeFilters.price.max
 									? `${formatMoney(activeFilters.price.max)}`
 									: "Any"}
@@ -336,6 +350,15 @@ const Products = () => {
 					{products.length !== 1 ? "s" : ""}
 				</div>
 			)}
+			<div className="flex justify-end">
+				<Pagination
+					currentPage={currentPage}
+					totalCount={totalProducts}
+					pageSize={pageSize}
+					onPageChange={setCurrentPage}
+					siblingCount={1}
+				/>
+			</div>
 		</div>
 	);
 };

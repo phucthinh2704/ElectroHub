@@ -16,9 +16,11 @@ const TopHeader = () => {
 	// Không sử dụng vì khi render lại sẽ hiện giao diện khi chưa đăng nhập
 	// Khi component được mount mới gọi action getCurrent và render lại giao diện đã đăng nhập
 	// useEffect(() => {
-	// 	if (isLoggedIn && !current) {
-	// 		dispatch(getCurrent());
-	// 	}
+	//   const setTimeOutid = setTimeout(() => {
+	//     if (isLoggedIn && !current) {
+	//       dispatch(getCurrent());
+	//     }
+	//   }, 1000);
 	// }, [current, dispatch, isLoggedIn]);
 
 	const handleLogoutClick = () => {

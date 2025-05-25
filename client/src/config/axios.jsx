@@ -8,7 +8,7 @@ const instance = axios.create({
 instance.interceptors.request.use(
 	function (config) {
 		// Do something before request is sent
-		let localStorageData = JSON.parse(window.localStorage.getItem("persist:shop/user")) || {};
+		const localStorageData = JSON.parse(window.localStorage.getItem("persist:shop/user")) || {};
 		if (localStorageData.token != null) {
 			const accessToken = JSON.parse(localStorageData.token);
 			config.headers = { authorization: `${accessToken}` };
