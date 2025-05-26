@@ -72,7 +72,7 @@ const Pagination = ({
 				disabled={currentPage === 1}>
 				<ChevronLeft className="w-5 h-5" />
 			</button>
-
+ 
 			{/* Page numbers */}
 			{paginationRange.map((pageNumber, index) => {
 				// Nếu là DOTS thì render ...
