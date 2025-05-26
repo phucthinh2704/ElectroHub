@@ -65,8 +65,13 @@ const TopHeader = () => {
 				{isLoggedIn && current ? (
 					<div className="flex items-center gap-3 group relative">
 						<div className="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2 hover:bg-white/30 transition-all cursor-pointer">
-							<div className="h-6 w-6 rounded-full bg-blue-200 flex items-center justify-center text-blue-700 font-semibold text-xs">
-								{current.name.charAt(0).toUpperCase()}
+							<div className="h-6 w-6 rounded-full bg-blue-200 flex items-center justify-center text-blue-700 font-semibold text-xs overflow-hidden">
+								<img
+									src={current.avatar}
+									alt={current.name}
+									className="w-full h-full object-cover rounded-full"
+								/>
+								{/* {current.name.charAt(0).toUpperCase()} */}
 							</div>
 							<span className="text-sm font-medium">
 								{current.name}

@@ -22,7 +22,13 @@ const createProduct = asyncHandler(async (req, res) => {
 
 const getProductById = asyncHandler(async (req, res) => {
 	const { pid } = req.params;
-	const product = await Product.findById(pid); //.populate("category");
+	const product = await Product.findById(pid).populate({
+		path: "ratings",
+		populate: {
+			path: "postedBy",
+			select: "name avatar",
+		},
+	});
 	if (!product) throw new Error("Product not found");
 	res.status(200).json({
 		success: true,
@@ -172,6 +178,7 @@ const ratingProduct = asyncHandler(async (req, res) => {
 					...item,
 					star: rating,
 					comment: comment || item.comment,
+					date: Date.now(),
 				};
 			}
 			return item;
@@ -190,7 +197,6 @@ const ratingProduct = asyncHandler(async (req, res) => {
 	product.ratingCount = product.ratings.length;
 
 	await product.save();
-	await product.populate("ratings.postedBy", "name email");
 	res.status(200).json({
 		success: true,
 		message: "Rating updated successfully",

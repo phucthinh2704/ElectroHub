@@ -64,6 +64,8 @@ const FilterItem = ({ name, isOpen, setIsOpen }) => {
 			}
 		}
 
+		params.set("page", "1"); // Reset to page 1 when filters change
+
 		if (params.toString()) {
 			navigate({
 				pathname: `/products/${category}`,

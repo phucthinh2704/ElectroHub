@@ -5,7 +5,7 @@ const DOTS = "...";
 
 const usePagination = ({
 	totalCount,
-	pageSize = 10,
+	pageSize,
 	siblingCount = 1,
 	currentPage,
 }) => {

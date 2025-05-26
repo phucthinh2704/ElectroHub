@@ -20,7 +20,7 @@ const verifyAccessToken = asyncHandler(async (req, res, next) => {
 	} catch (err) {
 		return res.status(403).json({
 			success: false,
-			message: "Token is not matched!",
+			message: "Token is not matched or expired! Please login again.",
 		});
 	}
 });

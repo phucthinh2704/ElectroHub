@@ -1,23 +1,22 @@
-import React, { memo, useState } from "react";
 import {
-	Star,
-	ThumbsUp,
-	ThumbsDown,
-	User,
 	Calendar,
-	Filter,
-	ChevronDown,
-	X,
 	Camera,
+	ChevronDown,
 	Clock,
+	Filter,
+	Star,
+	X,
 } from "lucide-react";
-import Swal from "sweetalert2";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import path from "../utils/path";
-import { apiRatings } from "../apis";
-import { ratingLabels } from "../utils/constants";
 import moment from "moment";
+import React, { memo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import Swal from "sweetalert2";
+import { apiLogout, apiRatings } from "../apis";
+import { logout } from "../store/user/userSlice";
+import { ratingLabels } from "../utils/constants";
+import path from "../utils/path";
 
 const RatingsReview = ({ product = {}, onReviewSubmitted }) => {
 	const [sortBy, setSortBy] = useState("newest");
@@ -27,8 +26,8 @@ const RatingsReview = ({ product = {}, onReviewSubmitted }) => {
 	const [selectedRating, setSelectedRating] = useState(0);
 	const [hoverRating, setHoverRating] = useState(0);
 	const [reviewComment, setReviewComment] = useState("");
-	console.log(product);
 
+	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
 	const { isLoggedIn } = useSelector((state) => state.user);
@@ -142,8 +141,19 @@ const RatingsReview = ({ product = {}, onReviewSubmitted }) => {
 		} else {
 			Swal.fire({
 				title: "Error",
-				text: response.message || "Failed to submit review.",
+				text: "Your session has expired. Please log in again to continue.",
 				icon: "error",
+				confirmButtonText: "Login",
+			}).then(async (result) => {
+				const response = await apiLogout();
+				if (!response.success) {
+					return toast.error(response.message);
+				}
+				dispatch(logout());
+				if (result.isConfirmed) {
+					scrollTo(0, 0);
+					navigate(`/${path.LOGIN}`);
+				}
 			});
 		}
 	};
@@ -271,7 +281,11 @@ const RatingsReview = ({ product = {}, onReviewSubmitted }) => {
 								<div className="flex items-center">
 									<div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold">
 										{/* <User className="w-5 h-5" /> */}
-										<img src={review.postedBy.avatar} alt="avatar" className="rounded-full w-full h-full object-cover"/>
+										<img
+											src={review.postedBy.avatar}
+											alt="avatar"
+											className="rounded-full w-full h-full object-cover"
+										/>
 									</div>
 									<div className="ml-3">
 										<div className="flex items-center">

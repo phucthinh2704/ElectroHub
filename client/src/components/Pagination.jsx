@@ -1,20 +1,24 @@
-import React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 import usePagination from "../hooks/usePagination";
 
 const Pagination = ({
 	totalCount,
 	currentPage,
-	pageSize = 10,
+	pageSize,
 	onPageChange,
 	siblingCount = 1,
 }) => {
+	const navigate = useNavigate();
+
 	const paginationRange = usePagination({
 		currentPage,
 		totalCount,
 		siblingCount,
 		pageSize,
 	});
+	const lastPage = paginationRange[paginationRange.length - 1];
 
 	// Nếu có ít hơn 2 trang thì không hiển thị pagination
 	if (currentPage === 0 || paginationRange.length < 2) {
@@ -22,14 +26,38 @@ const Pagination = ({
 	}
 
 	const onNext = () => {
-		onPageChange(currentPage + 1);
+		onPageChange((prev) => prev + 1);
+		if (currentPage < lastPage) {
+			handlePageChange(currentPage + 1);
+		}
 	};
 
 	const onPrevious = () => {
-		onPageChange(currentPage - 1);
+		onPageChange((prev) => Math.max(prev - 1, 1));
+		if (currentPage > 1) {
+			handlePageChange(currentPage - 1);
+		}
 	};
 
-	const lastPage = paginationRange[paginationRange.length - 1];
+	const handlePageChange = (pageNumber) => {
+		const params = new URLSearchParams(window.location.search);
+		params.set("page", pageNumber);
+
+		navigate(
+			{
+				pathname: window.location.pathname,
+				search: params.toString(),
+			},
+			{
+				replace: true,
+				state: { page: pageNumber },
+			}
+		);
+
+		if (pageNumber !== currentPage) {
+			onPageChange(pageNumber);
+		}
+	};
 
 	return (
 		<div className="flex items-center justify-center space-x-2 mt-6">
@@ -42,7 +70,7 @@ const Pagination = ({
 				}`}
 				onClick={onPrevious}
 				disabled={currentPage === 1}>
-				<ChevronLeft className="w-4 h-4" />
+				<ChevronLeft className="w-5 h-5" />
 			</button>
 
 			{/* Page numbers */}
@@ -67,7 +95,7 @@ const Pagination = ({
 								? "bg-blue-500 text-white border-blue-500"
 								: "text-gray-700 border-gray-300 hover:bg-gray-50"
 						}`}
-						onClick={() => onPageChange(pageNumber)}>
+						onClick={() => handlePageChange(pageNumber)}>
 						{pageNumber}
 					</button>
 				);
@@ -82,7 +110,7 @@ const Pagination = ({
 				}`}
 				onClick={onNext}
 				disabled={currentPage === lastPage}>
-				<ChevronRight className="w-4 h-4" />
+				<ChevronRight className="w-5 h-5" />
 			</button>
 		</div>
 	);

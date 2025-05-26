@@ -5,6 +5,7 @@ const product = require("./product");
 var userSchema = new mongoose.Schema(
 	{
 		name: { type: String, required: true },
+		avatar: { type: String },
 		email: { type: String, required: true, unique: true },
 		mobile: { type: String, required: true },
 		password: { type: String, required: true },

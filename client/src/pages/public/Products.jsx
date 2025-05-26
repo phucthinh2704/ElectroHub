@@ -33,7 +33,7 @@ const Products = () => {
 	// Pagination
 	const [currentPage, setCurrentPage] = useState(1);
 	const [totalProducts, setTotalProducts] = useState(0);
-	const pageSize = 10;
+	const pageSize = import.meta.VITE_LIMIT_PRODUCTS || 12;
 
 	useEffect(() => {
 		const fetchProductsByCategory = async (queries) => {
@@ -83,13 +83,11 @@ const Products = () => {
 		}
 		setActiveFilters(filters);
 		queries.category = category.charAt(0).toUpperCase() + category.slice(1);
-		// queries.title = "htc";
 		// queries.sort = "price";
-		// queries.page = 1;
-		// queries.limit = 20;
-		// queries.fields = "title,price,images,slug";
+		// queries.page = 1; // Đã set mặc định bên controller
+		queries.limit = pageSize; // Set page size for pagination
 		fetchProductsByCategory(queries);
-	}, [dispatch, category, params]);
+	}, [dispatch, category, params, pageSize]);
 
 	// Sort products
 	const sortProducts = () => {
@@ -134,6 +132,18 @@ const Products = () => {
 	const toggleFilters = () => {
 		setShowFilters(!showFilters);
 	};
+
+	const getPaginationInfo = (currentPage, pageSize, totalProducts) => {
+		const startItem = (currentPage - 1) * pageSize + 1;
+		const endItem = Math.min(currentPage * pageSize, totalProducts);
+
+		return { startItem, endItem };
+	};
+	const { startItem, endItem } = getPaginationInfo(
+		currentPage,
+		pageSize,
+		totalProducts
+	);
 
 	return (
 		<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -350,7 +360,10 @@ const Products = () => {
 					{products.length !== 1 ? "s" : ""}
 				</div>
 			)}
-			<div className="flex justify-end">
+			<div className="flex justify-between">
+				<div>
+					Show products {startItem} - {endItem} of {totalProducts}
+				</div>
 				<Pagination
 					currentPage={currentPage}
 					totalCount={totalProducts}

@@ -27,10 +27,13 @@ export const userSlice = createSlice({
       builder.addCase(actions.getCurrent.fulfilled, (state, action) => {
          state.isLoading = false;
          state.current = action.payload;
+         state.isLoggedIn = true;
       });
       builder.addCase(actions.getCurrent.rejected, (state) => {
          state.isLoading = false;
          state.current = null;
+         state.isLoggedIn = false;
+         state.token = null;
       });
    }
 });
