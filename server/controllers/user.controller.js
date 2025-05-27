@@ -160,7 +160,6 @@ const login = asyncHandler(async (req, res) => {
 	// Chuyển về Object thuần và loại bỏ các trường không cần thiết
 	const userObject = user.toObject();
 	delete userObject.password;
-	delete userObject.role;
 	delete userObject.refreshToken;
 
 	const accessToken = generateAccessToken(user._id, user.role);
