@@ -1,5 +1,5 @@
-import NextArrow from "../components/NextArrow";
-import PrevArrow from "../components/PrevArrow";
+import NextArrow from "../components/public/common/NextArrow";
+import PrevArrow from "../components/public/common/PrevArrow";
 
 const settings = {
 	dots: false,

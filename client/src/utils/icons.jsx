@@ -1,9 +1,15 @@
-import { AiFillEye, AiFillStar, AiOutlineStar } from "react-icons/ai";
+import {
+	AiFillEye,
+	AiFillStar,
+	AiOutlineStar,
+	AiOutlineDashboard,
+} from "react-icons/ai";
 import { BsFillSuitHeartFill } from "react-icons/bs";
 import { FaCartPlus, FaUserAlt } from "react-icons/fa";
 import { IoMdMenu } from "react-icons/io";
-import { MdEmail } from "react-icons/md";
-import { RiPhoneFill } from "react-icons/ri";
+import { MdEmail, MdGroups } from "react-icons/md";
+import { RiPhoneFill, RiBillLine } from "react-icons/ri";
+import { TbBrandProducthunt } from "react-icons/tb";
 
 const icons = {
 	RiPhoneFill,
@@ -15,6 +21,10 @@ const icons = {
 	IoMdMenu,
 	AiFillEye,
 	BsFillSuitHeartFill,
+	AiOutlineDashboard,
+	MdGroups,
+	TbBrandProducthunt,
+	RiBillLine
 };
 
 export default icons;

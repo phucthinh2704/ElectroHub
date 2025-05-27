@@ -1,3 +1,4 @@
+import icons from "./icons";
 import path from "./path";
 import {
 	Heart,
@@ -11,7 +12,12 @@ import {
 
 export const navigation = [
 	{ id: 1, path: `/${path.HOME}`, value: "Home", icon: Home },
-	{ id: 2, path: `/${path.PRODUCTS_CATEGORY}`, value: "Products", icon: ShoppingCart },
+	{
+		id: 2,
+		path: `/${path.PRODUCTS_CATEGORY}`,
+		value: "Products",
+		icon: ShoppingCart,
+	},
 	{ id: 3, path: `/${path.BLOGS}`, value: "Blogs", icon: Rss },
 	{
 		id: 4,
@@ -43,7 +49,7 @@ export const priceRanges = [
 	{ label: "4.000.000 - 6.000.000", min: 4000000, max: 6000000 },
 	{ label: "6.000.000 - 8.000.000", min: 6000000, max: 8000000 },
 	{ label: "8.000.000 - 10.000.000", min: 8000000, max: 10000000 },
-	{ label: "Over 10.000.000", min: 10000000, max: null }
+	{ label: "Over 10.000.000", min: 10000000, max: null },
 ];
 
 export const ratingLabels = {
@@ -53,6 +59,47 @@ export const ratingLabels = {
 	4: "Good",
 	5: "Excellent",
 };
+
+const { AiOutlineDashboard, MdGroups, TbBrandProducthunt, RiBillLine } = icons;
+export const adminSidebar = [
+	{
+		id: 1,
+		type: "SINGLE",
+		text: "DASHBOARD",
+		icon: <AiOutlineDashboard size={20} />,
+		path: `/${path.ADMIN}/${path.DASHBOARD}`,
+	},
+	{
+		id: 2,
+		type: "SINGLE",
+		text: "MANAGE USERS",
+		icon: <MdGroups size={20} />,
+		path: `/${path.ADMIN}/${path.MANAGE_USERS}`,
+	},
+	{
+		id: 3,
+		type: "SINGLE",
+		text: "MANAGE ORDERS",
+		icon: <RiBillLine size={20} />,
+		path: `/${path.ADMIN}/${path.MANAGE_ORDERS}`,
+	},
+	{
+		id: 4,
+		type: "PARENT",
+		text: "MANAGE PRODUCTS",
+		icon: <TbBrandProducthunt size={20} />,
+		submenu: [
+			{
+				text: "CREATE PRODUCT",
+				path: `/${path.ADMIN}/${path.CREATE_PRODUCT}`,
+			},
+			{
+				text: "MANAGE PRODUCT",
+				path: `/${path.ADMIN}/${path.MANAGE_PRODUCTS}`,
+			},
+		],
+	},
+];
 
 export const tabs = [
 	{
