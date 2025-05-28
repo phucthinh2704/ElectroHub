@@ -52,8 +52,8 @@ const AdminLayout = () => {
 				</div>
 
 				{/* Page Content */}
-				<div className="p-2">
-					<div className="bg-slate-800/90 rounded-lg p-6">
+				<div>
+					<div className="bg-slate-800/90 rounded-lg">
 						<Outlet></Outlet>
 					</div>
 				</div>

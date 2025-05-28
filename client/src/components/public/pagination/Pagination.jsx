@@ -60,13 +60,13 @@ const Pagination = ({
 	};
 
 	return (
-		<div className="flex items-center justify-center space-x-2 mt-6">
+		<div className="flex items-center justify-center space-x-2">
 			{/* Left navigation arrow */}
 			<button
 				className={`w-10 h-10 rounded-md border flex items-center justify-center ${
 					currentPage === 1
 						? "text-gray-400 border-gray-200 cursor-not-allowed"
-						: "text-gray-700 border-gray-300 hover:bg-gray-50"
+						: "text-gray-700 border-gray-300 hover:bg-gray-50 cursor-pointer"
 				}`}
 				onClick={onPrevious}
 				disabled={currentPage === 1}>
@@ -106,7 +106,7 @@ const Pagination = ({
 				className={`w-10 h-10 rounded-md border flex items-center justify-center ${
 					currentPage === lastPage
 						? "text-gray-400 border-gray-200 cursor-not-allowed"
-						: "text-gray-700 border-gray-300 hover:bg-gray-50"
+						: "text-gray-700 border-gray-300 hover:bg-gray-50 cursor-pointer"
 				}`}
 				onClick={onNext}
 				disabled={currentPage === lastPage}>

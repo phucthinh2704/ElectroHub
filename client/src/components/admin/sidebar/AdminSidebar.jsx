@@ -89,7 +89,7 @@ const AdminSidebar = ({ admin }) => {
 												onClick={(e) =>
 													e.stopPropagation()
 												}>
-												<div className="w-2 h-2 rounded-full bg-white group-hover:scale-115"></div>
+												<div className="group-hover:scale-115">{subItem.icon}</div>
 												<span className="text-sm font-medium group-hover:font-semibold">
 													{subItem.text}
 												</span>

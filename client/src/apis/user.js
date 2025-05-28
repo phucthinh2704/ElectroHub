@@ -43,3 +43,14 @@ export const apiGetCurrent = async () =>
 		url: `/user/current`,
 		withCredentials: true,
 	});
+export const apiGetAllUsers = async (params) =>
+	axios({
+		method: "GET",
+		url: `/user`,
+		params
+	});
+export const apiBlockUser = async (id) =>
+	axios({
+		method: "POST",
+		url: `/user/block/${id}`,
+	});

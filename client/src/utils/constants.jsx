@@ -8,6 +8,8 @@ import {
 	MailQuestionIcon,
 	Rss,
 	ContactRound,
+	CirclePlus,
+	Settings,
 } from "lucide-react";
 
 export const navigation = [
@@ -92,10 +94,12 @@ export const adminSidebar = [
 			{
 				text: "CREATE PRODUCT",
 				path: `/${path.ADMIN}/${path.CREATE_PRODUCT}`,
+				icon: <CirclePlus size={20}/>
 			},
 			{
 				text: "MANAGE PRODUCT",
 				path: `/${path.ADMIN}/${path.MANAGE_PRODUCTS}`,
+				icon: <Settings size={20}/>
 			},
 		],
 	},

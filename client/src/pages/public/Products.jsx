@@ -353,16 +353,18 @@ const Products = () => {
 				</>
 			)}
 
-			{/* Products count */}
-			{!loading && products.length > 0 && (
-				<div className="mt-6 text-sm text-gray-500">
-					Showing {products.length} product
-					{products.length !== 1 ? "s" : ""}
-				</div>
-			)}
-			<div className="flex justify-between">
+			{/* Products count and Pagination*/}
+			<div className="flex justify-between items-center mt-6">
 				<div>
-					Show products {startItem} - {endItem} of {totalProducts}
+					{!loading && products.length > 0 && (
+						<div className="text-sm text-gray-500">
+							Showing {products.length} product
+							{products.length !== 1 ? "s" : ""}
+						</div>
+					)}
+					<div>
+						Show products {startItem} - {endItem} of {totalProducts}
+					</div>
 				</div>
 				<Pagination
 					currentPage={currentPage}
