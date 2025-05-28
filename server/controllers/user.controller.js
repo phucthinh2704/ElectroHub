@@ -152,10 +152,14 @@ const login = asyncHandler(async (req, res) => {
 	if (!email || !password) throw new Error("Missing required fields");
 
 	const user = await User.findOne({ email });
-	if (!user) throw new Error("Login failed: User not found. Please check your username and try again.");
+	if (!user)
+		throw new Error(
+			"Login failed: User not found. Please check your username and try again."
+		);
 
 	const isMatch = await bcrypt.compare(password, user.password);
-	if (!isMatch) throw new Error("The password that you've entered is incorrect.");
+	if (!isMatch)
+		throw new Error("The password that you've entered is incorrect.");
 
 	// Chuyển về Object thuần và loại bỏ các trường không cần thiết
 	const userObject = user.toObject();
@@ -347,14 +351,66 @@ const resetPassword = asyncHandler(async (req, res) => {
 	});
 });
 
-const getAllUsers = asyncHandler(async (req, res) => {
-	const users = await User.find().select("-refreshToken -password -role");
-	if (!users) throw new Error("No users found");
+const blockUser = asyncHandler(async (req, res) => {
+	const { id } = req.params;
 
+	const user = await User.findById(id).select("-refreshToken -password");
+	if (!user) throw new Error("User not found");
+	if (user.role === "admin") {
+		throw new Error("Cannot block admin user");
+	}
+	user.isBlocked = !user.isBlocked; // Chuyển trạng thái block
+	await user.save();
 	return res.status(200).json({
 		success: true,
-		message: "Get all users successfully",
+		message: `User ${user.email} has been ${
+			user.isBlocked ? "blocked" : "unblocked"
+		}`,
+		user,
+	});
+});
+
+const getAllUsers = asyncHandler(async (req, res) => {
+	const queries = { ...req.query };
+	// Tách các trường đặc biệt khỏi query
+	const excludeFields = ["page", "sort", "limit", "fields"];
+	excludeFields.forEach((el) => delete queries[el]);
+
+	let formattedQueries = {};
+	// Filtering
+	if (queries?.name)
+		formattedQueries.name = { $regex: queries.name, $options: "i" };
+
+	let queryCommand = User.find(formattedQueries);
+
+	// Sorting
+	if (req.query.sort) {
+		const sortBy = req.query.sort.split(",").join(" ");
+		queryCommand = queryCommand.sort(sortBy);
+	}
+
+	// Fields limiting
+	if (req.query.fields) {
+		const fields = req.query.fields.split(",").join(" ");
+		queryCommand = queryCommand.select(fields);
+	}
+
+	// Pagination
+	const page = parseInt(req.query.page) || 1;
+	const limit = parseInt(req.query.limit) || process.env.LIMIT_PRODUCTS;
+	const skip = (page - 1) * limit; // tương tự như offset trong SQL
+	queryCommand = queryCommand.skip(skip).limit(limit);
+
+	// Execute query
+	const users = await queryCommand;
+	const count = await User.find(formattedQueries).countDocuments();
+
+	return res.status(200).json({
+		success: users ? true : false,
+		count,
 		users,
+		currentPage: page,
+		totalPages: Math.ceil(count / limit),
 	});
 });
 
@@ -499,6 +555,7 @@ module.exports = {
 	register,
 	login,
 	getCurrent,
+	blockUser,
 	refreshAccessToken,
 	logout,
 	forgotPassword,

@@ -52,15 +52,6 @@ const getAllProducts = asyncHandler(async (req, res) => {
 	const excludeFields = ["page", "sort", "limit", "fields"];
 	excludeFields.forEach((el) => delete queries[el]);
 
-	// Format lại các operators ($gt, $gte, etc)
-	// let queryString = JSON.stringify(queries);
-	// queryString = queryString.replace(
-	// 	/\b(gte|gt|lt|lte)\b/g,
-	// 	(match) => `$${match}`
-	// );
-	// queryString = JSON.parse(queryString);
-	// queryString = convertQueryFormat(queryString); // convert from {price[$gte]: 1000} ==> {price: {$gte: 1000}}
-
 	let formattedQueries = {};
 	// Filtering
 	if (queries?.title)
