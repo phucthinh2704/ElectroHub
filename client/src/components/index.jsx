@@ -24,3 +24,4 @@ export { default as Pagination } from "./public/pagination/Pagination";
 
 // ADMIN
 export { default as AdminSidebar } from "./admin/sidebar/AdminSidebar";
+export { default as EditForm } from "./admin/form/EditForm ";

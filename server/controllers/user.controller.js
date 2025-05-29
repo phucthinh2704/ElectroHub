@@ -423,8 +423,8 @@ const deleteUser = asyncHandler(async (req, res) => {
 
 	return res.status(200).json({
 		success: true,
-		message: "Delete user successfully",
-		deletedUser: `User ${user.email} deleted`,
+		message: `User with email ${user.email} has been deleted`,
+		deletedUser: user,
 	});
 });
 

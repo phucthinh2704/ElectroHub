@@ -6,10 +6,12 @@ import {
 } from "lucide-react";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
-import { apiBlockUser, apiGetAllUsers } from "../../apis/user";
-import Pagination from "../../components/public/pagination/Pagination";
-import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import Swal from "sweetalert2";
+import { apiBlockUser, apiDeleteUser, apiGetAllUsers } from "../../apis/user";
+import EditForm from "../../components/admin/form/EditForm ";
+import Pagination from "../../components/public/pagination/Pagination";
 
 const ManageUsers = () => {
 	const [users, setUsers] = useState([]);
@@ -17,6 +19,8 @@ const ManageUsers = () => {
 	const [filterRole, setFilterRole] = useState("all");
 	const [filterStatus, setFilterStatus] = useState("all");
 	const [currentPage, setCurrentPage] = useState(1);
+	const [showEditForm, setShowEditForm] = useState(false);
+	const [selectedUserId, setSelectedUserId] = useState(null);
 	const [usersPerPage] = useState(5);
 
 	const navigate = useNavigate();
@@ -30,13 +34,18 @@ const ManageUsers = () => {
 			}
 		};
 		fetchUsers();
+
+		const params = new URLSearchParams(window.location.search);
+		const page = params.get("page") || 1;
+		setCurrentPage(Number(page));
 	}, []);
 
 	// Filter users based on search and filters
 	const filteredUsers = users.filter((user) => {
 		const matchesSearch =
 			user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-			user.email.toLowerCase().includes(searchTerm.toLowerCase());
+			user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+			user.mobile.includes(searchTerm.toLowerCase());
 		const matchesRole = filterRole === "all" || user.role === filterRole;
 		const matchesStatus =
 			filterStatus === "all" ||
@@ -74,11 +83,46 @@ const ManageUsers = () => {
 	// const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
 
 	const handleEdit = (userId) => {
-		console.log("Edit user:", userId);
+		setSelectedUserId(userId);
+		setShowEditForm(true);
 	};
 
 	const handleDelete = (userId) => {
-		console.log("Delete user:", userId);
+		Swal.fire({
+			title: "Are you sure delete this user?",
+			text: "You won't be able to revert this!",
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#d33",
+			cancelButtonColor: "#3085d6",
+			confirmButtonText: "Yes, delete it!",
+		}).then(async (result) => {
+			if (result.isConfirmed) {
+				try {
+					const response = await apiDeleteUser(userId);
+					if (response.success) {
+						setUsers(users.filter((user) => user._id !== userId));
+						if (currentUsers.length === 1 && currentPage > 1) {
+							console.log(
+								"No users on current page, going back one page"
+							);
+							setCurrentPage(currentPage - 1);
+							navigate({
+								pathname: window.location.pathname,
+								search: `?page=${currentPage - 1}`,
+							});
+						}
+						toast.success(response.message);
+					} else {
+						toast.error(
+							response.message || "Failed to delete user"
+						);
+					}
+				} catch (e) {
+					console.error("Error deleting user:", e.message || e);
+				}
+			}
+		});
 	};
 
 	const handleBlock = async (userId) => {
@@ -230,7 +274,7 @@ const ManageUsers = () => {
 								</div>
 								<input
 									type="text"
-									placeholder="Search users by name or email..."
+									placeholder="Search users by name, email or phone number..."
 									value={searchTerm}
 									onChange={(e) =>
 										handleFilterChange(
@@ -249,7 +293,7 @@ const ManageUsers = () => {
 							onChange={(e) =>
 								handleFilterChange("role", e.target.value)
 							}
-							className="px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white">
+							className="px-4 py-3 border uppercase border-slate-200 rounded-xl hover:shadow-lg focus:outline-none cursor-pointer focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white">
 							<option value="all">All Roles</option>
 							<option value="admin">Admin</option>
 							<option value="moderator">Moderator</option>
@@ -262,7 +306,7 @@ const ManageUsers = () => {
 							onChange={(e) =>
 								handleFilterChange("status", e.target.value)
 							}
-							className="px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white">
+							className="px-4 py-3 border uppercase border-slate-300 rounded-xl focus:ring-2 hover:shadow-lg focus:outline-none cursor-pointer focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white">
 							<option value="all">All Status</option>
 							<option value="active">Active</option>
 							<option value="blocked">Blocked</option>
@@ -390,9 +434,10 @@ const ManageUsers = () => {
 												<div className="w-4 h-4 bg-current rounded"></div>
 											</button>
 											<button
-												onClick={() =>
-													handleEdit(user._id)
-												}
+												onClick={() => {
+													handleEdit(user._id);
+													setShowEditForm(true);
+												}}
 												className="p-2 cursor-pointer text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-150"
 												title="Edit User">
 												<UserRoundPen />
@@ -494,6 +539,20 @@ const ManageUsers = () => {
 					<p className="text-slate-600">
 						Try adjusting your search or filter criteria
 					</p>
+				</div>
+			)}
+			{/* Edit User Form */}
+			{showEditForm && (
+				<div className="fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center z-50">
+					<EditForm
+						users={users}
+						setUsers={setUsers}
+						selectedUserId={selectedUserId}
+						onClose={() => {
+							setShowEditForm(false);
+							setSelectedUserId(null);
+						}}
+					/>
 				</div>
 			)}
 		</div>

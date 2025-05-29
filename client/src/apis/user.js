@@ -54,3 +54,14 @@ export const apiBlockUser = async (id) =>
 		method: "POST",
 		url: `/user/block/${id}`,
 	});
+export const apiUpdateUser = async (id, data) =>
+	axios({
+		method: "PUT",
+		url: `/user/${id}`,
+		data
+	});
+export const apiDeleteUser = async (id) =>
+	axios({
+		method: "DELETE",
+		url: `/user/${id}`,
+	});

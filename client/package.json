@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "server": "cd ../server && npm run dev"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.7.0",
@@ -18,6 +19,7 @@
     "moment": "^2.30.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-hook-form": "^7.56.4",
     "react-icons": "^5.5.0",
     "react-medium-image-zoom": "^5.2.14",
     "react-redux": "^9.2.0",
