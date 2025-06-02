@@ -161,6 +161,10 @@ const login = asyncHandler(async (req, res) => {
 	if (!isMatch)
 		throw new Error("The password that you've entered is incorrect.");
 
+	if( user.isBlocked) {
+		throw new Error("Your account has been blocked. Please contact support.");
+	}
+
 	// Chuyển về Object thuần và loại bỏ các trường không cần thiết
 	const userObject = user.toObject();
 	delete userObject.password;
@@ -397,7 +401,7 @@ const getAllUsers = asyncHandler(async (req, res) => {
 
 	// Pagination
 	const page = parseInt(req.query.page) || 1;
-	const limit = parseInt(req.query.limit) || process.env.LIMIT_PRODUCTS;
+	const limit = parseInt(req.query.limit) || 999999;
 	const skip = (page - 1) * limit; // tương tự như offset trong SQL
 	queryCommand = queryCommand.skip(skip).limit(limit);
 
@@ -446,7 +450,7 @@ const updateUser = asyncHandler(async (req, res) => {
 
 	// Kiểm tra định dạng số điện thoại (ví dụ)
 	if (req.body.mobile) {
-		const mobileRegex = /^[0-9]{10}$/;
+		const mobileRegex = /^[0-9]{10,11}$/;
 		if (!mobileRegex.test(req.body.mobile))
 			throw new Error("Invalid mobile number format");
 	}

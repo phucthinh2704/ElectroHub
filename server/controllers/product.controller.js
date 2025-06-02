@@ -6,8 +6,12 @@ require("dotenv").config();
 
 const createProduct = asyncHandler(async (req, res) => {
 	if (!req.body) throw new Error("Please fill all the fields");
-
 	if (req.body.title) req.body.slug = slugify(req.body.title);
+
+	const thumb = req?.files?.thumb[0]?.path;
+	const images = req.files?.images?.map((file) => file.path);
+	if (thumb) req.body.thumb = thumb;
+	if (images) req.body.images = images;
 
 	const newProduct = await Product.create(req.body);
 
@@ -79,7 +83,6 @@ const getAllProducts = asyncHandler(async (req, res) => {
 		  }
 		: {};
 
-
 	formattedQueries = { ...colorQueryObject, ...formattedQueries };
 	let queryCommand = Product.find(formattedQueries);
 
@@ -97,7 +100,7 @@ const getAllProducts = asyncHandler(async (req, res) => {
 
 	// Pagination
 	const page = parseInt(req.query.page) || 1;
-	const limit = parseInt(req.query.limit) || process.env.LIMIT_PRODUCTS;
+	const limit = parseInt(req.query.limit) || 999999;
 	const skip = (page - 1) * limit; // tương tự như offset trong SQL
 	queryCommand = queryCommand.skip(skip).limit(limit);
 
@@ -135,8 +138,8 @@ const updateProduct = asyncHandler(async (req, res) => {
 });
 
 const deleteProduct = asyncHandler(async (req, res) => {
-	const { pid } = req.params;
-	const deletedProduct = await Product.findByIdAndDelete(pid);
+	const { id } = req.params;
+	const deletedProduct = await Product.findByIdAndDelete(id);
 	if (!deletedProduct) throw new Error("Product not found");
 	res.status(200).json({
 		success: true,

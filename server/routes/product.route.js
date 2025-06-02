@@ -8,14 +8,21 @@ router.get("/:pid", product.getProductById);
 router.put("/ratings", verifyAccessToken, product.ratingProduct);
 
 // Admin routes
-router.post("/", [verifyAccessToken, isAdmin], product.createProduct);
-router.put("/:pid", [verifyAccessToken, isAdmin], product.updateProduct);
-router.delete("/:pid", [verifyAccessToken, isAdmin], product.deleteProduct);
+router.post(
+	"/",
+	[verifyAccessToken, isAdmin],
+	uploader.fields([
+		{ name: "images", maxCount: 10 },
+		{ name: "thumb", maxCount: 1 },
+	]),
+	product.createProduct
+);
 router.put(
 	"/upload-image/:id",
 	[verifyAccessToken, isAdmin],
 	uploader.array("images", 10),
 	product.uploadImagesProduct
 );
+router.delete("/:id", [verifyAccessToken, isAdmin], product.deleteProduct);
 
 module.exports = router;
