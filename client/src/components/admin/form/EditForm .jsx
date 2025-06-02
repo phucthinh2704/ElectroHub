@@ -1,6 +1,6 @@
 import { X } from "lucide-react";
 import moment from "moment";
-import React, { useMemo, useState } from "react";
+import React, { memo, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { apiUpdateUser } from "../../../apis/user";
 
@@ -379,4 +379,4 @@ const EditForm = ({ users, setUsers, selectedUserId, onClose }) => {
 	);
 };
 
-export default EditForm;
+export default memo(EditForm);

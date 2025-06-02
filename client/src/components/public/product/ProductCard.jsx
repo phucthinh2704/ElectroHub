@@ -14,7 +14,7 @@ const ProductCard = ({ data, isNew, normal }) => {
 
 	return (
 		<div
-			className="w-full text-base border-2 border-gray-300 p-4 rounded-2xl "
+			className="w-full h-full text-base border-2 border-gray-300 p-4 rounded-xl "
 			onMouseEnter={() => setIsShowOptions(true)}
 			onMouseLeave={() => setIsShowOptions(false)}>
 			<Link
@@ -59,13 +59,12 @@ const ProductCard = ({ data, isNew, normal }) => {
 					</span>
 
 					<div>
-						{data.originalPrice &&
-							data.originalPrice > data.price && (
+						{data.originalPrice && (
 								<p className="text-gray-400 text-xs line-through">
 									{formatMoney(data.originalPrice)} VND
 								</p>
 							)}
-						<div className="flex justify-between items-center">
+						<div className="flex justify-between items-center mt-auto">
 							<p className="text-main font-semibold">
 								{formatMoney(data.price)} VND
 							</p>

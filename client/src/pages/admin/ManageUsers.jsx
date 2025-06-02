@@ -175,7 +175,7 @@ const ManageUsers = () => {
 	);
 
 	return (
-		<div className="p-6 bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen">
+		<div className="p-5 bg-slate-100 min-h-screen">
 			{/* Header */}
 			<div className="mb-8">
 				<div className="flex items-center justify-between mb-6">
@@ -282,7 +282,7 @@ const ManageUsers = () => {
 											e.target.value
 										)
 									}
-									className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+									className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
 								/>
 							</div>
 						</div>
@@ -293,7 +293,7 @@ const ManageUsers = () => {
 							onChange={(e) =>
 								handleFilterChange("role", e.target.value)
 							}
-							className="px-4 py-3 border uppercase border-slate-200 rounded-xl hover:shadow-lg focus:outline-none cursor-pointer focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white">
+							className="px-4 py-3 border uppercase border-slate-300 rounded-xl hover:shadow-lg focus:outline-none cursor-pointer focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white">
 							<option value="all">All Roles</option>
 							<option value="admin">Admin</option>
 							<option value="moderator">Moderator</option>
@@ -463,8 +463,8 @@ const ManageUsers = () => {
 					<div>
 						{users.length > 0 && (
 							<div className="text-sm text-gray-500">
-								Showing {users.length} user
-								{users.length !== 1 ? "s" : ""}
+								Showing {filteredUsers.length} user
+								{filteredUsers.length !== 1 ? "s" : ""}
 							</div>
 						)}
 						<div className="text-sm text-slate-600">

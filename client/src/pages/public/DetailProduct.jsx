@@ -1,3 +1,4 @@
+import DOMPurify from "dompurify";
 import {
 	Heart,
 	Loader2,
@@ -8,9 +9,10 @@ import {
 	Truck,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
+import { useParams } from "react-router-dom";
+import Slider from "react-slick";
 import { apiGetProductById } from "../../apis";
 import {
 	Breadcrumbs,
@@ -18,9 +20,8 @@ import {
 	OthersProduct,
 	RatingsReview,
 } from "../../components";
-import renderRatingStar from "../../utils/renderRatingStar";
 import formatMoney from "../../utils/formatMoney";
-import Slider from "react-slick";
+import renderRatingStar from "../../utils/renderRatingStar";
 import settings from "../../utils/settingsSlider";
 
 const DetailProduct = () => {
@@ -102,7 +103,7 @@ const DetailProduct = () => {
 														] || product.thumb
 													}
 													alt={product.title}
-													className="h-[500px] object-contain display-block mx-auto"
+													className="h-[560px] object-cover display-block mx-auto"
 												/>
 											</Zoom>
 										) : (
@@ -206,10 +207,10 @@ const DetailProduct = () => {
 
 									{/* Product Description */}
 									<div className="border-t border-b border-gray-200 py-4 my-4">
-										<h3 className="text-lg font-semibold mb-2">
+										<h3 className="text-2xl font-semibold mb-2">
 											Description
 										</h3>
-										<ul className="space-y-1 text-gray-600">
+										<ul className="space-y-1 text-gray-600 overflow-y-auto max-h-80">
 											{Array.isArray(
 												product.description
 											) ? (
@@ -221,7 +222,13 @@ const DetailProduct = () => {
 															<span className="mr-2 mt-1 text-blue-500">
 																•
 															</span>
-															<span>{desc}</span>
+															<span
+																dangerouslySetInnerHTML={{
+																	__html: DOMPurify.sanitize(
+																		desc
+																	),
+																}}
+															/>
 														</li>
 													)
 												)

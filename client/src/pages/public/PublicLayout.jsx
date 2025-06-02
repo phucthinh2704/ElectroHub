@@ -7,7 +7,6 @@ import { apiGetCurrent, apiLogout } from "../../apis";
 import { Footer, Header, Navigation, TopHeader } from "../../components";
 import { logout } from "../../store/user/userSlice";
 import path from "../../utils/path";
-import { toast } from "react-toastify";
 
 const PublicLayout = () => {
 	const location = useLocation();
@@ -33,10 +32,9 @@ const PublicLayout = () => {
 								cancelButtonText: "Cancel",
 							}).then(async (result) => {
 								const response = await apiLogout();
-								if (!response.success) {
-									return toast.error(response.message);
+								if (response.success) {
+									dispatch(logout());
 								}
-								dispatch(logout());
 								if (result.isConfirmed) {
 									scrollTo(0, 0);
 									navigate(`/${path.LOGIN}`);

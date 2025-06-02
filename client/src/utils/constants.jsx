@@ -10,6 +10,7 @@ import {
 	ContactRound,
 	CirclePlus,
 	Settings,
+	HomeIcon,
 } from "lucide-react";
 
 export const navigation = [
@@ -102,6 +103,13 @@ export const adminSidebar = [
 				icon: <Settings size={20}/>
 			},
 		],
+	},
+	{
+		id: 5,
+		type: "SINGLE",
+		text: "HOME PAGE",
+		icon: <HomeIcon size={20} />,
+		path: `/${path.HOME}`,
 	},
 ];
 

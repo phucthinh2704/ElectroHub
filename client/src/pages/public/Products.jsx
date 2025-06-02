@@ -341,7 +341,7 @@ const Products = () => {
 							{sortProducts().map((product) => (
 								<div
 									key={product._id}
-									className="transition-all duration-300 hover:shadow-md rounded-lg">
+									className="transition-all duration-300 hover:shadow-lg rounded-xl">
 									<ProductCard
 										data={product}
 										normal
