@@ -3,8 +3,7 @@ import {
 	Filter,
 	Grid2x2,
 	Grid3x3,
-	Loader2,
-	X,
+	Loader2
 } from "lucide-react";
 import React, { memo, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";

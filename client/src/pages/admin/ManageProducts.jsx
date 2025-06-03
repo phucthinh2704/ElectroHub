@@ -1,15 +1,14 @@
 import {
-	Plus,
-	Search,
-	Edit3,
-	Trash2,
-	Package,
-	Eye,
-	Star,
-	ShoppingCart,
-	Box,
 	AlertTriangle,
 	CheckCircle,
+	Edit3,
+	Eye,
+	Package,
+	Plus,
+	Search,
+	ShoppingCart,
+	Star,
+	Trash2,
 } from "lucide-react";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
@@ -18,10 +17,11 @@ import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 // import { apiGetAllProducts, apiDeleteProduct, apiUpdateProduct } from "../../apis/product";
 // import EditProductForm from "../../components/admin/form/EditProductForm";
-import Pagination from "../../components/public/pagination/Pagination";
 import { apiDeleteProduct, apiGetProducts } from "../../apis/product";
+import Pagination from "../../components/public/pagination/Pagination";
 import formatMoney from "../../utils/formatMoney";
 import path from "../../utils/path";
+import { EditProductForm } from "../../components";
 
 const ManageProducts = () => {
 	const [products, setProducts] = useState([]);
@@ -30,9 +30,11 @@ const ManageProducts = () => {
 	const [filterCategory, setFilterCategory] = useState("all");
 	const [filterBrand, setFilterBrand] = useState("all");
 	const [filterStock, setFilterStock] = useState("all");
+	const [sortOption, setSortOption] = useState("newest");
 	const [currentPage, setCurrentPage] = useState(1);
 	const [showEditForm, setShowEditForm] = useState(false);
 	const [selectedProductId, setSelectedProductId] = useState(null);
+	const [brands, setBrands] = useState([]);
 	const [productsPerPage] = useState(5);
 
 	const navigate = useNavigate();
@@ -53,8 +55,48 @@ const ManageProducts = () => {
 		setCurrentPage(Number(page));
 	}, []);
 
+	useEffect(() => {
+		// Get unique brands based on current products
+		const uniqueBrands = [...new Set(products.map((p) => p.brand))];
+		setBrands(uniqueBrands);
+	}, [products]);
+
+	const sortProducts = () => {
+		let sortedProducts = [...products];
+
+		switch (sortOption) {
+			case "best-seller":
+				sortedProducts.sort((a, b) => b.sold - a.sold);
+				break;
+			case "price-asc":
+				sortedProducts.sort((a, b) => a.price - b.price);
+				break;
+			case "price-desc":
+				sortedProducts.sort((a, b) => b.price - a.price);
+				break;
+			case "stock-asc":
+				sortedProducts.sort((a, b) => a.stock - b.stock);
+				break;
+			case "stock-desc":
+				sortedProducts.sort((a, b) => b.stock - a.stock);
+				break;
+			case "rating-asc":
+				sortedProducts.sort((a, b) => a.totalRatings - b.totalRatings);
+				break;
+			case "rating-desc":
+				sortedProducts.sort((a, b) => b.totalRatings - a.totalRatings);
+				break;
+			default:
+				// newest first (default)
+				sortedProducts.sort(
+					(a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+				);
+		}
+		return sortedProducts;
+	};
+
 	// Filter products based on search and filters
-	const filteredProducts = products.filter((product) => {
+	const filteredProducts = sortProducts().filter((product) => {
 		const matchesSearch =
 			product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
 			product.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -178,11 +220,13 @@ const ManageProducts = () => {
 			case "camera":
 				return "bg-purple-100 text-purple-800 border-purple-200";
 			case "accessories":
-				return "bg-yellow-100 text-yellow-800 border-yellow-200";
+				return "bg-amber-100 text-amber-800 border-amber-200";
 			case "laptop":
 				return "bg-red-100 text-red-800 border-red-200";
 			case "tablet":
 				return "bg-green-100 text-green-800 border-green-200";
+			case "speaker":
+				return "bg-cyan-100 text-cyan-800 border-cyan-200";
 			default:
 				return "bg-gray-100 text-gray-800 border-gray-200";
 		}
@@ -202,15 +246,14 @@ const ManageProducts = () => {
 
 	// Get unique categories and brands for filters
 	const categories = [...new Set(products.map((p) => p.category))];
-	const brands = [...new Set(products.map((p) => p.brand))];
 
 	return (
-		<div className="p-5 bg-slate-100 min-h-screen">
+		<div className="p-4 bg-slate-100 min-h-screen">
 			{/* Header */}
-			<div className="mb-8">
+			<div className="mb-6">
 				<div className="flex items-center justify-between mb-6">
 					<div>
-						<h1 className="text-3xl font-bold text-slate-800 mb-2">
+						<h1 className="text-3xl font-bold text-slate-800 mb-2 uppercase">
 							Manage Products
 						</h1>
 						<p className="text-slate-600">
@@ -226,7 +269,7 @@ const ManageProducts = () => {
 				</div>
 
 				{/* Stats Cards */}
-				<div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+				<div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
 					<div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
 						<div className="flex items-center justify-between">
 							<div>
@@ -322,13 +365,72 @@ const ManageProducts = () => {
 							</div>
 						</div>
 
+						{/* SORT */}
+						<select
+							onChange={(e) => {
+								setSortOption(e.target.value);
+								const params = new URLSearchParams(
+									window.location.search
+								);
+								params.set("page", 1);
+								setCurrentPage(1);
+								navigate({
+									pathname: window.location.pathname,
+									search: params.toString(),
+								});
+							}}
+							className="p-2 border border-slate-300 rounded-xl hover:shadow-lg focus:outline-none cursor-pointer focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white uppercase">
+							<option value="newest">Newest</option>
+							<option value="best-seller">Best Seller</option>
+							<option value="price-asc">
+								Price: Low to High
+							</option>
+							<option value="price-desc">
+								Price: High to Low
+							</option>
+							<option value="stock-asc">
+								Stock: Low to High
+							</option>
+							<option value="stock-desc">
+								Stock: High to Low
+							</option>
+							<option value="rating-asc">
+								Rating: Low to High
+							</option>
+							<option value="rating-desc">
+								Rating: High to Low
+							</option>
+						</select>
 						{/* Category Filter */}
 						<select
 							value={filterCategory}
-							onChange={(e) =>
-								handleFilterChange("category", e.target.value)
-							}
-							className="p-3 border border-slate-300 rounded-xl hover:shadow-lg focus:outline-none cursor-pointer focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white">
+							onChange={(e) => {
+								const newCategory = e.target.value;
+								handleFilterChange("category", newCategory);
+
+								const filterBrands =
+									newCategory !== "all"
+										? [
+												...new Set(
+													products
+														.filter(
+															(p) =>
+																p.category ===
+																newCategory
+														)
+														.map((p) => p.brand)
+												),
+										  ]
+										: [
+												...new Set(
+													products.map((p) => p.brand)
+												),
+										  ];
+								setBrands(filterBrands);
+								// Reset brand filter when category changes
+								setFilterBrand("all");
+							}}
+							className="p-3 border border-slate-300 rounded-xl hover:shadow-lg focus:outline-none cursor-pointer focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white uppercase">
 							<option value="all">All Categories</option>
 							{categories.map((category) => (
 								<option
@@ -345,7 +447,7 @@ const ManageProducts = () => {
 							onChange={(e) =>
 								handleFilterChange("brand", e.target.value)
 							}
-							className="p-3 border border-slate-300 rounded-xl hover:shadow-lg focus:outline-none cursor-pointer focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white">
+							className="p-3 border border-slate-300 rounded-xl hover:shadow-lg focus:outline-none cursor-pointer focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white uppercase">
 							<option value="all">All Brands</option>
 							{brands.map((brand) => (
 								<option
@@ -362,7 +464,7 @@ const ManageProducts = () => {
 							onChange={(e) =>
 								handleFilterChange("stock", e.target.value)
 							}
-							className="p-3 border border-slate-300 rounded-xl focus:ring-2 hover:shadow-lg focus:outline-none cursor-pointer focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white">
+							className="p-3 border border-slate-300 rounded-xl focus:ring-2 hover:shadow-lg focus:outline-none cursor-pointer focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white uppercase">
 							<option value="all">All Stock Status</option>
 							<option value="in-stock">In Stock</option>
 							<option value="low-stock">Low Stock</option>
@@ -586,8 +688,15 @@ const ManageProducts = () => {
 
 			{/* Edit Product Form */}
 			{showEditForm && (
-				<div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-					{/* <EditProductForm
+				<div
+					className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+					onClick={(e) => {
+						if (e.target === e.currentTarget) {
+							setShowEditForm(false);
+							setSelectedProductId(null);
+						}
+					}}>
+					<EditProductForm
 						products={products}
 						setProducts={setProducts}
 						selectedProductId={selectedProductId}
@@ -595,8 +704,8 @@ const ManageProducts = () => {
 							setShowEditForm(false);
 							setSelectedProductId(null);
 						}}
-					/> */}
-					<div className="bg-white rounded-xl p-6 w-full max-w-md">
+					/>
+					{/* <div className="bg-white rounded-xl p-6 w-full max-w-md">
 						<h2 className="text-xl font-semibold mb-4">
 							Edit Product
 						</h2>
@@ -616,7 +725,7 @@ const ManageProducts = () => {
 								Save
 							</button>
 						</div>
-					</div>
+					</div> */}
 				</div>
 			)}
 		</div>

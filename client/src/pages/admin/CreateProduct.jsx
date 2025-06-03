@@ -72,7 +72,7 @@ const CreateProduct = () => {
 	}, [watch("thumb")]);
 
 	useEffect(() => {
-		if (watch("images")) {
+		if (watch("images") && watch("images").length > 0) {
 			handlePreviewMultipleImage(watch("images"));
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -187,14 +187,14 @@ const CreateProduct = () => {
 				</div>
 			</div>
 
-			<div className="max-w-6xl mx-auto px-4 py-6">
+			<div className="max-w-6xl mx-auto py-4">
 				<div className="space-y-8">
 					{/* Basic Information Card */}
 					<div className="bg-white/70 backdrop-blur-sm rounded-3xl shadow-xl border border-gray-200/50 overflow-hidden">
 						<div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 px-8 py-6 border-b border-gray-200/50">
-							<h2 className="text-xl font-semibold text-gray-800 flex items-center">
+							<h2 className="text-2xl font-semibold text-gray-800 flex items-center">
 								<svg
-									className="w-5 h-5 mr-3 text-blue-600"
+									className="w-7 h-7 mr-3 text-blue-600"
 									fill="none"
 									stroke="currentColor"
 									viewBox="0 0 24 24">
@@ -624,15 +624,6 @@ const CreateProduct = () => {
 											}
 											if (files.length > 5) {
 												return "You can upload a maximum of 5 product images";
-											}
-											for (let file of files) {
-												if (
-													!file.type.startsWith(
-														"image/"
-													)
-												) {
-													return "All files must be images";
-												}
 											}
 											return true;
 										},

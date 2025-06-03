@@ -18,7 +18,7 @@ const Header = () => {
 				/>
 			</Link>
 			<div className="flex text-[13px]">
-				<div className="flex flex-col gap-1 items-center border-r border-gray-300 px-5 py-2">
+				<div className="flex flex-col gap-1 justify-center items-center border-r border-gray-300 px-5 py-2">
 					<p className="flex items-center gap-2 font-semibold">
 						<Phone
 							size={16}
@@ -33,7 +33,7 @@ const Header = () => {
 					</p>
 				</div>
 				<div
-					className={`flex flex-col gap-1 items-center px-4 py-2  ${
+					className={`flex flex-col gap-1 items-center justify-center px-4 py-2  ${
 						current ? "-mr-0 border-r border-gray-300" : "-mr-6"
 					}`}>
 					<p className="flex items-center gap-2 font-semibold">
@@ -53,9 +53,9 @@ const Header = () => {
 				</div>
 				{current && (
 					<>
-						<div className="flex flex-col gap-1 items-center border-r border-gray-300 px-6 py-2">
+						<div className="flex flex-col gap-1 items-center justify-center border-r border-gray-300 px-6 py-2">
 							<ShoppingCart
-								size={16}
+								size={20}
 								className="text-red-500"
 								strokeWidth={2}
 							/>
@@ -69,14 +69,14 @@ const Header = () => {
 									? `/${path.MEMBER}/${path.PERSONAL}`
 									: `/${path.LOGIN}`
 							}
-							className="flex flex-col gap-1 items-center px-6 py-2">
+							className="flex flex-col gap-1 items-center justify-center px-6 py-2">
 							<User
-								size={16}
+								size={20}
 								className="text-red-500"
 								strokeWidth={2}
 							/>
 							<p className="text-xs text-gray-500 hover:text-blue-500 cursor-pointer">
-								My Profile
+								{current?.role === "admin" ? "Admin Panel" : "My Profile"}
 							</p>
 						</Link>
 					</>

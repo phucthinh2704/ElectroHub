@@ -4,7 +4,7 @@ import React, { memo, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { apiUpdateUser } from "../../../apis/user";
 
-const EditForm = ({ users, setUsers, selectedUserId, onClose }) => {
+const EditUserForm = ({ users, setUsers, selectedUserId, onClose }) => {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [submitMessage, setSubmitMessage] = useState("");
 
@@ -107,7 +107,7 @@ const EditForm = ({ users, setUsers, selectedUserId, onClose }) => {
 			</button>
 
 			<div className="mb-6">
-				<h1 className="text-2xl font-bold text-gray-800 mb-2">
+				<h1 className="text-2xl font-bold text-gray-800 mb-2 uppercase">
 					Edit User Information
 				</h1>
 				<p className="text-gray-600">
@@ -379,4 +379,4 @@ const EditForm = ({ users, setUsers, selectedUserId, onClose }) => {
 	);
 };
 
-export default memo(EditForm);
+export default memo(EditUserForm);

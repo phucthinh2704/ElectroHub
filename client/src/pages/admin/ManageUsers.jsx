@@ -1,8 +1,12 @@
 import {
+	ShieldUser,
+	UserCheck,
+	UserLock,
 	UserPlus,
 	UserRoundPen,
 	UserRoundSearch,
 	UserRoundX,
+	Users,
 } from "lucide-react";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
@@ -10,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import { apiBlockUser, apiDeleteUser, apiGetAllUsers } from "../../apis/user";
-import EditForm from "../../components/admin/form/EditForm ";
+import EditUserForm from "../../components/admin/form/EditUserForm";
 import Pagination from "../../components/public/pagination/Pagination";
 
 const ManageUsers = () => {
@@ -69,7 +73,7 @@ const ManageUsers = () => {
 		}
 		const params = new URLSearchParams(window.location.search);
 		params.set("page", 1);
-		setCurrentPage(1); // Reset to first page on filter change
+		setCurrentPage(1);
 		navigate({
 			pathname: window.location.pathname,
 			search: params.toString(),
@@ -175,12 +179,12 @@ const ManageUsers = () => {
 	);
 
 	return (
-		<div className="p-5 bg-slate-100 min-h-screen">
+		<div className="p-4 bg-slate-100 min-h-screen">
 			{/* Header */}
-			<div className="mb-8">
+			<div className="mb-6">
 				<div className="flex items-center justify-between mb-6">
 					<div>
-						<h1 className="text-3xl font-bold text-slate-800 mb-2">
+						<h1 className="text-3xl font-bold text-slate-800 mb-2 uppercase">
 							Manage Users
 						</h1>
 						<p className="text-slate-600">
@@ -194,7 +198,7 @@ const ManageUsers = () => {
 				</div>
 
 				{/* Stats Cards */}
-				<div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+				<div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
 					<div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
 						<div className="flex items-center justify-between">
 							<div>
@@ -206,7 +210,10 @@ const ManageUsers = () => {
 								</p>
 							</div>
 							<div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-								<div className="w-6 h-6 bg-blue-600 rounded-full"></div>
+								<Users
+									color="blue"
+									size={28}
+								/>
 							</div>
 						</div>
 					</div>
@@ -222,7 +229,10 @@ const ManageUsers = () => {
 								</p>
 							</div>
 							<div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-								<div className="w-6 h-6 bg-green-600 rounded-full"></div>
+								<UserCheck
+									color="green"
+									size={28}
+								/>
 							</div>
 						</div>
 					</div>
@@ -238,7 +248,10 @@ const ManageUsers = () => {
 								</p>
 							</div>
 							<div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
-								<div className="w-6 h-6 bg-red-600 rounded-full"></div>
+								<UserLock
+									color="red"
+									size={28}
+								/>
 							</div>
 						</div>
 					</div>
@@ -257,7 +270,11 @@ const ManageUsers = () => {
 								</p>
 							</div>
 							<div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-								<div className="w-6 h-6 bg-purple-600 rounded-full"></div>
+								{/* <div className="w-6 h-6 bg-purple-600 rounded-full"></div> */}
+								<ShieldUser
+									color="purple"
+									size={28}
+								/>
 							</div>
 						</div>
 					</div>
@@ -543,8 +560,15 @@ const ManageUsers = () => {
 			)}
 			{/* Edit User Form */}
 			{showEditForm && (
-				<div className="fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center z-50">
-					<EditForm
+				<div
+					className="fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center z-50"
+					onClick={(e) => {
+						if (e.target === e.currentTarget) {
+							setShowEditForm(false);
+							setSelectedUserId(null);
+						}
+					}}>
+					<EditUserForm
 						users={users}
 						setUsers={setUsers}
 						selectedUserId={selectedUserId}
