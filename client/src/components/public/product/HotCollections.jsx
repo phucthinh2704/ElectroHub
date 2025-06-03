@@ -24,7 +24,7 @@ const HotCollections = ({ categories }) => {
 					<div
 						key={category._id}
 						className="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-gray-200">
-						<div className="p-4 flex flex-col items-center">
+						<div className="p-4 flex flex-col items-center justify-between h-full">
 							{/* Image with hover effect */}
 							<div className="w-full overflow-hidden mb-4 rounded-md flex justify-center items-center">
 								<img

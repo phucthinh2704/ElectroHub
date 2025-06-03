@@ -270,15 +270,15 @@ const EditProductForm = ({
 									},
 								})}
 								className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-									errors.name
+									errors.title
 										? "border-red-600"
 										: "border-gray-300"
 								}`}
 								placeholder="Enter product name"
 							/>
-							{errors.name && (
+							{errors.title && (
 								<p className="text-red-500 text-sm mt-1">
-									{errors.name.message}
+									{errors.title.message}
 								</p>
 							)}
 						</div>
