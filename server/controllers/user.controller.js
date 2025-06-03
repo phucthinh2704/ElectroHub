@@ -422,8 +422,13 @@ const deleteUser = asyncHandler(async (req, res) => {
 	const { id } = req.params;
 	if (!id) throw new Error("Missing id");
 
-	const user = await User.findByIdAndDelete(id);
+	const user = await User.findById(id);
 	if (!user) throw new Error("User not found");
+
+	if (user.role === "admin") {
+		throw new Error("Cannot delete admin user");
+	}
+	await User.findByIdAndDelete(id);
 
 	return res.status(200).json({
 		success: true,
