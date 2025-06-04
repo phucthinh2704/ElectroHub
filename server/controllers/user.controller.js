@@ -92,12 +92,6 @@ const register = asyncHandler(async (req, res) => {
             
             <p style="font-weight: 500; margin-bottom: 5px; color: #333;">Best regards,</p>
             <p>The Electro Hub Team</p>
-            
-            <div style="margin-top: 15px;">
-                <a href="#" style="display: inline-block; width: 32px; height: 32px; background-color: #4776E6; border-radius: 50%; margin: 0 5px; color: white; line-height: 32px; text-align: center; font-size: 16px; text-decoration: none;">f</a>
-                <a href="#" style="display: inline-block; width: 32px; height: 32px; background-color: #4776E6; border-radius: 50%; margin: 0 5px; color: white; line-height: 32px; text-align: center; font-size: 16px; text-decoration: none;">in</a>
-                <a href="#" style="display: inline-block; width: 32px; height: 32px; background-color: #4776E6; border-radius: 50%; margin: 0 5px; color: white; line-height: 32px; text-align: center; font-size: 16px; text-decoration: none;">t</a>
-            </div>
         </div>
         
         <div style="background-color: #f8f9fa; padding: 20px; text-align: center; font-size: 13px; color: #666;">
@@ -161,8 +155,10 @@ const login = asyncHandler(async (req, res) => {
 	if (!isMatch)
 		throw new Error("The password that you've entered is incorrect.");
 
-	if( user.isBlocked) {
-		throw new Error("Your account has been blocked. Please contact support.");
+	if (user.isBlocked) {
+		throw new Error(
+			"Your account has been blocked. Please contact support."
+		);
 	}
 
 	// Chuyển về Object thuần và loại bỏ các trường không cần thiết
@@ -298,6 +294,11 @@ const forgotPassword = asyncHandler(async (req, res) => {
             </p>
             
             <p style="font-size: 16px; margin-bottom: 25px; color: #5f6368;">If you didn't request a password reset, please ignore this email or contact support if you have any questions.</p>
+
+				<div style="height: 1px; background-color: #eaeaea; margin: 25px 0;"></div>
+					 
+				 <p style="font-weight: 500; margin-bottom: 5px; color: #333;">Best regards,</p>
+				 <p>The Electro Hub Team</p>
         </div>
         
         <div style="background-color: #f8f9fa; padding: 20px; text-align: center; font-size: 13px; color: #666;">

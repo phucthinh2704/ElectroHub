@@ -123,10 +123,19 @@ const getAllProducts = asyncHandler(async (req, res) => {
 });
 
 const updateProduct = asyncHandler(async (req, res) => {
-	const { pid } = req.params;
+	const { id } = req.params;
 	if (!req.body) throw new Error("Please fill all the fields");
+
+	const files = req.files;
+	if (files) {
+		const thumb = files.thumb ? files.thumb[0].path : undefined;
+		const images = files.images ? files.images.map((file) => file.path) : [];
+		if (thumb) req.body.thumb = thumb;
+		if (images.length > 0) req.body.images = images;
+	}
 	if (req.body.title) req.body.slug = slugify(req.body.title);
-	const updatedProduct = await Product.findByIdAndUpdate(pid, req.body, {
+
+	const updatedProduct = await Product.findByIdAndUpdate(id, req.body, {
 		new: true,
 	});
 	if (!updatedProduct) throw new Error("Product not found");
