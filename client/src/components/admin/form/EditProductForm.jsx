@@ -8,12 +8,13 @@ import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import toBase64 from "../../../utils/toBase64";
-// import { apiUpdateProduct } from "../../../apis/product";
+import { apiUpdateProduct } from "../../../apis";
+import formatDescription from "../../../utils/formatDescription";
 
 const EditProductForm = ({
 	products,
-	setProducts,
 	selectedProductId,
+	fetchProducts,
 	onClose,
 }) => {
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -22,7 +23,7 @@ const EditProductForm = ({
 		const selectedProduct = products.find(
 			(product) => product._id === selectedProductId
 		);
-		return selectedProduct ? selectedProduct.description.join(". ") : "";
+		return formatDescription(selectedProduct?.description);
 	});
 	const [previewImage, setPreviewImage] = useState(() => {
 		const selectedProduct = products.find(
@@ -54,7 +55,13 @@ const EditProductForm = ({
 			color: selectedProduct.color || "",
 			category: selectedProduct.category || "",
 			brand: selectedProduct.brand || "",
-			description: selectedProduct.description.join(". ") || "",
+			description: (() => {
+				if (!selectedProduct?.description) return "";
+				if (Array.isArray(selectedProduct.description)) {
+					return selectedProduct.description.join(". ");
+				}
+				return selectedProduct.description;
+			})(),
 			thumb: selectedProduct.thumb || "",
 			images: selectedProduct.images || [],
 		}),
@@ -139,12 +146,12 @@ const EditProductForm = ({
 				...prev,
 				images: [],
 			}));
-		} 
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [watch("images")]);
 
 	const onSubmit = (data) => {
-		console.log(data);
+		// console.log({ data, description: description.split(". "), previewImage });
 		if (
 			!description ||
 			description.trim() === "" ||
@@ -157,52 +164,54 @@ const EditProductForm = ({
 		setSubmitMessage("");
 		const formData = new FormData();
 
-		formData.append("title", data.title);
-		formData.append("originalPrice", parseInt(data.originalPrice));
-		formData.append("price", parseInt(data.originalPrice));
-		formData.append("stock", parseInt(data.stock));
-		formData.append("category", data.category);
-		formData.append("brand", data.brand);
-		formData.append("description", description);
-		formData.append("color", data.color);
+		console.log(data);
+		for (const key in data) {
+			if (data[key] !== initialData[key]) {
+				formData.append(key, data[key]);
+			}
+		}
 
-		if (data.thumb) {
+		formData.append("price", parseInt(data.originalPrice)); // Assuming price is the same as originalPrice
+		if (description !== initialData.description) {
+			formData.append("description", [description]); // Chuyển đổi mô tả thành mảng
+		}
+		// formData.append("title", data.title);
+		// formData.append("originalPrice", parseInt(data.originalPrice));
+		// formData.append("stock", parseInt(data.stock));
+		// formData.append("category", data.category);
+		// formData.append("brand", data.brand);
+		// formData.append("color", data.color);
+		formData.delete("thumb");
+		formData.delete("images"); // Xóa các trường thumb và images nếu đã tồn tại
+		if (data.thumb instanceof FileList && data.thumb.length > 0) {
 			formData.append("thumb", data.thumb[0]);
 		}
 
-		if (data.images) {
+		if (data.images instanceof FileList && data.images.length > 0) {
 			for (let image of data.images) formData.append("images", image);
 		}
-		// 		setIsSubmitting(true);
-		// 		try {
-		// 			setTimeout(async () => {
-		// 				const response = await apiUpdateProduct(selectedProductId, data);
-		// 				if (response.success) {
-		// 					// Cập nhật product trong danh sách
-		// 					const updatedProducts = products.map((product) =>
-		// 						product._id === selectedProductId
-		// 							? {
-		// 									...product,
-		// 									...data,
-		// 									updatedAt: new Date().toISOString(),
-		// 							  }
-		// 							: product
-		// 					);
-		// 					setProducts(updatedProducts);
-		// 					setSubmitMessage("Product information updated successfully!");
-		// 				} else {
-		// 					setSubmitMessage("Failed to update product information!");
-		// 				}
-		// 				setIsSubmitting(false);
-		// 			}, 1000);
-		//
-		// 			// Reset dirty state sau khi submit thành công
-		// 			reset(data);
-		// 		} catch (error) {
-		// 			console.log("An error occurred while updating the product:", error);
-		// 			setSubmitMessage("An error occurred while updating the product!");
-		// 			setIsSubmitting(false);
-		// 		}
+		setIsSubmitting(true);
+		try {
+			setTimeout(async () => {
+				const response = await apiUpdateProduct(
+					selectedProductId,
+					formData
+				);
+				if (response.success) {
+					fetchProducts(); // Cập nhật lại danh sách sản phẩm từ server
+					setSubmitMessage(
+						"Product information updated successfully!"
+					);
+				} else {
+					setSubmitMessage("Failed to update product information!");
+				}
+				setIsSubmitting(false);
+			}, 200);
+		} catch (error) {
+			console.log("An error occurred while updating the product:", error);
+			setSubmitMessage("An error occurred while updating the product!");
+			setIsSubmitting(false);
+		}
 	};
 
 	// Hàm reset form về dữ liệu ban đầu
@@ -212,18 +221,21 @@ const EditProductForm = ({
 			thumb: initialData.thumb,
 			images: [...initialData.images],
 		});
-		setDescription(initialData.description);
+		// Sửa phần set description
+		const resetDescription = (() => {
+			if (!selectedProduct?.description) return "";
+			if (Array.isArray(selectedProduct.description)) {
+				return selectedProduct.description.join(". ");
+			}
+			return selectedProduct.description;
+		})();
+
+		setDescription(resetDescription);
 		setSubmitMessage("");
 		setErrorsImage({
 			thumb: null,
 			images: null,
 		});
-	};
-
-	const handleFileUpload = (fieldName, files) => {
-		// Placeholder cho file upload logic
-		console.log(`Uploading files for ${fieldName}:`, files);
-		// setValue(fieldName, files);
 	};
 
 	return (
@@ -318,7 +330,7 @@ const EditProductForm = ({
 								</label>
 								<input
 									type="number"
-									step="0.01"
+									step="1000"
 									{...register("originalPrice", {
 										required: "Please enter original price",
 										min: {
@@ -373,6 +385,12 @@ const EditProductForm = ({
 									{...register("category", {
 										required: "Please select a category",
 									})}
+									onChange={(e) => {
+										setValue("category", e.target.value);
+										// Reset brand when category changes
+										setValue("brand", "");
+									}}
+									value={watchedValues.category || ""}
 									className={`w-full px-3 py-2 border rounded-md uppercase focus:outline-none focus:ring-2 focus:ring-blue-500 ${
 										errors.category
 											? "border-red-600"
@@ -402,11 +420,12 @@ const EditProductForm = ({
 										required: "Please select a brand",
 									})}
 									value={watchedValues.brand || ""}
-									className={`w-full px-3 py-2 border uppercase rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+									className={`w-full px-3 py-2 border uppercase rounded-md outline-none ${
 										errors.brand
 											? "border-red-600"
-											: "border-gray-300"
+											: "border-gray-300 focus:ring-2 focus:ring-blue-500"
 									}`}>
+									<option value="">Select a brand</option>
 									{categories
 										.find(
 											(category) =>
@@ -466,15 +485,6 @@ const EditProductForm = ({
 									{errorsImage.thumb}
 								</div>
 							)}
-							{/* <input
-								id="thumb"
-								type="file"
-								accept="image/*"
-								className="hidden"
-								onChange={(e) =>
-									handleFileUpload("thumb", e.target.files)
-								}
-							/> */}
 							<div>
 								{previewImage.thumb && (
 									<img
@@ -515,15 +525,6 @@ const EditProductForm = ({
 									{errorsImage.images}
 								</div>
 							)}
-							{/* <input
-								id="thumb"
-								type="file"
-								accept="image/*"
-								className="hidden"
-								onChange={(e) =>
-									handleFileUpload("thumb", e.target.files)
-								}
-							/> */}
 							<div className="mt-2 flex items-center gap-2">
 								{previewImage.images.map((image, index) => (
 									<Zoom key={index}>

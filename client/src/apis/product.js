@@ -12,6 +12,12 @@ export const apiCreateProduct = async (data) =>
 		url: `/product/`,
 		data,
 	});
+export const apiUpdateProduct = async (id, data) =>
+	axios({
+		method: "PUT",
+		url: `/product/${id}`,
+		data,
+	});
 
 export const apiGetProductById = async ({ pid }) =>
 	axios({

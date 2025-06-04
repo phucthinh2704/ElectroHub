@@ -68,7 +68,7 @@ const EditUserForm = ({ users, setUsers, selectedUserId, onClose }) => {
 					setSubmitMessage("Failed to update user information!");
 				}
 				setIsSubmitting(false);
-			}, 1000);
+			}, 500);
 
 			// Reset dirty state sau khi submit thành công
 			reset(data);
@@ -124,109 +124,111 @@ const EditUserForm = ({ users, setUsers, selectedUserId, onClose }) => {
 					</h2>
 
 					<div className="space-y-4">
-						<div>
-							<label className="block text-sm font-medium text-gray-700 mb-1">
-								Full Name *
-							</label>
-							<input
-								{...register("name", {
-									required: "Please enter full name",
-									minLength: {
-										value: 2,
-										message:
-											"Full name must be at least 2 characters",
-									},
-								})}
-								className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-									errors.name
-										? "border-red-600"
-										: "border-gray-300"
-								}`}
-								placeholder="Enter full name"
-							/>
-							{errors.name && (
-								<p className="text-red-500 text-sm mt-1">
-									{errors.name.message}
-								</p>
-							)}
-						</div>
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+							<div>
+								<label className="block text-sm font-medium text-gray-700 mb-1">
+									Full Name *
+								</label>
+								<input
+									{...register("name", {
+										required: "Please enter full name",
+										minLength: {
+											value: 2,
+											message:
+												"Full name must be at least 2 characters",
+										},
+									})}
+									className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+										errors.name
+											? "border-red-600"
+											: "border-gray-300"
+									}`}
+									placeholder="Enter full name"
+								/>
+								{errors.name && (
+									<p className="text-red-500 text-sm mt-1">
+										{errors.name.message}
+									</p>
+								)}
+							</div>
 
-						<div>
-							<label className="block text-sm font-medium text-gray-700 mb-1">
-								Email *
-							</label>
-							<input
-								type="email"
-								{...register("email", {
-									required: "Please enter email",
-									pattern: {
-										value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-										message: "Invalid email format",
-									},
-								})}
-								className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-									errors.email
-										? "border-red-600"
-										: "border-gray-300"
-								}`}
-								placeholder="Enter email address"
-							/>
-							{errors.email && (
-								<p className="text-red-500 text-sm mt-1">
-									{errors.email.message}
-								</p>
-							)}
+							<div>
+								<label className="block text-sm font-medium text-gray-700 mb-1">
+									Email *
+								</label>
+								<input
+									type="email"
+									{...register("email", {
+										required: "Please enter email",
+										pattern: {
+											value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+											message: "Invalid email format",
+										},
+									})}
+									className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+										errors.email
+											? "border-red-600"
+											: "border-gray-300"
+									}`}
+									placeholder="Enter email address"
+								/>
+								{errors.email && (
+									<p className="text-red-500 text-sm mt-1">
+										{errors.email.message}
+									</p>
+								)}
+							</div>
 						</div>
-
-						<div>
-							<label className="block text-sm font-medium text-gray-700 mb-1">
-								Phone Number
-							</label>
-							<input
-								{...register("mobile", {
-									required: "Please enter phone number",
-									pattern: {
-										value: /^[0-9]{10,11}$/,
-										message:
-											"Phone number must be 10-11 digits",
-									},
-								})}
-								className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-									errors.mobile
-										? "border-red-600"
-										: "border-gray-300"
-								}`}
-								placeholder="Enter phone number"
-							/>
-							{errors.mobile && (
-								<p className="text-red-500 text-sm mt-1">
-									{errors.mobile.message}
-								</p>
-							)}
-						</div>
-
-						<div>
-							<label className="block text-sm font-medium text-gray-700 mb-1">
-								Role *
-							</label>
-							<select
-								{...register("role", {
-									required: "Please select a role",
-								})}
-								className={`w-full px-3 py-2 border rounded-md uppercase focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-									errors.role
-										? "border-red-600"
-										: "border-gray-300"
-								}`}>
-								<option value="user">User</option>
-								<option value="moderator">Moderator</option>
-								<option value="admin">Admin</option>
-							</select>
-							{errors.role && (
-								<p className="text-red-500 text-sm mt-1">
-									{errors.role.message}
-								</p>
-							)}
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+							<div>
+								<label className="block text-sm font-medium text-gray-700 mb-1">
+									Phone Number
+								</label>
+								<input
+									{...register("mobile", {
+										required: "Please enter phone number",
+										pattern: {
+											value: /^[0-9]{10,11}$/,
+											message:
+												"Phone number must be 10-11 digits",
+										},
+									})}
+									className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+										errors.mobile
+											? "border-red-600"
+											: "border-gray-300"
+									}`}
+									placeholder="Enter phone number"
+								/>
+								{errors.mobile && (
+									<p className="text-red-500 text-sm mt-1">
+										{errors.mobile.message}
+									</p>
+								)}
+							</div>
+							<div>
+								<label className="block text-sm font-medium text-gray-700 mb-1">
+									Role *
+								</label>
+								<select
+									{...register("role", {
+										required: "Please select a role",
+									})}
+									className={`w-full px-3 py-2 border rounded-md uppercase focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+										errors.role
+											? "border-red-600"
+											: "border-gray-300"
+									}`}>
+									<option value="user">User</option>
+									<option value="moderator">Moderator</option>
+									<option value="admin">Admin</option>
+								</select>
+								{errors.role && (
+									<p className="text-red-500 text-sm mt-1">
+										{errors.role.message}
+									</p>
+								)}
+							</div>
 						</div>
 					</div>
 

@@ -39,15 +39,15 @@ const ManageProducts = () => {
 
 	const navigate = useNavigate();
 
+	const fetchProducts = async () => {
+		try {
+			const response = await apiGetProducts();
+			if (response.success) setProducts(response.products);
+		} catch (e) {
+			console.log("Error fetching products:", e.message || e);
+		}
+	};
 	useEffect(() => {
-		const fetchProducts = async () => {
-			try {
-				const response = await apiGetProducts();
-				if (response.success) setProducts(response.products);
-			} catch (e) {
-				console.log("Error fetching products:", e.message || e);
-			}
-		};
 		fetchProducts();
 
 		const params = new URLSearchParams(window.location.search);
@@ -519,9 +519,9 @@ const ManageProducts = () => {
 									</td>
 
 									{/* Product Info */}
-									<td className="text-left">
+									<td className="text-left max-w-xs">
 										<div className="flex items-center gap-2">
-											<div className="h-12 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+											<div className="h-12 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 border border-slate-400">
 												<img
 													src={product.thumb}
 													alt={product.title}
@@ -698,8 +698,8 @@ const ManageProducts = () => {
 					}}>
 					<EditProductForm
 						products={products}
-						setProducts={setProducts}
 						selectedProductId={selectedProductId}
+						fetchProducts={fetchProducts}
 						onClose={() => {
 							setShowEditForm(false);
 							setSelectedProductId(null);
