@@ -90,6 +90,41 @@ var productSchema = new mongoose.Schema(
 			type: Number,
 			default: 0,
 		},
+		variants: {
+			type: [
+				{
+					color: {
+						type: String,
+						required: true,
+					},
+					price: {
+						type: Number,
+						required: true,
+					},
+					stock: {
+						type: Number,
+						default: 0,
+					},
+					sold: {
+						type: Number,
+						default: 0,
+					},
+					thumb: {
+						type: String,
+						default: "",
+					},
+					images: {
+						type: Array,
+						default: [],
+					},
+					sku: {
+						type: String,
+						required: true,
+					},
+				},
+			],
+			default: [],
+		},
 	},
 	{ timestamps: true }
 );

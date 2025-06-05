@@ -7,6 +7,12 @@ require("dotenv").config();
 const createProduct = asyncHandler(async (req, res) => {
 	if (!req.body) throw new Error("Please fill all the fields");
 	if (req.body.title) req.body.slug = slugify(req.body.title);
+	const product = await Product.findOne({
+		slug: req.body.slug,
+	});
+	if (product) {
+		throw new Error("Product with this name already exists");
+	}
 
 	const thumb = req?.files?.thumb[0]?.path;
 	const images = req.files?.images?.map((file) => file.path);
