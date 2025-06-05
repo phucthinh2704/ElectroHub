@@ -2,10 +2,10 @@ import { Check, ChevronDown, ChevronUp, DollarSign, X } from "lucide-react";
 import React, { memo, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { colors, priceRanges } from "../../../utils/constants";
+import { priceRanges } from "../../../utils/constants";
 import formatMoney from "../../../utils/formatMoney";
 
-const FilterItem = ({ name, isOpen, setIsOpen }) => {
+const FilterItem = ({ name, isOpen, setIsOpen, colorsFilter }) => {
 	const navigate = useNavigate();
 	const [colorsSelected, setColorsSelected] = useState(() => {
 		const params = new URLSearchParams(window.location.search);
@@ -200,7 +200,7 @@ const FilterItem = ({ name, isOpen, setIsOpen }) => {
 							</div>
 
 							<div className="grid grid-cols-2 gap-2 mt-2">
-								{colors.map((color, index) => (
+								{colorsFilter.map((color, index) => (
 									<div
 										key={index}
 										onClick={() =>

@@ -15,8 +15,6 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
-// import { apiGetAllProducts, apiDeleteProduct, apiUpdateProduct } from "../../apis/product";
-// import EditProductForm from "../../components/admin/form/EditProductForm";
 import { apiDeleteProduct, apiGetProducts } from "../../apis/product";
 import Pagination from "../../components/public/pagination/Pagination";
 import formatMoney from "../../utils/formatMoney";
@@ -196,8 +194,12 @@ const ManageProducts = () => {
 	};
 
 	const handleView = (productId) => {
-		// Navigate to product detail page or open modal
-		console.log("View product:", productId);
+		const product = products.find((p) => p._id === productId);
+		navigate(
+			`/products/${product.category.toLowerCase()}/${product._id}/${
+				product.slug
+			}`
+		);
 	};
 
 	const getStockBadgeColor = (stock) => {

@@ -35,3 +35,9 @@ export const apiDeleteProduct = async (id) =>
 		method: "DELETE",
 		url: `/product/${id}`,
 	});
+export const apiUpdateProductVariant = async (id, data) =>
+	axios({
+		method: "PUT",
+		url: `/product/${id}`,
+		data,
+	});

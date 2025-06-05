@@ -28,6 +28,7 @@ const DetailProduct = () => {
 	const { productId } = useParams();
 	const [product, setProduct] = useState({});
 	const [currentImageIndex, setCurrentImageIndex] = useState(0);
+	// const [variant, setVariant] = useState(null);
 	const [quantity, setQuantity] = useState(1);
 	const [loading, setLoading] = useState(true);
 
@@ -52,10 +53,8 @@ const DetailProduct = () => {
 		fetchProduct();
 	};
 
-	// Calculate discount percentage
 	const discountPercentage = product.discount ? product.discount : 0;
 
-	// Handle quantity change
 	const handleQuantityChange = (change) => {
 		const newQuantity = quantity + change;
 		if (newQuantity >= 1 && newQuantity <= product.stock) {
@@ -63,7 +62,6 @@ const DetailProduct = () => {
 		}
 	};
 
-	// Change the current image
 	const handleImageChange = (index) => {
 		setCurrentImageIndex(index);
 	};

@@ -26,3 +26,4 @@ export { default as Pagination } from "./public/pagination/Pagination";
 export { default as AdminSidebar } from "./admin/sidebar/AdminSidebar";
 export { default as EditUserForm } from "./admin/form/EditUserForm";
 export { default as EditProductForm } from "./admin/form/EditProductForm";
+export { default as AddVariants } from "./admin/form/AddVariants";

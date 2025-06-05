@@ -25,7 +25,7 @@ const CreateProduct = () => {
 		handleSubmit,
 		reset,
 		watch,
-		formState: { errors, isDirty },
+		formState: { errors },
 	} = useForm({
 		defaultValues: {},
 		mode: "onChange",
@@ -67,6 +67,11 @@ const CreateProduct = () => {
 	useEffect(() => {
 		if (watch("thumb")[0]) {
 			handlePreviewImage(watch("thumb")[0]);
+		} else {
+			setPreviewImage((prev) => ({
+				...prev,
+				thumb: "",
+			}));
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [watch("thumb")]);
@@ -74,6 +79,12 @@ const CreateProduct = () => {
 	useEffect(() => {
 		if (watch("images") && watch("images").length > 0) {
 			handlePreviewMultipleImage(watch("images"));
+		}
+		else {
+			setPreviewImage((prev) => ({
+				...prev,
+				images: [],
+			}));
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [watch("images")]);
@@ -92,22 +103,28 @@ const CreateProduct = () => {
 		// Tạo FormData để gửi files
 		const formData = new FormData();
 
-		formData.append("title", data.title);
-		formData.append("originalPrice", parseInt(data.originalPrice));
+		for(const key in data) {
+			if (key === "thumb" && data[key]) {
+				formData.append("thumb", data[key][0]);
+			} else if (key === "images" && data[key]) {
+				for (let image of data[key]) {
+					formData.append("images", image);
+				}
+			} else {
+				formData.append(key, data[key]);
+			}
+		}
+
 		formData.append("price", parseInt(data.originalPrice));
-		formData.append("stock", parseInt(data.stock));
-		formData.append("category", data.category);
-		formData.append("brand", data.brand);
 		formData.append("description", description);
-		formData.append("color", data.color);
 
-		if (data.thumb) {
-			formData.append("thumb", data.thumb[0]);
-		}
-
-		if (data.images) {
-			for (let image of data.images) formData.append("images", image);
-		}
+// 		if (data.thumb) {
+// 			formData.append("thumb", data.thumb[0]);
+// 		}
+// 
+// 		if (data.images) {
+// 			for (let image of data.images) formData.append("images", image);
+// 		}
 
 		setIsSubmitting(true);
 		setTimeout(async () => {
@@ -597,7 +614,7 @@ const CreateProduct = () => {
 											<img
 												src={previewImage.thumb}
 												alt="Thumbnail"
-												className="h-[150px] object-cover"
+												className="h-[150px] object-contain block rounded-lg shadow-md border-2 border-gray-200 hover:border-blue-500 transition-all duration-300"
 											/>
 										</Zoom>
 									</div>
@@ -619,9 +636,6 @@ const CreateProduct = () => {
 										required:
 											"Please upload product images",
 										validate: (files) => {
-											if (files.length < 1) {
-												return "Please upload at least one product image";
-											}
 											if (files.length > 5) {
 												return "You can upload a maximum of 5 product images";
 											}
@@ -657,11 +671,7 @@ const CreateProduct = () => {
 															alt={`Preview ${
 																index + 1
 															}`}
-															className="h-[150px] object-cover block rounded-lg shadow-md border-2 border-gray-200 hover:border-blue-500 transition-all duration-300"
-															style={{
-																boxShadow:
-																	"0 0 10px 0 rgba(0, 0, 0, 0.1)",
-															}}
+															className="h-[150px] object-contain block rounded-lg shadow-md border-2 border-gray-200 hover:border-blue-500 transition-all duration-300"
 														/>
 													</Zoom>
 												</div>
@@ -834,10 +844,10 @@ const CreateProduct = () => {
 					<div className="flex flex-col sm:flex-row gap-4 pt-4">
 						<button
 							type="submit"
-							disabled={isSubmitting || !isDirty}
+							disabled={isSubmitting}
 							onClick={handleSubmit(onSubmit)}
 							className={`flex-1 sm:flex-none px-8 py-4 rounded-2xl font-semibold transition-all duration-300 flex items-center justify-center ${
-								isSubmitting || !isDirty
+								isSubmitting
 									? "bg-gray-200 text-gray-600 cursor-not-allowed"
 									: "bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 hover:shadow-xl hover:shadow-blue-500/25 active:scale-95 cursor-pointer"
 							}`}>

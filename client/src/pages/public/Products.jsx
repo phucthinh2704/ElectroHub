@@ -1,10 +1,4 @@
-import {
-	ChevronDown,
-	Filter,
-	Grid2x2,
-	Grid3x3,
-	Loader2
-} from "lucide-react";
+import { ChevronDown, Filter, Grid2x2, Grid3x3, Loader2 } from "lucide-react";
 import React, { memo, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useParams, useSearchParams } from "react-router-dom";
@@ -25,6 +19,7 @@ const Products = () => {
 	const [sortOption, setSortOption] = useState("newest");
 	const [gridView, setGridView] = useState(4); // 3 or 4 columns
 	const [showFilters, setShowFilters] = useState(false); // for mobile view
+	const [colorsFilter, setColorsFilter] = useState([]);
 	const [activeFilters, setActiveFilters] = useState({});
 	const { category } = useParams();
 	const [params] = useSearchParams();
@@ -82,11 +77,28 @@ const Products = () => {
 		}
 		setActiveFilters(filters);
 		queries.category = category.charAt(0).toUpperCase() + category.slice(1);
-		// queries.sort = "price";
 		// queries.page = 1; // Đã set mặc định bên controller
 		queries.limit = pageSize; // Set page size for pagination
 		fetchProductsByCategory(queries);
 	}, [dispatch, category, params, pageSize]);
+
+	useEffect(() => {
+		const fetchAllProducts = async () => {
+			setLoading(true);
+			try {
+				const response = await apiGetProducts({ category });
+				if (response.success) {
+					const products = response.products;
+					const colors = [...new Set(products.map((p) => p.color))];
+					setColorsFilter(colors);
+				}
+			} catch (error) {
+				console.error("Error fetching products:", error);
+			}
+			setLoading(false);
+		};
+		fetchAllProducts();
+	}, [category]);
 
 	// Sort products
 	const sortProducts = () => {
@@ -238,6 +250,7 @@ const Products = () => {
 								<FilterItem
 									isOpen={isOpen}
 									setIsOpen={setIsOpen}
+									colorsFilter={colorsFilter}
 									name="Color"
 								/>
 								<FilterItem

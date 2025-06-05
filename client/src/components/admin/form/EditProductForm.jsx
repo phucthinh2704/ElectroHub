@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import toBase64 from "../../../utils/toBase64";
 import { apiUpdateProduct } from "../../../apis";
 import formatDescription from "../../../utils/formatDescription";
+import AddVariants from "./AddVariants";
 
 const EditProductForm = ({
 	products,
@@ -19,6 +20,7 @@ const EditProductForm = ({
 }) => {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [submitMessage, setSubmitMessage] = useState("");
+	const [addVariantsMode, setAddVariantsMode] = useState(false);
 	const [description, setDescription] = useState(() => {
 		const selectedProduct = products.find(
 			(product) => product._id === selectedProductId
@@ -34,17 +36,18 @@ const EditProductForm = ({
 			images: [...selectedProduct.images],
 		};
 	});
+
 	const [errorsImage, setErrorsImage] = useState({
 		thumb: null,
 		images: null,
 	});
+
 	const { categories } = useSelector((state) => state.app);
 
 	// Tìm product được chọn để edit
 	const selectedProduct = products.find(
 		(product) => product._id === selectedProductId
 	);
-	// console.log("Selected Product:", selectedProduct);
 
 	// Dữ liệu ban đầu từ product được chọn
 	const initialData = useMemo(
@@ -55,13 +58,7 @@ const EditProductForm = ({
 			color: selectedProduct.color || "",
 			category: selectedProduct.category || "",
 			brand: selectedProduct.brand || "",
-			description: (() => {
-				if (!selectedProduct?.description) return "";
-				if (Array.isArray(selectedProduct.description)) {
-					return selectedProduct.description.join(". ");
-				}
-				return selectedProduct.description;
-			})(),
+			description: formatDescription(selectedProduct.description),
 			thumb: selectedProduct.thumb || "",
 			images: selectedProduct.images || [],
 		}),
@@ -131,7 +128,7 @@ const EditProductForm = ({
 			handlePreviewMultipleImage(watch("images"));
 			setErrorsImage((prev) => ({
 				...prev,
-				images: null, // Reset errors when valid
+				images: null,
 			}));
 		} else if (
 			watch("images") instanceof FileList &&
@@ -141,7 +138,7 @@ const EditProductForm = ({
 				...prev,
 				images: "You can only upload up to 5 images.",
 			}));
-			setValue("images", []); // Reset the images field
+			setValue("images", []);
 			setPreviewImage((prev) => ({
 				...prev,
 				images: [],
@@ -151,7 +148,6 @@ const EditProductForm = ({
 	}, [watch("images")]);
 
 	const onSubmit = (data) => {
-		// console.log({ data, description: description.split(". "), previewImage });
 		if (
 			!description ||
 			description.trim() === "" ||
@@ -164,23 +160,15 @@ const EditProductForm = ({
 		setSubmitMessage("");
 		const formData = new FormData();
 
-		console.log(data);
 		for (const key in data) {
 			if (data[key] !== initialData[key]) {
 				formData.append(key, data[key]);
 			}
 		}
 
-		formData.append("price", parseInt(data.originalPrice)); // Assuming price is the same as originalPrice
-		if (description !== initialData.description) {
-			formData.append("description", [description]); // Chuyển đổi mô tả thành mảng
-		}
-		// formData.append("title", data.title);
-		// formData.append("originalPrice", parseInt(data.originalPrice));
-		// formData.append("stock", parseInt(data.stock));
-		// formData.append("category", data.category);
-		// formData.append("brand", data.brand);
-		// formData.append("color", data.color);
+		formData.append("price", parseInt(data.originalPrice));
+		formData.append("description", [description]); // Chuyển đổi mô tả thành mảng
+
 		formData.delete("thumb");
 		formData.delete("images"); // Xóa các trường thumb và images nếu đã tồn tại
 		if (data.thumb instanceof FileList && data.thumb.length > 0) {
@@ -221,16 +209,11 @@ const EditProductForm = ({
 			thumb: initialData.thumb,
 			images: [...initialData.images],
 		});
-		// Sửa phần set description
-		const resetDescription = (() => {
-			if (!selectedProduct?.description) return "";
-			if (Array.isArray(selectedProduct.description)) {
-				return selectedProduct.description.join(". ");
-			}
-			return selectedProduct.description;
-		})();
-
+		const resetDescription = formatDescription(
+			selectedProduct?.description
+		);
 		setDescription(resetDescription);
+
 		setSubmitMessage("");
 		setErrorsImage({
 			thumb: null,
@@ -450,9 +433,31 @@ const EditProductForm = ({
 					</div>
 				</div>
 
+				<p
+					className="px-2 text-sky-500 cursor-pointer hover:text-blue-700 hover:underline inline-block"
+					onClick={() => setAddVariantsMode(true)}>
+					Add variants to this product
+				</p>
+				{addVariantsMode && (
+					<div
+						className="fixed right-0 left-0 top-0 min-h-screen bg-black/50 flex items-center justify-center z-57"
+						onClick={(e) => {
+							if (e.target === e.currentTarget) {
+								setAddVariantsMode(false);
+							}
+						}}>
+						<AddVariants 
+							products={products}
+							selectedProductId={selectedProductId}
+							fetchProducts={fetchProducts}
+							onClose={() => setAddVariantsMode(false)}
+						/>
+					</div>
+				)}
+
 				{/* Image Upload Section */}
 				<div className="bg-gray-50 p-4 rounded-lg">
-					<h2 className="text-lg font-semibold text-gray-700 mb-4">
+					<h2 className="text-lg font-semibold text-gray-700">
 						Product Images
 					</h2>
 
@@ -487,11 +492,13 @@ const EditProductForm = ({
 							)}
 							<div>
 								{previewImage.thumb && (
-									<img
-										src={previewImage.thumb}
-										alt="Thumbnail Preview"
-										className="h-30 object-cover rounded-md border border-gray-300"
-									/>
+									<Zoom>
+										<img
+											src={previewImage.thumb}
+											alt="Thumbnail Preview"
+											className="h-30 object-contain block rounded-lg shadow-md border-2 border-gray-200 hover:border-blue-500 transition-all duration-300"
+										/>
+									</Zoom>
 								)}
 							</div>
 						</div>
@@ -531,7 +538,7 @@ const EditProductForm = ({
 										<img
 											src={image}
 											alt="Image Preview"
-											className="h-30 object-cover rounded-md border border-gray-300"
+											className="h-30 object-contain block rounded-lg shadow-md border-2 border-gray-200 hover:border-blue-500 transition-all duration-300"
 										/>
 									</Zoom>
 								))}
@@ -539,7 +546,7 @@ const EditProductForm = ({
 						</div>
 					</div>
 				</div>
-
+				
 				{/* Product Description */}
 				<div className="bg-gray-50 p-4 rounded-lg">
 					<h2 className="text-lg font-semibold text-gray-700 mb-4">
