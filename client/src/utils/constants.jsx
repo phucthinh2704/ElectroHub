@@ -1,17 +1,26 @@
-import icons from "./icons";
-import path from "./path";
 import {
+	CirclePlus,
+	ContactRound,
 	Heart,
 	Home,
-	ShoppingCart,
-	User,
+	HomeIcon,
 	MailQuestionIcon,
 	Rss,
-	ContactRound,
-	CirclePlus,
 	Settings,
-	HomeIcon,
+	ShoppingCart,
+	User,
 } from "lucide-react";
+import {
+	AiOutlineBell,
+	AiOutlineHeart,
+	AiOutlineHistory,
+	AiOutlineHome,
+	AiOutlineSetting,
+	AiOutlineShoppingCart,
+	AiOutlineUser,
+} from "react-icons/ai";
+import icons from "./icons";
+import path from "./path";
 
 export const navigation = [
 	{ id: 1, path: `/${path.HOME}`, value: "Home", icon: Home },
@@ -95,12 +104,12 @@ export const adminSidebar = [
 			{
 				text: "CREATE PRODUCT",
 				path: `/${path.ADMIN}/${path.CREATE_PRODUCT}`,
-				icon: <CirclePlus size={20}/>
+				icon: <CirclePlus size={20} />,
 			},
 			{
 				text: "MANAGE PRODUCT",
 				path: `/${path.ADMIN}/${path.MANAGE_PRODUCTS}`,
-				icon: <Settings size={20}/>
+				icon: <Settings size={20} />,
 			},
 		],
 	},
@@ -110,6 +119,43 @@ export const adminSidebar = [
 		text: "HOME PAGE",
 		icon: <HomeIcon size={20} />,
 		path: `/${path.HOME}`,
+	},
+];
+export const memberSidebar = [
+	{
+		id: 1,
+		type: "SINGLE",
+		path: `/${path.HOME}`,
+		text: "Home",
+		icon: <AiOutlineHome size={20} />,
+	},
+	{
+		id: 2,
+		type: "SINGLE",
+		path: `/${path.MEMBER}/${path.PERSONAL}`,
+		text: "Personal Information",
+		icon: <AiOutlineUser size={20} />,
+	},
+	{
+		id: 3,
+		type: "SINGLE",
+		path: `/${path.MEMBER}/${path.MY_CART}`,
+		text: "My Cart",
+		icon: <AiOutlineShoppingCart size={20} />,
+	},
+	{
+		id: 4,
+		type: "SINGLE",
+		path: `/${path.MEMBER}/${path.WISHLIST}`,
+		text: "Wishlist",
+		icon: <AiOutlineHeart size={20} />,
+	},
+	{
+		id: 5,
+		type: "SINGLE",
+		path: `/${path.MEMBER}/${path.ORDER_HISTORY}`,
+		text: "Order History",
+		icon: <AiOutlineHistory size={20} />,
 	},
 ];
 

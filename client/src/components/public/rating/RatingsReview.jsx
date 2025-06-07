@@ -280,12 +280,19 @@ const RatingsReview = ({ product = {}, onReviewSubmitted }) => {
 							<div className="flex items-start justify-between mb-3">
 								<div className="flex items-center">
 									<div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold">
-										{/* <User className="w-5 h-5" /> */}
-										<img
-											src={review.postedBy.avatar}
-											alt="avatar"
-											className="rounded-full w-full h-full object-cover"
-										/>
+										{review.postedBy.avatar ? (
+											<img
+												src={review.postedBy.avatar}
+												alt="avatar"
+												className="rounded-full w-full h-full object-cover"
+											/>
+										) : (
+											<div className="w-full h-full flex items-center justify-center bg-blue-200 text-blue-700 font-bold text-lg">
+												{review.postedBy.name
+													.charAt(0)
+													.toUpperCase()}
+											</div>
+										)}
 									</div>
 									<div className="ml-3">
 										<div className="flex items-center">

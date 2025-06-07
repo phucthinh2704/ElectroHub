@@ -24,6 +24,9 @@ const path = {
 	// Member Routes
 	MEMBER: "member",
 	PERSONAL: "personal",
+	MY_CART: "my-cart",
+	ORDER_HISTORY: "order-history",
+	WISHLIST: "wishlist",
 };
 
 export default path;

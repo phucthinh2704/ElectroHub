@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -7,6 +7,10 @@ import path from "../../utils/path";
 
 const AdminLayout = () => {
 	const { current, isLoggedIn } = useSelector((state) => state.user);
+
+	useEffect(() => {
+		document.title = "Admin Dashboard | E-Commerce";
+	}, []);
 
 	if (!isLoggedIn || !current) {
 		return (

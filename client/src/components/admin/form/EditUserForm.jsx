@@ -2,7 +2,7 @@ import { X } from "lucide-react";
 import moment from "moment";
 import React, { memo, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { apiUpdateUser } from "../../../apis/user";
+import { apiUpdateUserByAdmin } from "../../../apis/user";
 
 const EditUserForm = ({ users, setUsers, selectedUserId, onClose }) => {
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -50,7 +50,7 @@ const EditUserForm = ({ users, setUsers, selectedUserId, onClose }) => {
 
 		try {
 			setTimeout(async () => {
-				const response = await apiUpdateUser(selectedUserId, data);
+				const response = await apiUpdateUserByAdmin(selectedUserId, data);
 				if (response.success) {
 					// Cập nhật user trong danh sách
 					const updatedUsers = users.map((user) =>

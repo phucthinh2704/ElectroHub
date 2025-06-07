@@ -36,10 +36,17 @@ const EditProductForm = ({
 			images: [...selectedProduct.images],
 		};
 	});
-
-	const [errorsImage, setErrorsImage] = useState({
-		thumb: null,
-		images: null,
+	const [thumb, setThumb] = useState(() => {
+		const selectedProduct = products.find(
+			(product) => product._id === selectedProductId
+		);
+		return selectedProduct.thumb || "";
+	});
+	const [images, setImages] = useState(() => {
+		const selectedProduct = products.find(
+			(product) => product._id === selectedProductId
+		);
+		return [...selectedProduct.images];
 	});
 
 	const { categories } = useSelector((state) => state.app);
@@ -71,6 +78,7 @@ const EditProductForm = ({
 		reset,
 		watch,
 		setValue,
+		setError,
 		formState: { errors },
 	} = useForm({
 		defaultValues: initialData,
@@ -115,6 +123,7 @@ const EditProductForm = ({
 	useEffect(() => {
 		if (watch("thumb") instanceof FileList && watch("thumb").length > 0) {
 			handlePreviewImage(watch("thumb")[0]);
+			setThumb(watch("thumb"));
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [watch("thumb")]);
@@ -126,19 +135,16 @@ const EditProductForm = ({
 			watch("images").length <= 5
 		) {
 			handlePreviewMultipleImage(watch("images"));
-			setErrorsImage((prev) => ({
-				...prev,
-				images: null,
-			}));
+			setImages(watch("images"));
 		} else if (
 			watch("images") instanceof FileList &&
 			watch("images").length > 5
 		) {
-			setErrorsImage((prev) => ({
-				...prev,
-				images: "You can only upload up to 5 images.",
-			}));
-			setValue("images", []);
+			setError("images", {
+				type: "manual",
+				message: "You can only upload up to 5 images.",
+			});
+			setImages([]);
 			setPreviewImage((prev) => ({
 				...prev,
 				images: [],
@@ -158,8 +164,8 @@ const EditProductForm = ({
 		}
 
 		setSubmitMessage("");
-		const formData = new FormData();
 
+		const formData = new FormData();
 		for (const key in data) {
 			if (data[key] !== initialData[key]) {
 				formData.append(key, data[key]);
@@ -170,14 +176,19 @@ const EditProductForm = ({
 		formData.append("description", [description]); // Chuyển đổi mô tả thành mảng
 
 		formData.delete("thumb");
-		formData.delete("images"); // Xóa các trường thumb và images nếu đã tồn tại
-		if (data.thumb instanceof FileList && data.thumb.length > 0) {
-			formData.append("thumb", data.thumb[0]);
+		formData.delete("images");
+
+		if (thumb instanceof FileList && thumb.length > 0) {
+			formData.append("thumb", thumb[0]);
 		}
 
-		if (data.images instanceof FileList && data.images.length > 0) {
-			for (let image of data.images) formData.append("images", image);
+		if (images instanceof FileList && images.length > 0) {
+			for (let image of images) formData.append("images", image);
+		} else if (images.length === 0) {
+			// Nếu không có ảnh nào được chọn, xóa trường images khỏi formData
+			formData.delete("images");
 		}
+
 		setIsSubmitting(true);
 		try {
 			setTimeout(async () => {
@@ -215,10 +226,6 @@ const EditProductForm = ({
 		setDescription(resetDescription);
 
 		setSubmitMessage("");
-		setErrorsImage({
-			thumb: null,
-			images: null,
-		});
 	};
 
 	return (
@@ -446,7 +453,7 @@ const EditProductForm = ({
 								setAddVariantsMode(false);
 							}
 						}}>
-						<AddVariants 
+						<AddVariants
 							products={products}
 							selectedProductId={selectedProductId}
 							fetchProducts={fetchProducts}
@@ -475,7 +482,7 @@ const EditProductForm = ({
 								accept="image/*"
 								{...register("thumb")}
 							/>
-							{errorsImage.thumb && (
+							{errors.thumb && (
 								<div className="text-red-500 text-sm mt-2">
 									<svg
 										className="w-4 h-4 mr-1 inline-block"
@@ -487,7 +494,7 @@ const EditProductForm = ({
 											clipRule="evenodd"
 										/>
 									</svg>
-									{errorsImage.thumb}
+									{errors.thumb.message}
 								</div>
 							)}
 							<div>
@@ -517,7 +524,7 @@ const EditProductForm = ({
 								multiple
 								{...register("images")}
 							/>
-							{errorsImage.images && (
+							{errors.images && (
 								<div className="text-red-500 text-sm mt-2">
 									<svg
 										className="w-4 h-4 mr-1 inline-block"
@@ -529,7 +536,7 @@ const EditProductForm = ({
 											clipRule="evenodd"
 										/>
 									</svg>
-									{errorsImage.images}
+									{errors.images.message}
 								</div>
 							)}
 							<div className="mt-2 flex items-center gap-2">
@@ -546,7 +553,7 @@ const EditProductForm = ({
 						</div>
 					</div>
 				</div>
-				
+
 				{/* Product Description */}
 				<div className="bg-gray-50 p-4 rounded-lg">
 					<h2 className="text-lg font-semibold text-gray-700 mb-4">

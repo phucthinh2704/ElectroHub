@@ -58,7 +58,6 @@ const AddVariants = ({
 		handleSubmit,
 		reset,
 		watch,
-		setValue,
 		setError,
 		formState: { errors },
 	} = useForm({
@@ -121,6 +120,7 @@ const AddVariants = ({
 			watch("images") instanceof FileList &&
 			watch("images").length > 5
 		) {
+			setImages([]);
 			setError(
 				"images",
 				{
@@ -129,7 +129,6 @@ const AddVariants = ({
 				},
 				{ shouldFocus: true }
 			);
-			setValue("images", []);
 			setPreviewImage((prev) => ({
 				...prev,
 				images: [],
@@ -156,11 +155,14 @@ const AddVariants = ({
 		}
 
 		const formData = new FormData();
-		console.log("Form data before appending:", data);
+
 		for (const key in data) {
 			formData.append(key, data[key]);
 		}
 
+		formData.delete("thumb");
+		formData.delete("images");
+		console.log({ thumb, images });
 		if (thumb instanceof FileList && thumb.length > 0) {
 			formData.append("thumb", thumb[0]);
 		} else if (typeof thumb === "string" && thumb) {
@@ -191,46 +193,63 @@ const AddVariants = ({
 				{ shouldFocus: true }
 			);
 			return;
+		} else if (Array.isArray(images) && images.length === 0) {
+			setError(
+				"images",
+				{
+					type: "manual",
+					message: "Please upload at least one image product.",
+				},
+				{ shouldFocus: true }
+			);
+			return;
 		} else {
 			console.log("No images uploaded or thumb field is empty.");
 		}
 
-		for (const [key, value] of formData.entries()) {
-			console.log(`${key}: ${value}`);
+		setIsSubmitting(true);
+		try {
+			setTimeout(async () => {
+				const response = await apiUpdateProductVariant(
+					selectedProductId,
+					formData
+				);
+				if (response.success) {
+					fetchProducts();
+					Swal.fire({
+						icon: "success",
+						title: "Success",
+						text:
+							response.message ||
+							"Product variant updated successfully!",
+					});
+					reset({
+						stock: response.product.variants[response.product.variants.length -1].stock || 0,
+						color: response.product.variants[response.product.variants.length -1].color || "",
+						thumb: response.product.variants[response.product.variants.length -1].thumb || "",
+						images: [...response.product.variants[response.product.variants.length -1].images],
+						price: response.product.variants[response.product.variants.length -1].price || 0,
+					});
+				} else {
+					Swal.fire({
+						icon: "error",
+						title: "Error",
+						text:
+							response.message ||
+							"Failed to update product variant!",
+					});
+				}
+				setIsSubmitting(false);
+			}, 200);
+		} catch (error) {
+			console.log("An error occurred while updating the product:", error);
+			Swal.fire({
+				icon: "error",
+				title: "Error",
+				text: "An error occurred while updating the product!",
+			});
+			setIsSubmitting(false);
 		}
-
-		// 		setIsSubmitting(true);
-		// 		try {
-		// 			setTimeout(async () => {
-		// 				const response = await apiUpdateProductVariant(
-		// 					selectedProductId,
-		// 					formData
-		// 				);
-		// 				if (response.success) {
-		// 					fetchProducts();
-		//                Swal.fire({
-		//                   icon: "success",
-		//                   title: "Success",
-		//                   text: "Product variant updated successfully!",
-		//                })
-		// 				} else {
-		// 					Swal.fire({
-		//                   icon: "error",
-		//                   title: "Error",
-		//                   text: response.message || "Failed to update product variant!",
-		//                })
-		// 				}
-		// 				setIsSubmitting(false);
-		// 			}, 200);
-		// 		} catch (error) {
-		// 			console.log("An error occurred while updating the product:", error);
-		//          Swal.fire({
-		//             icon: "error",
-		//             title: "Error",
-		//             text: "An error occurred while updating the product!",
-		//          })
-		// 			setIsSubmitting(false);
-		// 		}
 	};
 
 	// Hàm reset form về dữ liệu ban đầu
@@ -375,21 +394,6 @@ const AddVariants = ({
 									{errors.thumb.message}
 								</div>
 							)}
-							{/* {errorsImage.thumb && (
-								<div className="text-red-500 text-sm mt-2">
-									<svg
-										className="w-4 h-4 mr-1 inline-block"
-										fill="currentColor"
-										viewBox="0 0 20 20">
-										<path
-											fillRule="evenodd"
-											d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-											clipRule="evenodd"
-										/>
-									</svg>
-									{errorsImage.thumb}
-								</div>
-							)} */}
 							<div>
 								{previewImage.thumb && (
 									<Zoom>

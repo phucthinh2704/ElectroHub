@@ -1,7 +1,7 @@
 import React, { memo, useState } from "react";
-import { adminSidebar } from "../../../utils/constants";
 import { AiOutlineCaretDown } from "react-icons/ai";
 import { NavLink } from "react-router-dom";
+import { adminSidebar } from "../../../utils/constants";
 
 const AdminSidebar = ({ admin }) => {
 	const [active, setActive] = useState([]);
@@ -89,7 +89,9 @@ const AdminSidebar = ({ admin }) => {
 												onClick={(e) =>
 													e.stopPropagation()
 												}>
-												<div className="group-hover:scale-115">{subItem.icon}</div>
+												<div className="group-hover:scale-115">
+													{subItem.icon}
+												</div>
 												<span className="text-sm font-medium group-hover:font-semibold">
 													{subItem.text}
 												</span>
@@ -108,10 +110,18 @@ const AdminSidebar = ({ admin }) => {
 				<div className="bg-gray-200 backdrop-blur-sm rounded-xl p-4 border border-slate-700/50">
 					<div className="flex items-center gap-3">
 						<div className="w-8 h-8 rounded-lg flex items-center justify-center overflow-hidden">
-							<img
-								src={admin.avatar}
-								alt=""
-							/>
+							{admin.avatar ? (
+								<img
+									src={admin.avatar}
+									alt=""
+								/>
+							) : (
+								<div className="w-full h-full bg-gray-300 flex items-center justify-center rounded-lg">
+									<span className="text-gray-500 font-bold">
+										{admin.name.charAt(0).toUpperCase()}
+									</span>
+								</div>
+							)}
 						</div>
 						<div className="flex-1 min-w-0">
 							<p className="text-black text-sm font-medium">

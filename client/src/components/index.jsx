@@ -21,6 +21,7 @@ export { default as ScrollToTop } from "./public/common/ScrollToTop";
 export { default as FilterItem } from "./public/product/FilterItem";
 export { default as RatingsReview } from "./public/rating/RatingsReview";
 export { default as Pagination } from "./public/pagination/Pagination";
+export { default as MemberSidebar } from "./public/sidebar/MemberSidebar";
 
 // ADMIN
 export { default as AdminSidebar } from "./admin/sidebar/AdminSidebar";

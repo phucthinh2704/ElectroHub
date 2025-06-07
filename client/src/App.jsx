@@ -1,41 +1,85 @@
 // App.js
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { Route, Routes } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Route, Routes, useNavigate } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
+import { ScrollToTop } from "./components";
 import {
-	Home,
-	Login,
-	PublicLayout,
-	Products,
+	AdminDashboard,
+	AdminLayout,
+	CreateProduct,
+	ManageOrders,
+	ManageProducts,
+	ManageUsers,
+} from "./pages/admin";
+import { MemberLayout, Personal, MyCart, Wishlist, OrderHistory } from "./pages/member";
+import {
 	Blogs,
-	Services,
 	DetailProduct,
 	FAQ,
 	ForgotPassword,
+	Home,
+	Login,
+	Products,
+	PublicLayout,
 	ResetPassword,
+	Services,
 } from "./pages/public";
-import {
-	AdminLayout,
-	AdminDashboard,
-	CreateProduct,
-	ManageOrders,
-	ManageUsers,
-	ManageProducts,
-} from "./pages/admin";
-import { MemberLayout, Personal } from "./pages/member";
 import { getCategories } from "./store/app/asyncActions";
 import path from "./utils/path";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { ScrollToTop } from "./components";
+import Swal from "sweetalert2";
+import { apiGetCurrent, apiLogout } from "./apis";
+import { logout } from "./store/user/userSlice";
+
 
 function App() {
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		dispatch(getCategories());
 	}, [dispatch]);
+
+	const { token, isLoggedIn } = useSelector((state) => state.user);
+
+	useEffect(() => {
+		const checkToken = () => {
+			setTimeout(async () => {
+				if (token && isLoggedIn) {
+					try {
+						const response = await apiGetCurrent();
+						if (!response.success) {
+							Swal.fire({
+								icon: "error",
+								title: "Session Expired",
+								text: "Your session has expired. Please log in again to continue.",
+								showCancelButton: true,
+								confirmButtonText: "Login",
+								cancelButtonText: "Cancel",
+							}).then(async (result) => {
+								const response = await apiLogout();
+								if (response.success) {
+									dispatch(logout());
+								}
+								if (result.isConfirmed) {
+									scrollTo(0, 0);
+									navigate(`/${path.LOGIN}`);
+								}
+							});
+						}
+					} catch (error) {
+						dispatch(logout());
+						navigate(`/${path.LOGIN}`);
+						console.log("Error verifying token:", error);
+					}
+				}
+			}, 1000);
+		};
+
+		checkToken();
+	}, [dispatch, isLoggedIn, navigate, token]);
 
 	return (
 		<div className="min-h-screen font-main">
@@ -115,6 +159,18 @@ function App() {
 					<Route
 						path={path.PERSONAL}
 						element={<Personal />}
+					/>
+					<Route
+						path={path.MY_CART}
+						element={<MyCart />}
+					/>
+					<Route
+						path={path.WISHLIST}
+						element={<Wishlist />}
+					/>
+					<Route
+						path={path.ORDER_HISTORY}
+						element={<OrderHistory />}
 					/>
 				</Route>
 			</Routes>

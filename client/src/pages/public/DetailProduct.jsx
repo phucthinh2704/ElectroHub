@@ -28,7 +28,7 @@ const DetailProduct = () => {
 	const { productId } = useParams();
 	const [product, setProduct] = useState({});
 	const [currentImageIndex, setCurrentImageIndex] = useState(0);
-	// const [variant, setVariant] = useState(null);
+	const [variant, setVariant] = useState(null);
 	const [quantity, setQuantity] = useState(1);
 	const [loading, setLoading] = useState(true);
 
@@ -57,8 +57,14 @@ const DetailProduct = () => {
 
 	const handleQuantityChange = (change) => {
 		const newQuantity = quantity + change;
-		if (newQuantity >= 1 && newQuantity <= product.stock) {
-			setQuantity(newQuantity);
+		if (variant) {
+			if (newQuantity >= 1 && newQuantity <= variant.stock) {
+				setQuantity(newQuantity);
+			}
+		} else {
+			if (newQuantity >= 1 && newQuantity <= product.stock) {
+				setQuantity(newQuantity);
+			}
 		}
 	};
 
@@ -92,7 +98,21 @@ const DetailProduct = () => {
 								{/* Product Images Section */}
 								<div className="md:w-1/2 p-6">
 									<div className="relative w-full rounded-lg mb-10">
-										{product.images ? (
+										{variant ? (
+											variant.images && (
+												<Zoom>
+													<img
+														src={
+															variant.images[
+																currentImageIndex
+															] || variant.thumb
+														}
+														alt={product.title}
+														className="h-[560px] object-cover display-block mx-auto"
+													/>
+												</Zoom>
+											)
+										) : product.images ? (
 											<Zoom>
 												<img
 													src={
@@ -114,7 +134,72 @@ const DetailProduct = () => {
 									</div>
 
 									{/* Thumbnail Gallery */}
-									{product.images &&
+									{variant ? (
+										variant.images.length > 2 ? (
+											<Slider
+												{...settings}
+												slidesToShow={3}>
+												{variant.images.map(
+													(image, index) => (
+														<div
+															key={image}
+															className={`aspect-square h-[140px] rounded-md overflow-hidden cursor-pointer border-2 ${
+																currentImageIndex ===
+																index
+																	? "border-blue-500"
+																	: "border-gray-300"
+															}`}
+															onClick={() =>
+																handleImageChange(
+																	index
+																)
+															}>
+															<img
+																src={image}
+																alt={`${
+																	product.title
+																} thumbnail ${
+																	index + 1
+																}`}
+																className="h-full object-contain display-block mx-auto"
+															/>
+														</div>
+													)
+												)}
+											</Slider>
+										) : (
+											<>
+												{variant.images.map(
+													(image, index) => (
+														<div
+															key={image}
+															className={`aspect-square h-[140px] rounded-md overflow-hidden cursor-pointer border-2 ${
+																currentImageIndex ===
+																index
+																	? "border-blue-500"
+																	: "border-gray-300"
+															}`}
+															onClick={() =>
+																handleImageChange(
+																	index
+																)
+															}>
+															<img
+																src={image}
+																alt={`${
+																	product.title
+																} thumbnail ${
+																	index + 1
+																}`}
+																className="h-full object-contain display-block mx-auto"
+															/>
+														</div>
+													)
+												)}{" "}
+											</>
+										)
+									) : (
+										product.images &&
 										product.images.length > 0 && (
 											<Slider
 												{...settings}
@@ -147,7 +232,8 @@ const DetailProduct = () => {
 													)
 												)}
 											</Slider>
-										)}
+										)
+									)}
 								</div>
 								{/* Product Info Section */}
 								<div className="md:w-1/2 p-6 md:border-l border-gray-200">
@@ -182,7 +268,12 @@ const DetailProduct = () => {
 									<div className="mt-4 mb-6">
 										<div className="flex items-center">
 											<span className="text-3xl font-semibold">
-												{formatMoney(product.price)} đ
+												{variant
+													? formatMoney(variant.price)
+													: formatMoney(
+															product.price
+													  )}{" "}
+												đ
 											</span>
 											{discountPercentage > 0 && (
 												<span className="ml-3 text-lg text-gray-500 line-through">
@@ -199,7 +290,16 @@ const DetailProduct = () => {
 											)}
 										</div>
 										<p className="text-gray-500">
-											Sold: {product.sold}
+											Sold:{" "}
+											{variant
+												? variant.sold
+												: product.sold}
+										</p>
+										<p className="text-gray-500">
+											In Stock:{" "}
+											{variant
+												? variant.stock
+												: product.stock}
 										</p>
 									</div>
 
@@ -242,20 +342,108 @@ const DetailProduct = () => {
 											<h3 className="text-sm font-medium text-gray-900 mb-2">
 												Color
 											</h3>
-											<div className="flex items-center">
+											<div className="grid grid-cols-3 gap-2">
 												<div
-													className="h-8 w-8 rounded-full border border-gray-300 cursor-pointer flex items-center justify-center"
-													style={{
-														backgroundColor:
-															product.color.toLowerCase(),
-													}}>
-													<span className="sr-only">
-														{product.color}
-													</span>
+													className={`border relative border-gray-300 rounded-xl flex items-center gap-2 py-2 px-4 cursor-pointer ${
+														!variant
+															? "border-blue-500 bg-blue-100 shadow-md"
+															: "border-gray-200 bg-white hover:border-gray-300"
+													}`}
+													onClick={() =>
+														setVariant(null)
+													}>
+													<img
+														src={product.thumb}
+														alt="thumb"
+														className="w-12 h-12 object-cover rounded-lg"
+													/>
+													<div>
+														<span className="font-semibold">
+															{product.color}
+														</span>
+														<p>
+															{formatMoney(
+																product.price
+															)}{" "}
+															đ
+														</p>
+													</div>
+													{!variant && (
+														<div className="absolute top-2 right-2">
+															<div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
+																<svg
+																	className="w-2.5 h-2.5 text-white"
+																	fill="currentColor"
+																	viewBox="0 0 20 20">
+																	<path
+																		fillRule="evenodd"
+																		d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+																		clipRule="evenodd"
+																	/>
+																</svg>
+															</div>
+														</div>
+													)}
 												</div>
-												<span className="ml-2 text-sm text-gray-700">
-													{product.color}
-												</span>
+												{product.variants &&
+													product.variants.map(
+														(variantItem) => (
+															<div
+																key={
+																	variantItem.sku
+																}
+																onClick={() =>
+																	setVariant(
+																		variantItem
+																	)
+																}
+																className={`relative border border-gray-300 rounded-xl flex items-center gap-4 py-2 px-4 cursor-pointer ${
+																	variantItem.sku ===
+																	variant?.sku
+																		? "border-blue-500 bg-blue-100 shadow-md"
+																		: "border-gray-200 bg-white hover:border-gray-300"
+																}`}>
+																<img
+																	src={
+																		variantItem.thumb
+																	}
+																	alt="thumb"
+																	className="w-12 h-12 object-cover rounded-lg"
+																/>
+																<div>
+																	<span className="font-semibold">
+																		{
+																			variantItem.color
+																		}
+																	</span>
+																	<p>
+																		{formatMoney(
+																			variantItem.price
+																		)}{" "}
+																		đ
+																	</p>
+																</div>
+																{variant &&
+																	variant.sku ===
+																		variantItem.sku && (
+																		<div className="absolute top-2 right-2">
+																			<div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
+																				<svg
+																					className="w-2.5 h-2.5 text-white"
+																					fill="currentColor"
+																					viewBox="0 0 20 20">
+																					<path
+																						fillRule="evenodd"
+																						d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+																						clipRule="evenodd"
+																					/>
+																				</svg>
+																			</div>
+																		</div>
+																	)}
+															</div>
+														)
+													)}
 											</div>
 										</div>
 									)}
@@ -303,7 +491,10 @@ const DetailProduct = () => {
 											</button>
 										</div>
 										<p className="text-sm text-gray-500 mt-1">
-											{product.stock} items available
+											{variant
+												? variant.stock
+												: product.stock}{" "}
+											items available
 										</p>
 									</div>
 

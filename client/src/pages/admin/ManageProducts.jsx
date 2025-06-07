@@ -495,6 +495,9 @@ const ManageProducts = () => {
 									Price
 								</th>
 								<th className="p-4 font-semibold text-slate-700">
+									Variants
+								</th>
+								<th className="p-4 font-semibold text-slate-700">
 									Stock
 								</th>
 								<th className="p-4 font-semibold text-slate-700">
@@ -572,6 +575,14 @@ const ManageProducts = () => {
 										</div>
 									</td>
 
+									{/* Variants */}
+									<td className="py-4 px-4">
+										<span
+											className={`inline-flex text-slate-800 items-center font-semibold`}>
+											{product.variants.length}
+										</span>
+									</td>
+									
 									{/* Stock */}
 									<td className="py-4 px-4">
 										<div className="flex flex-col items-center gap-1">
@@ -707,27 +718,6 @@ const ManageProducts = () => {
 							setSelectedProductId(null);
 						}}
 					/>
-					{/* <div className="bg-white rounded-xl p-6 w-full max-w-md">
-						<h2 className="text-xl font-semibold mb-4">
-							Edit Product
-						</h2>
-						<p className="text-gray-600 mb-4">
-							Edit product form will be implemented here...
-						</p>
-						<div className="flex gap-3">
-							<button
-								onClick={() => {
-									setShowEditForm(false);
-									setSelectedProductId(null);
-								}}
-								className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-lg transition-colors">
-								Close
-							</button>
-							<button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors">
-								Save
-							</button>
-						</div>
-					</div> */}
 				</div>
 			)}
 		</div>

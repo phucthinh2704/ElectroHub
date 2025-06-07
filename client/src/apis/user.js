@@ -54,7 +54,15 @@ export const apiBlockUser = async (id) =>
 		method: "POST",
 		url: `/user/block/${id}`,
 	});
-export const apiUpdateUser = async (id, data) =>
+
+export const apiUpdateCurrentUser = async (data) =>
+	axios({
+		method: "PUT",
+		url: `/user/current`,
+		data,
+		withCredentials: true,
+	});
+export const apiUpdateUserByAdmin = async (id, data) =>
 	axios({
 		method: "PUT",
 		url: `/user/${id}`,
