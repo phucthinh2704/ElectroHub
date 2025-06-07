@@ -2,8 +2,10 @@ const Product = require("../models/product");
 const asyncHandler = require("express-async-handler");
 const slugify = require("slugify");
 const convertQueryFormat = require("../utils/convertQuery");
+const createSKU = require("uniqid");
 require("dotenv").config();
 
+// [POST] /product
 const createProduct = asyncHandler(async (req, res) => {
 	if (!req.body) throw new Error("Please fill all the fields");
 	if (req.body.title) req.body.slug = slugify(req.body.title);
@@ -30,6 +32,7 @@ const createProduct = asyncHandler(async (req, res) => {
 	});
 });
 
+// [GET] /product/:pid
 const getProductById = asyncHandler(async (req, res) => {
 	const { pid } = req.params;
 	const product = await Product.findById(pid).populate({
@@ -47,7 +50,7 @@ const getProductById = asyncHandler(async (req, res) => {
 	});
 });
 
-//filtering, sorting, pagination
+// [GET] /product
 const getAllProducts = asyncHandler(async (req, res) => {
 	// Example routes to test in Postman:
 	// GET /api/product - Get all products
@@ -128,6 +131,7 @@ const getAllProducts = asyncHandler(async (req, res) => {
 	});
 });
 
+// [PUT] /product/:id
 const updateProduct = asyncHandler(async (req, res) => {
 	const { id } = req.params;
 	if (!req.body) throw new Error("Please fill all the fields");
@@ -135,7 +139,9 @@ const updateProduct = asyncHandler(async (req, res) => {
 	const files = req.files;
 	if (files) {
 		const thumb = files.thumb ? files.thumb[0].path : undefined;
-		const images = files.images ? files.images.map((file) => file.path) : [];
+		const images = files.images
+			? files.images.map((file) => file.path)
+			: [];
 		if (thumb) req.body.thumb = thumb;
 		if (images.length > 0) req.body.images = images;
 	}
@@ -152,6 +158,7 @@ const updateProduct = asyncHandler(async (req, res) => {
 	});
 });
 
+// [DELETE] /product/:id
 const deleteProduct = asyncHandler(async (req, res) => {
 	const { id } = req.params;
 	const deletedProduct = await Product.findByIdAndDelete(id);
@@ -163,6 +170,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
 	});
 });
 
+// [PUT] /product/ratings
 const ratingProduct = asyncHandler(async (req, res) => {
 	const { _id } = req.user;
 	const { rating, comment, pid } = req.body;
@@ -213,6 +221,7 @@ const ratingProduct = asyncHandler(async (req, res) => {
 	});
 });
 
+// [PUT] /product/upload-image/:id
 const uploadImagesProduct = asyncHandler(async (req, res) => {
 	if (!req.files) throw new Error("Please upload images");
 	const product = await Product.findByIdAndUpdate(
@@ -229,6 +238,54 @@ const uploadImagesProduct = asyncHandler(async (req, res) => {
 	});
 });
 
+// [PUT] /product/variant/:id
+const addVariantProduct = asyncHandler(async (req, res) => {
+	const { stock, price, color } = req.body;
+	const files = req.files;
+	if (!stock || !price || !color) {
+		throw new Error("Please fill all the fields");
+	}
+	if (files) {
+		const thumb = files.thumb ? files.thumb[0].path : undefined;
+		const images = files.images
+			? files.images.map((file) => file.path)
+			: [];
+		if (thumb) req.body.thumb = thumb;
+		if (images.length > 0) req.body.images = images;
+	}
+	const productVariantValidate = await Product.findOne({
+		_id: req.params.id,
+		"variants.color": color,
+	});
+	if (productVariantValidate) {
+		throw new Error("Variant with this color already exists");
+	}
+
+	const product = await Product.findByIdAndUpdate(
+		req.params.id,
+		// push each image path to the images array
+		{
+			$push: {
+				variants: {
+					color,
+					price,
+					stock,
+					thumb: req.body.thumb ? req.body.thumb : "",
+					images: req.body.images ? req.body.images : [],
+					sku: createSKU(),
+				},
+			},
+		},
+		{ new: true }
+	);
+	if (!product) throw new Error("Product not found");
+	res.status(200).json({
+		success: true,
+		message: "Variant added successfully",
+		product,
+	});
+});
+
 module.exports = {
 	createProduct,
 	getProductById,
@@ -237,4 +294,5 @@ module.exports = {
 	deleteProduct,
 	ratingProduct,
 	uploadImagesProduct,
+	addVariantProduct,
 };

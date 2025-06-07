@@ -27,6 +27,10 @@ router.put("/:id", [verifyAccessToken, isAdmin], uploader.fields([
 	{ name: "images", maxCount: 10 },
 	{ name: "thumb", maxCount: 1 },
 ]), product.updateProduct);
+router.put("/variant/:id", [verifyAccessToken, isAdmin], uploader.fields([
+	{ name: "images", maxCount: 10 },
+	{ name: "thumb", maxCount: 1 },
+]), product.addVariantProduct);
 router.delete("/:id", [verifyAccessToken, isAdmin], product.deleteProduct);
 
 module.exports = router;

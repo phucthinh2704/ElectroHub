@@ -12,6 +12,7 @@ const {
 } = require("../middlewares/jwt");
 const { hashPassword, createPasswordResetToken } = require("../utils/password");
 
+// [POST] /user/register
 const register = asyncHandler(async (req, res) => {
 	const { name, email, mobile, password } = req.body || {};
 
@@ -113,6 +114,7 @@ const register = asyncHandler(async (req, res) => {
 	});
 });
 
+// [GET] /user/auth-register/:token
 const authRegister = asyncHandler(async (req, res) => {
 	const { token } = req.params;
 	const cookies = req.cookies;
@@ -140,6 +142,7 @@ const authRegister = asyncHandler(async (req, res) => {
 	);
 });
 
+// [POST] /user/login
 const login = asyncHandler(async (req, res) => {
 	const { email, password } = req.body || {};
 
@@ -183,6 +186,7 @@ const login = asyncHandler(async (req, res) => {
 	});
 });
 
+// [GET] /user/current
 const getCurrent = asyncHandler(async (req, res) => {
 	const { _id } = req.user;
 	const user = await User.findById(_id).select(
@@ -203,6 +207,7 @@ const getCurrent = asyncHandler(async (req, res) => {
 	});
 });
 
+// [POST] /user/refresh-token
 const refreshAccessToken = asyncHandler(async (req, res) => {
 	// Lấy refresh token từ cookie
 	const cookies = req.cookies;
@@ -224,6 +229,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 	});
 });
 
+// [POST] /user/logout
 const logout = asyncHandler(async (req, res) => {
 	// Kiểm tra xem refresh token có tồn tại trong cookie không
 	const cookies = req.cookies;
@@ -247,6 +253,7 @@ const logout = asyncHandler(async (req, res) => {
 	});
 });
 
+// [POST] /user/forgot-password
 const forgotPassword = asyncHandler(async (req, res) => {
 	const { email } = req.body;
 	if (!email) throw new Error("Missing required fields");
@@ -325,6 +332,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
 	});
 });
 
+// [PUT] /user/reset-password/:token
 const resetPassword = asyncHandler(async (req, res) => {
 	const { password } = req.body;
 	const { token } = req.params;
@@ -356,6 +364,7 @@ const resetPassword = asyncHandler(async (req, res) => {
 	});
 });
 
+// [POST] /user/block/:id
 const blockUser = asyncHandler(async (req, res) => {
 	const { id } = req.params;
 
@@ -375,6 +384,7 @@ const blockUser = asyncHandler(async (req, res) => {
 	});
 });
 
+// [GET] /user
 const getAllUsers = asyncHandler(async (req, res) => {
 	const queries = { ...req.query };
 	// Tách các trường đặc biệt khỏi query
@@ -419,6 +429,7 @@ const getAllUsers = asyncHandler(async (req, res) => {
 	});
 });
 
+// [DELETE] /user/:id
 const deleteUser = asyncHandler(async (req, res) => {
 	const { id } = req.params;
 	if (!id) throw new Error("Missing id");
@@ -438,6 +449,7 @@ const deleteUser = asyncHandler(async (req, res) => {
 	});
 });
 
+// [PUT] /user/current
 const updateUser = asyncHandler(async (req, res) => {
 	const { _id } = req.user;
 
@@ -447,21 +459,24 @@ const updateUser = asyncHandler(async (req, res) => {
 	const user = await User.findById(_id);
 	if (!user) throw new Error("User not found");
 
+	const { name, email, mobile } = req.body;
+	if (!name && !email && !mobile) throw new Error("Nothing to update");
+	const avatar = req.file ? req.file.path : user.avatar; // Nếu có file thì lấy đường dẫn của file, nếu không thì giữ nguyên avatar cũ
+	const data = { name, email, mobile, avatar };
 	// Kiểm tra định dạng email
-	if (req.body.email) {
+	if (email) {
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-		if (!emailRegex.test(req.body.email))
-			throw new Error("Invalid email format");
+		if (!emailRegex.test(email)) throw new Error("Invalid email format");
 	}
 
 	// Kiểm tra định dạng số điện thoại (ví dụ)
-	if (req.body.mobile) {
+	if (mobile) {
 		const mobileRegex = /^[0-9]{10,11}$/;
-		if (!mobileRegex.test(req.body.mobile))
+		if (!mobileRegex.test(mobile))
 			throw new Error("Invalid mobile number format");
 	}
 
-	const updatedUser = await User.findByIdAndUpdate(_id, req.body, {
+	const updatedUser = await User.findByIdAndUpdate(_id, data, {
 		new: true,
 	}).select("-refreshToken -password -role"); // new:true là trả về data sau khi update
 
@@ -472,6 +487,7 @@ const updateUser = asyncHandler(async (req, res) => {
 	});
 });
 
+// [PUT] /user/:id (Admin)
 const updateUserByAdmin = asyncHandler(async (req, res) => {
 	const { id } = req.params;
 
@@ -506,6 +522,7 @@ const updateUserByAdmin = asyncHandler(async (req, res) => {
 	});
 });
 
+// [PUT] /user/address
 const updateUserAddress = asyncHandler(async (req, res) => {
 	const { _id } = req.user;
 	if (!req.body?.address) throw new Error("Missing address");
@@ -521,6 +538,8 @@ const updateUserAddress = asyncHandler(async (req, res) => {
 		user,
 	});
 });
+
+// [PUT] /user/cart
 const updateCart = asyncHandler(async (req, res) => {
 	const { _id } = req.user;
 	if (!req.body) throw new Error("Missing request body");
