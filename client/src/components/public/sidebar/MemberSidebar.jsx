@@ -1,25 +1,43 @@
 import React, { memo, useState } from "react";
 import {
-	AiOutlineCaretDown,
 	AiOutlineGift,
-	AiOutlineLogout,
+	AiOutlineLogout
 } from "react-icons/ai";
+import { NavLink, useNavigate } from "react-router-dom";
 import { memberSidebar } from "../../../utils/constants";
-import { Link } from "react-router-dom";
+import { apiLogout } from "../../../apis";
+import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import path from "../../../utils/path";
+import { logout } from "../../../store/user/userSlice";
+import { LogOut } from "lucide-react";
 
 const MemberSidebar = ({ user }) => {
-	const [active, setActive] = useState([]);
+	const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+	const dispatch = useDispatch();
+	const navigate = useNavigate();
+	
+	const handleLogoutClick = () => {
+		setShowLogoutConfirm(true);
+	};
 
-	const handleShowTabs = (tabId) => {
-		if (active.some((id) => id === tabId)) {
-			setActive(active.filter((id) => id !== tabId));
-		} else {
-			setActive([...active, tabId]);
+	const handleConfirmLogout = async () => {
+		const response = await apiLogout();
+		if (!response.success) {
+			return toast.error(response.message);
 		}
+		toast.success(response.message);
+		dispatch(logout());
+		navigate(`/${path.LOGIN}`);
+		setShowLogoutConfirm(false);
+	};
+
+	const handleCancelLogout = () => {
+		setShowLogoutConfirm(false);
 	};
 
 	return (
-		<div className="bg-gradient-to-b from-slate-50 to-white h-full w-80 border-r border-gray-200 shadow-lg">
+		<div className="bg-gradient-to-b from-slate-50 to-white h-full w-80 border-r border-gray-200 shadow-lg relative">
 			{/* Header with User Profile */}
 			<div className="p-6 border-b border-gray-100">
 				<div className="flex items-center gap-4">
@@ -48,14 +66,6 @@ const MemberSidebar = ({ user }) => {
 						<p className="text-gray-500 text-sm truncate">
 							{user.email}
 						</p>
-						{/* <div className="flex items-center gap-2 mt-1">
-							<span className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs px-2 py-1 rounded-full font-medium">
-								{user.membershipLevel}
-							</span>
-							<span className="text-blue-600 text-xs font-semibold">
-								{user.points} điểm
-							</span>
-						</div> */}
 					</div>
 				</div>
 			</div>
@@ -71,9 +81,11 @@ const MemberSidebar = ({ user }) => {
 				{memberSidebar.map((item) => (
 					<React.Fragment key={item.id}>
 						{item.type === "SINGLE" && (
-							<Link
+							<NavLink
 								to={item.path}
-								className="group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 cursor-pointer text-gray-600 hover:text-blue-600 hover:bg-blue-50/70 hover:scale-102">
+								className={({ isActive }) =>
+									`group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 cursor-pointer  ${isActive ? "text-blue-600 bg-blue-50" : "text-gray-600"} hover:text-blue-600 hover:bg-blue-50 hover:scale-102`
+								}>
 								<span className="flex-shrink-0 transition-all duration-300 group-hover:scale-110">
 									{item.icon}
 								</span>
@@ -83,58 +95,7 @@ const MemberSidebar = ({ user }) => {
 								<div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-300">
 									<div className="w-2 h-2 bg-blue-400 rounded-full"></div>
 								</div>
-							</Link>
-						)}
-
-						{item.type === "PARENT" && (
-							<div className="space-y-1">
-								<div
-									className="group flex items-center justify-between px-4 py-3 rounded-xl text-gray-600 cursor-pointer hover:text-blue-600 hover:bg-blue-50/70 transition-all duration-300"
-									onClick={() => handleShowTabs(item.id)}>
-									<div className="flex items-center gap-3">
-										<span className="flex-shrink-0 transition-all duration-300 group-hover:scale-110">
-											{item.icon}
-										</span>
-										<span className="font-medium">
-											{item.text}
-										</span>
-									</div>
-									<div
-										className={`transition-all duration-300 ${
-											active.includes(item.id)
-												? "rotate-180 text-blue-600"
-												: "text-gray-400"
-										}`}>
-										<AiOutlineCaretDown className="text-sm" />
-									</div>
-								</div>
-
-								{/* Submenu with smooth animation */}
-								<div
-									className={`overflow-hidden transition-all duration-300 ${
-										active.includes(item.id)
-											? "max-h-96 opacity-100"
-											: "max-h-0 opacity-0"
-									}`}>
-									<div className="pl-4 space-y-1 mt-1">
-										{item.submenu.map((subItem) => (
-											<div
-												key={subItem.text}
-												className="group flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-300 cursor-pointer text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 hover:translate-x-1"
-												onClick={(e) =>
-													e.stopPropagation()
-												}>
-												<span className="flex-shrink-0 transition-all duration-300 group-hover:scale-110">
-													{subItem.icon}
-												</span>
-												<span className="text-sm font-medium">
-													{subItem.text}
-												</span>
-											</div>
-										))}
-									</div>
-								</div>
-							</div>
+							</NavLink>
 						)}
 					</React.Fragment>
 				))}
@@ -162,7 +123,7 @@ const MemberSidebar = ({ user }) => {
 				</div>
 
 				{/* Logout Button */}
-				<button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-600 hover:text-red-700 hover:bg-red-50/70 transition-all duration-300 group">
+				<button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-600 hover:text-red-700 hover:bg-red-50 transition-all duration-300 group cursor-pointer" onClick={handleLogoutClick}>
 					<AiOutlineLogout
 						size={20}
 						className="transition-transform duration-300 group-hover:scale-110"
@@ -170,6 +131,47 @@ const MemberSidebar = ({ user }) => {
 					<span className="font-medium">Log out</span>
 				</button>
 			</div>
+
+			{showLogoutConfirm && (
+				<div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-52 p-4">
+					<div className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-auto overflow-hidden">
+						{/* Header với icon */}
+						<div className="bg-gradient-to-r from-red-50 to-orange-50 p-6 border-b border-red-100">
+							<div className="flex items-center justify-center mb-3">
+								<div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+									<LogOut className="w-8 h-8 text-red-500" />
+								</div>
+							</div>
+							<h3 className="text-xl font-bold text-center text-gray-800">
+								Confirm Logout
+							</h3>
+						</div>
+
+						{/* Content */}
+						<div className="p-6">
+							<p className="text-gray-600 text-center mb-8 leading-relaxed">
+								Are you sure you want to log out of your
+								account? You will need to log in again to
+								continue using the service.
+							</p>
+
+							{/* Buttons */}
+							<div className="flex gap-3">
+								<button
+									onClick={handleCancelLogout}
+									className="flex-1 py-3 px-4 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all duration-200 font-medium border border-gray-200 hover:border-gray-300 cursor-pointer">
+									Cancel
+								</button>
+								<button
+									onClick={handleConfirmLogout}
+									className="flex-1 py-3 px-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:from-red-600 hover:to-red-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105 cursor-pointer">
+									Log out
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			)}
 		</div>
 	);
 };

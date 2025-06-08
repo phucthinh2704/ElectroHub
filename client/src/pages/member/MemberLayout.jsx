@@ -1,8 +1,8 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
-import path from "../../utils/path";
 import { MemberSidebar } from "../../components";
+import path from "../../utils/path";
 
 const MemberLayout = () => {
 	const { current, isLoggedIn } = useSelector((state) => state.user);

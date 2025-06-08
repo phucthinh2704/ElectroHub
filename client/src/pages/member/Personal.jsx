@@ -1,11 +1,11 @@
+import moment from "moment";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { apiUpdateCurrentUser } from "../../apis/user";
-import toBase64 from "../../utils/toBase64";
-import moment from "moment";
 import avatarDefault from "../../assets/avatarDefault.png";
 import { getCurrent } from "../../store/user/asyncAction";
+import toBase64 from "../../utils/toBase64";
 
 const Personal = () => {
 	const dispatch = useDispatch();
@@ -74,12 +74,6 @@ const Personal = () => {
 
 			if (data.avatar && data.avatar instanceof File) {
 				formData.append("avatar", data.avatar);
-			}
-
-			console.log("Updated user data:", data);
-			console.log("FormData entries:");
-			for (let [key, value] of formData.entries()) {
-				console.log(key, value);
 			}
 
 			setIsSubmitting(true);
@@ -276,7 +270,7 @@ const Personal = () => {
 					<button
 						type="button"
 						onClick={handleSubmit(onSubmit)}
-						disabled={isSubmitting || !isDirty}
+						disabled={isSubmitting || (!isDirty && !previewAvatar)}
 						className="flex-1 bg-blue-600 text-white py-2 px-4 cursor-pointer rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
 						{isSubmitting ? (
 							<span className="flex items-center justify-center">

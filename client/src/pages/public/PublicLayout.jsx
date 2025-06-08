@@ -1,7 +1,7 @@
 // Public.js
 import React from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import { Footer, Header, Navigation, TopHeader } from "../../components";
+import { BackToTop, Footer, Header, Navigation, TopHeader } from "../../components";
 import path from "../../utils/path";
 
 const PublicLayout = () => {
@@ -18,6 +18,7 @@ const PublicLayout = () => {
 				<Outlet />
 			</div>
 			<Footer />
+			<BackToTop />
 		</div>
 	);
 };

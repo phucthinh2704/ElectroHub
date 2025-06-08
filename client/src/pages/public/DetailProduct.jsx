@@ -338,7 +338,7 @@ const DetailProduct = () => {
 
 									{/* Color */}
 									{product.color && (
-										<div className="mb-4">
+										<div className="mb-4 min-w-2xl">
 											<h3 className="text-sm font-medium text-gray-900 mb-2">
 												Color
 											</h3>

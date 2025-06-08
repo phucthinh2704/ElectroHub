@@ -87,7 +87,7 @@ const TopHeader = () => {
 						{/* Dropdown menu */}
 						<div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-10 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all">
 							<Link
-								to="/profile"
+								to={`/${path.MEMBER}/${path.PERSONAL}`}
 								className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm">
 								<User size={14} />
 								<span>My Profile</span>

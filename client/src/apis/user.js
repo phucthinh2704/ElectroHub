@@ -47,7 +47,7 @@ export const apiGetAllUsers = async (params) =>
 	axios({
 		method: "GET",
 		url: `/user`,
-		params
+		params,
 	});
 export const apiBlockUser = async (id) =>
 	axios({
@@ -66,10 +66,21 @@ export const apiUpdateUserByAdmin = async (id, data) =>
 	axios({
 		method: "PUT",
 		url: `/user/${id}`,
-		data
+		data,
 	});
 export const apiDeleteUser = async (id) =>
 	axios({
 		method: "DELETE",
 		url: `/user/${id}`,
+	});
+export const apiUpdateCart = async (data) =>
+	axios({
+		method: "PUT",
+		url: `/user/cart`,
+		data,
+	});
+export const apiRemoveCartItem = async (pid) =>
+	axios({
+		method: "DELETE",
+		url: `/user/remove-cart/${pid}`,
 	});

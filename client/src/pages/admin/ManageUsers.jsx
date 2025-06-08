@@ -374,9 +374,19 @@ const ManageUsers = () => {
 									<td className="py-4 px-6 text-left">
 										<div className="flex items-center gap-3">
 											<div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-												{user.name
-													.charAt(0)
-													.toUpperCase()}
+												{user.avatar ? (
+													<img
+														src={user.avatar}
+														alt={user.name}
+														className="w-full h-full rounded-full object-cover"
+													/>
+												) : (
+													<>
+														{user.name
+															.charAt(0)
+															.toUpperCase()}
+													</>
+												)}
 											</div>
 											<div>
 												<p className="font-medium text-slate-800">

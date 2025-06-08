@@ -1,12 +1,20 @@
 import { Mail, Phone, ShoppingCart, User } from "lucide-react";
-import React, { memo } from "react";
+import React, { memo, useEffect } from "react";
 import { Link } from "react-router-dom";
 import logo from "../../../assets/logo.jpg";
 import path from "../../../utils/path";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { getCurrent } from "../../../store/user/asyncAction";
 
 const Header = () => {
 	const { current } = useSelector((state) => state.user);
+	const dispatch = useDispatch();
+	useEffect(() => {
+		const setTimeOutId = setTimeout(() => {
+			dispatch(getCurrent());
+		}, 1000);
+		return () => clearTimeout(setTimeOutId);
+	}, [dispatch]);
 
 	return (
 		<header className="w-(--main-width) py-2 flex justify-between items-center">
@@ -53,14 +61,14 @@ const Header = () => {
 				</div>
 				{current && (
 					<>
-						<div className="flex flex-col gap-1 items-center justify-center border-r border-gray-300 px-6 py-2">
+						<Link to={`/${path.MEMBER}/${path.MY_CART}`} className="flex flex-col gap-1 items-center justify-center border-r border-gray-300 px-6 py-2">
 							<ShoppingCart
 								size={20}
 								className="text-red-500"
 								strokeWidth={2}
 							/>
-							<p className="text-xs text-gray-500">0 item(s)</p>
-						</div>
+							<p className="text-xs text-gray-500">{`${current.cart.length || 0} item(s)`}</p>
+						</Link>
 						<Link
 							to={
 								current?.role === "admin"
@@ -76,7 +84,9 @@ const Header = () => {
 								strokeWidth={2}
 							/>
 							<p className="text-xs text-gray-500 hover:text-blue-500 cursor-pointer">
-								{current?.role === "admin" ? "Admin Panel" : "My Profile"}
+								{current?.role === "admin"
+									? "Admin Panel"
+									: "My Profile"}
 							</p>
 						</Link>
 					</>

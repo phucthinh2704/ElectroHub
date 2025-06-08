@@ -23,20 +23,23 @@ const HotCollections = ({ categories }) => {
 				{categories?.map((category) => (
 					<div
 						key={category._id}
-						className="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-gray-200">
+						className="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-gray-200 hover:border-main/80 cursor-pointer">
 						<div className="p-4 flex flex-col items-center justify-between h-full">
 							{/* Image with hover effect */}
-							<div className="w-full overflow-hidden mb-4 rounded-md flex justify-center items-center">
-								<img
-									src={category.image}
-									alt={category.title}
-									className="h-[180px] object-cover transition-transform duration-500 group-hover:scale-105"
-								/>
-							</div>
+							<Link
+								to={`/products/${category.title.toLowerCase()}`}>
+								<div className="w-full overflow-hidden mb-4 rounded-md flex justify-center items-center">
+									<img
+										src={category.image}
+										alt={category.title}
+										className="h-[180px] object-cover transition-transform duration-500 group-hover:scale-105"
+									/>
+								</div>
 
-							<h4 className="text-lg font-semibold text-gray-800 mb-3 group-hover:text-main transition-all duration-300">
-								{category.title}
-							</h4>
+								<h4 className="text-lg font-semibold text-gray-800 mb-3 group-hover:text-main transition-all duration-300 text-center">
+									{category.title}
+								</h4>
+							</Link>
 
 							<div className="w-full">
 								{category.brand?.map((item, index) => (

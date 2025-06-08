@@ -1,20 +1,87 @@
 import React, { memo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import { apiUpdateCart } from "../../../apis/user";
 import newLabel from "../../../assets/new.png";
 import trendingLabel from "../../../assets/trending.png";
 import formatMoney from "../../../utils/formatMoney";
 import icons from "../../../utils/icons";
 import renderRatingStar from "../../../utils/renderRatingStar";
 import HoverOption from "../common/HoverOption";
+import QuickView from "./QuickView";
+import Swal from "sweetalert2";
+import { getCurrent } from "../../../store/user/asyncAction";
+import path from "../../../utils/path";
 
-const { AiFillEye, BsFillSuitHeartFill, IoMdMenu } = icons;
+const { AiFillEye, BsFillSuitHeartFill, FaCartPlus } = icons;
 
 const ProductCard = ({ data, isNew, normal }) => {
 	const [isShowOptions, setIsShowOptions] = useState(false);
+	const [isShowQuickView, setIsShowQuickView] = useState(false);
+
+	const dispatch = useDispatch();
+	const navigate = useNavigate();
+	const { current } = useSelector((state) => state.user);
+
+	const handleClickOptions = async (e, type) => {
+		e.preventDefault();
+		e.stopPropagation();
+		switch (type) {
+			case "QUICK_VIEW":
+				setIsShowQuickView(true);
+				break;
+			case "WISHLIST":
+				console.log("Wishlist clicked");
+				break;
+			case "ADD_TO_CART": {
+				if(!current) {
+					Swal.fire({
+						title: "Please login to continue",
+						icon: "warning",
+						showCancelButton: true,
+						confirmButtonText: "Login",
+						cancelButtonText: "Cancel",
+					}).then((result) => {
+						if (result.isConfirmed) {
+							window.scrollTo(0, 0); 
+							navigate(`/${path.LOGIN}`)
+						}
+					})
+					return;
+				}
+				try {
+					const response = await apiUpdateCart({
+						pid: data._id,
+						color: data.color,
+						quantity: 1,
+					});
+					if (response.success) {
+						toast.success(response.message);
+						dispatch(getCurrent());
+					} else {
+						toast.error(
+							response.message || "Failed to add to cart"
+						);
+					}
+				} catch (error) {
+					console.log("Error adding to cart:", error);
+					toast.error(
+						"Failed to add to cart. Please try again later."
+					);
+					return;
+				}
+				break;
+			}
+			default:
+				break;
+		}
+	};
 
 	return (
 		<div
-			className="w-full h-full text-base border-2 border-gray-300 p-4 rounded-xl "
+			className="w-full h-full text-base border-2 border-gray-300 p-4 rounded-xl relative hover:border-main/80 transition-all duration-300 cursor-pointer overflow-hidden"
 			onMouseEnter={() => setIsShowOptions(true)}
 			onMouseLeave={() => setIsShowOptions(false)}>
 			<Link
@@ -29,9 +96,25 @@ const ProductCard = ({ data, isNew, normal }) => {
 								? "opacity-100 translate-y-0"
 								: "opacity-0 translate-y-[20px]"
 						}`}>
-						<HoverOption icon={<AiFillEye />} />
-						<HoverOption icon={<BsFillSuitHeartFill />} />
-						<HoverOption icon={<IoMdMenu />} />
+						<span
+							title="Quick View"
+							onClick={(e) =>
+								handleClickOptions(e, "QUICK_VIEW")
+							}>
+							<HoverOption icon={<AiFillEye />} />
+						</span>
+						<span
+							title="Add to Wishlist"
+							onClick={(e) => handleClickOptions(e, "WISHLIST")}>
+							<HoverOption icon={<BsFillSuitHeartFill />} />
+						</span>
+						<span
+							title="Add to Cart"
+							onClick={(e) =>
+								handleClickOptions(e, "ADD_TO_CART")
+							}>
+							<HoverOption icon={<FaCartPlus />} />
+						</span>
 					</div>
 					<img
 						src={
@@ -60,10 +143,10 @@ const ProductCard = ({ data, isNew, normal }) => {
 
 					<div>
 						{data.originalPrice && (
-								<p className="text-gray-400 text-xs line-through">
-									{formatMoney(data.originalPrice)} VND
-								</p>
-							)}
+							<p className="text-gray-400 text-xs line-through">
+								{formatMoney(data.originalPrice)} VND
+							</p>
+						)}
 						<div className="flex justify-between items-center mt-auto">
 							<p className="text-main font-semibold">
 								{formatMoney(data.price)} VND
@@ -75,6 +158,14 @@ const ProductCard = ({ data, isNew, normal }) => {
 					</div>
 				</div>
 			</Link>
+			{isShowQuickView && (
+				<div className="absolute top-0 left-0 right-0 h-full w-full">
+					<QuickView
+						data={data}
+						onClose={() => setIsShowQuickView(false)}
+					/>
+				</div>
+			)}
 		</div>
 	);
 };

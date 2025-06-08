@@ -43,12 +43,12 @@ const AdminSidebar = ({ admin }) => {
 						{item.type === "SINGLE" && (
 							<NavLink
 								to={item.path}
-								className="group flex items-center gap-2 px-4 py-3 rounded-xl text-slate-300 transition-all duration-200 hover:text-white bg-gradient-to-r from-blue-600 to-purple-600">
+								className={({ isActive }) => `group flex items-center gap-2 px-4 py-3 rounded-xl transition-all duration-200 ${isActive ? "text-white font-semibold": "text-slate-300"} hover:text-white bg-gradient-to-r from-blue-600 to-purple-600`}>
 								<span className="flex-shrink-0 transition-transform group-hover:scale-110">
 									{item.icon}
 								</span>
 
-								<span className="font-medium group-hover:font-semibold">
+								<span className="group-hover:font-semibold">
 									{item.text}
 								</span>
 							</NavLink>
