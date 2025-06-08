@@ -190,8 +190,8 @@ const login = asyncHandler(async (req, res) => {
 const getCurrent = asyncHandler(async (req, res) => {
 	const { _id } = req.user;
 	const user = await User.findById(_id).select(
-		"-refreshToken -password -role"
-	);
+		"-refreshToken -password"
+	).populate("cart.product");
 
 	if (!user) {
 		return res.status(400).json({
@@ -543,24 +543,25 @@ const updateUserAddress = asyncHandler(async (req, res) => {
 const updateCart = asyncHandler(async (req, res) => {
 	const { _id } = req.user;
 	if (!req.body) throw new Error("Missing request body");
+
 	const { pid, quantity, color } = req.body;
 	if (!pid || !quantity || !color) throw new Error("Missing required fields");
+
 	const user = await User.findById(_id).select("cart");
 	const alreadyProduct = user?.cart?.find(
 		(item) => item.product.toString() === pid && item.color === color
 	);
 	if (alreadyProduct) {
-		// Update quantity if product already exists in cart
 		const response = await User.findOneAndUpdate(
 			{ cart: { $elemMatch: alreadyProduct } }, // sẽ cập nhật chính xác dù không cung cấp userId vì mỗi phần tử trong cart đều có id riêng
-			{ $set: { "cart.$.quantity": quantity } }, // cập nhật số lượng sản phẩm cho trường quantity của cart của user tìm được
+			{ $set: { "cart.$.quantity": alreadyProduct.quantity + quantity } }, // cập nhật số lượng sản phẩm cho trường quantity của cart của user tìm được
 			{ new: true }
 		);
 		return res.status(200).json({
 			success: response ? true : false,
 			message: response
-				? "Updated cart successfully"
-				: "Cannot update cart",
+				? "Product added to cart successfully"
+				: "Failed to update cart",
 			response,
 		});
 	} else {
@@ -580,8 +581,41 @@ const updateCart = asyncHandler(async (req, res) => {
 	}
 });
 
+// [DELETE] /user/remove-cart
+const removeCartItem = asyncHandler(async (req, res) => {
+	const { _id } = req.user;
+	if (!req.body) throw new Error("Missing request body");
+
+	const { pid } = req.params;
+
+	const user = await User.findById(_id).select("cart");
+	const alreadyProduct = user?.cart?.find(
+		(item) => item.product.toString() === pid && item.color === color
+	);
+	if (!alreadyProduct) {
+		return res.status(400).json({
+			success: false,
+			message: "Product not found in cart",
+		});
+	} else {
+		const response = await User.findByIdAndUpdate(
+			_id,
+			{ $pull: { cart: { product: pid } } }, // Sử dụng $pull để xóa sản phẩm khỏi mảng cart
+			{ new: true }
+		);
+		return res.status(200).json({
+			success: response ? true : false,
+			message: response
+				? "Removed product from cart successfully"
+				: "Cannot remove product from cart",
+			response,
+		});
+	}
+});
+
 module.exports = {
 	register,
+	authRegister,
 	login,
 	getCurrent,
 	blockUser,
@@ -595,5 +629,5 @@ module.exports = {
 	updateUserByAdmin,
 	updateUserAddress,
 	updateCart,
-	authRegister,
+	removeCartItem,
 };

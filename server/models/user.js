@@ -17,7 +17,7 @@ var userSchema = new mongoose.Schema(
 					ref: "Product",
 				},
 				quantity: { type: Number, default: 1 },
-				color: { type: String, default: "black" },
+				color: { type: String, required: true },
 			},
 		],
 		address: {

@@ -15,6 +15,7 @@ router.put("/reset-password/:token", user.resetPassword);
 router.put("/current", verifyAccessToken, uploader.single("avatar"),user.updateUser);
 router.put("/address", verifyAccessToken, user.updateUserAddress);
 router.put("/cart", verifyAccessToken, user.updateCart);
+router.delete("/remove-cart/:pid", verifyAccessToken, user.removeCartItem);
 
 // Admin routes
 router.get("/", [verifyAccessToken, isAdmin], user.getAllUsers);
