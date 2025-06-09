@@ -12,6 +12,7 @@ const path = {
 	FAVORITE: "favorites",
 	FORGOT_PASSWORD: "forgot-password",
 	RESET_PASSWORD: "reset-password/:token",
+	CHECKOUT: "checkout",
 
 	// Admin Routes
 	ADMIN: "admin",

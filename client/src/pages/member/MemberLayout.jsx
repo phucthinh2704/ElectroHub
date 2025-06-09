@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
 import { MemberSidebar } from "../../components";
@@ -6,6 +6,11 @@ import path from "../../utils/path";
 
 const MemberLayout = () => {
 	const { current, isLoggedIn } = useSelector((state) => state.user);
+
+	useEffect(() => {
+		document.title = "Member Dashboard - E-Commerce";
+	}, []);
+
 	if (!isLoggedIn || !current) {
 		return (
 			<Navigate
@@ -14,6 +19,7 @@ const MemberLayout = () => {
 			/>
 		);
 	}
+
 	return (
 		<div className="flex bg-black/80 min-h-screen text-white relative">
 			<div className="fixed top-0 bottom-0 z-40">

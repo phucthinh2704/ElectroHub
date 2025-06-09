@@ -12,7 +12,7 @@ const Header = () => {
 	useEffect(() => {
 		const setTimeOutId = setTimeout(() => {
 			dispatch(getCurrent());
-		}, 1000);
+		}, 300);
 		return () => clearTimeout(setTimeOutId);
 	}, [dispatch]);
 

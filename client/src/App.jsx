@@ -14,7 +14,14 @@ import {
 	ManageProducts,
 	ManageUsers,
 } from "./pages/admin";
-import { MemberLayout, Personal, MyCart, Wishlist, OrderHistory } from "./pages/member";
+import {
+	MemberLayout,
+	Personal,
+	MyCart,
+	Wishlist,
+	OrderHistory,
+	Checkout,
+} from "./pages/member";
 import {
 	Blogs,
 	DetailProduct,
@@ -32,7 +39,6 @@ import path from "./utils/path";
 import Swal from "sweetalert2";
 import { apiGetCurrent, apiLogout } from "./apis";
 import { logout } from "./store/user/userSlice";
-
 
 function App() {
 	const dispatch = useDispatch();
@@ -85,6 +91,10 @@ function App() {
 		<div className="min-h-screen font-main">
 			<ScrollToTop />
 			<Routes>
+				<Route
+					path={path.CHECKOUT}
+					element={<Checkout />}
+				/>
 				<Route
 					path={path.PUBLIC}
 					element={<PublicLayout />}>

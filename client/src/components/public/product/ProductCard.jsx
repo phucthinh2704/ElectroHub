@@ -36,7 +36,7 @@ const ProductCard = ({ data, isNew, normal }) => {
 				console.log("Wishlist clicked");
 				break;
 			case "ADD_TO_CART": {
-				if(!current) {
+				if (!current) {
 					Swal.fire({
 						title: "Please login to continue",
 						icon: "warning",
@@ -45,10 +45,14 @@ const ProductCard = ({ data, isNew, normal }) => {
 						cancelButtonText: "Cancel",
 					}).then((result) => {
 						if (result.isConfirmed) {
-							window.scrollTo(0, 0); 
-							navigate(`/${path.LOGIN}`)
+							window.scrollTo(0, 0);
+							navigate(`/${path.LOGIN}`, {
+								state: `/products/${data.category.toLowerCase()}/${
+									data._id
+								}/${data.slug}`,
+							});
 						}
-					})
+					});
 					return;
 				}
 				try {
@@ -56,6 +60,9 @@ const ProductCard = ({ data, isNew, normal }) => {
 						pid: data._id,
 						color: data.color,
 						quantity: 1,
+						thumb: data.thumb,
+						price: data.price,
+						stock: data.stock,
 					});
 					if (response.success) {
 						toast.success(response.message);

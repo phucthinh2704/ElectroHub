@@ -160,7 +160,12 @@ const Login = () => {
       setIsSubmitting(false);
       toast.success(response.message);
       dispatch(login({ isLoggedIn: true, user: response.user, token: response.access_token }));
-      navigate(`/${path.HOME}`);
+      const state = location.state;
+      if(state) {
+        navigate(`${state}`)
+      } else {
+        navigate(`/${path.HOME}`, { replace: true });
+      }
     }, 500);
   };
 

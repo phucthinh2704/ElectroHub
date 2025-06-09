@@ -85,14 +85,14 @@ const AdminSidebar = ({ admin }) => {
 											<NavLink
 												to={subItem.path}
 												key={subItem.text}
-												className="group flex items-center gap-2 px-8 rounded-2xl my-1 py-2.5 transition-all duration-200 text-white bg-gradient-to-r from-slate-600 to-slate-900 hover:from-slate-600 hover:to-slate-500"
+												className={({ isActive }) => `group flex items-center gap-2 px-8 rounded-2xl my-1 py-2.5 transition-all duration-200 ${isActive ? "font-semibold" : "font-medium"} text-white bg-gradient-to-r from-slate-500 to-slate-800 hover:from-slate-600 hover:to-slate-500`}
 												onClick={(e) =>
 													e.stopPropagation()
 												}>
 												<div className="group-hover:scale-115">
 													{subItem.icon}
 												</div>
-												<span className="text-sm font-medium group-hover:font-semibold">
+												<span className="text-sm group-hover:font-semibold">
 													{subItem.text}
 												</span>
 											</NavLink>

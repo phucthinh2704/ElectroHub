@@ -1,12 +1,14 @@
 export { default as BlogPosts } from "./public/blog/BlogPosts";
+export { default as CartItem } from "./public/cart/CartItem";
+export { default as BackToTop } from "./public/common/BackToTop";
 export { default as Breadcrumbs } from "./public/common/Breadcrumbs";
 export { default as CountDown } from "./public/common/CountDown";
 export { default as HoverOption } from "./public/common/HoverOption";
 export { default as ScrollToTop } from "./public/common/ScrollToTop";
-export { default as BackToTop } from "./public/common/BackToTop";
 export { default as InformationDetail } from "./public/detail/InformationDetail";
 export { default as OthersProduct } from "./public/detail/OthersProduct";
 export { default as Footer } from "./public/footer/Footer";
+export { default as CartHeader } from "./public/header/CartHeader";
 export { default as Header } from "./public/header/Header";
 export { default as Navigation } from "./public/header/Navigation";
 export { default as TopHeader } from "./public/header/TopHeader";

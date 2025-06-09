@@ -21,7 +21,10 @@ const createProduct = asyncHandler(async (req, res) => {
 	if (thumb) req.body.thumb = thumb;
 	if (images) req.body.images = images;
 
-	const newProduct = await Product.create(req.body);
+	const newProduct = await Product.create({
+		...req.body,
+		color: req.body.color.toUpperCase(),
+	});
 
 	res.status(201).json({
 		success: newProduct ? true : false,
@@ -267,7 +270,7 @@ const addVariantProduct = asyncHandler(async (req, res) => {
 		{
 			$push: {
 				variants: {
-					color,
+					color: color.toUpperCase(),
 					price,
 					stock,
 					thumb: req.body.thumb ? req.body.thumb : "",

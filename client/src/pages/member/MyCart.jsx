@@ -1,19 +1,22 @@
-import { Heart, Minus, Plus, ShoppingBag, Tag, Trash2 } from "lucide-react";
-import React, { memo, useState } from "react";
-import { useSelector } from "react-redux";
+import { ShoppingBag, ShoppingCart, Tag } from "lucide-react";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
+import { CartHeader, CartItem } from "../../components";
 import formatMoney from "../../utils/formatMoney";
 import path from "../../utils/path";
-import Swal from "sweetalert2";
+import { apiRemoveCartItem } from "../../apis";
+import { toast } from "react-toastify";
+import { getCurrent } from "../../store/user/asyncAction";
 
 const MyCart = () => {
 	const { current } = useSelector((state) => state.user);
+	const dispatch = useDispatch();
 
 	const [cartItems, setCartItems] = useState([...(current?.cart || [])]);
 	const [promoCode, setPromoCode] = useState("");
 	const [appliedPromo, setAppliedPromo] = useState(null);
-
-	console.log("Cart Items:", cartItems);
 
 	const updateQuantity = (id, change) => {
 		const itemQuantity = cartItems.find(
@@ -21,24 +24,13 @@ const MyCart = () => {
 		)?.quantity;
 
 		if (change < 0 && itemQuantity <= 1) {
-			Swal.fire({
-				title: "Warning",
-				text: "Are you sure you want to remove this item?",
-				icon: "warning",
-				confirmButtonText: "YES",
-				showCancelButton: true,
-				cancelButtonText: "NO",
-				confirmButtonColor: "#d33",
-				cancelButtonColor: "#3085d6",
-			}).then((result) => {
-				if (result.isConfirmed) {
-					removeItem(id);
-				}
-			});
+			removeItem(id);
 			return;
 		} else if (change > 0 && itemQuantity > 0) {
-			const inStock = cartItems.find((item) => item._id === id)?.product
-				?.stock;
+			const cartElement = cartItems.find((item) => item._id === id && item.color === item.product.color) || cartItems.find((item) => item._id === id);
+			const color = cartElement.color;
+			const inStock = cartElement.product.color === color ? cartElement.product.stock : cartElement.product.variants.find((variant) => variant.color === color)?.stock;
+				// console.log("inStock", inStock);
 			if (itemQuantity + change > inStock) {
 				Swal.fire({
 					title: "Warning",
@@ -64,8 +56,42 @@ const MyCart = () => {
 		);
 	};
 
-	const removeItem = (id) => {
-		setCartItems((items) => items.filter((item) => item._id !== id));
+	const removeItem = async (id) => {
+		try {
+			Swal.fire({
+				title: "Warning",
+				text: "Are you sure you want to remove this item?",
+				icon: "warning",
+				confirmButtonText: "YES",
+				showCancelButton: true,
+				cancelButtonText: "NO",
+				confirmButtonColor: "#d33",
+				cancelButtonColor: "#3085d6",
+			}).then(async (result) => {
+				if (result.isConfirmed) {
+					const response = await apiRemoveCartItem(id);
+					if (response.success) {
+						setCartItems((items) =>
+							items.filter((item) => item._id !== id)
+						);
+						dispatch(getCurrent());
+						toast.success(response.message);
+					} else {
+						toast.error(
+							response.message || "Failed to remove item"
+						);
+					}
+				}
+			});
+		} catch (error) {
+			console.error("Error removing item:", error);
+			Swal.fire({
+				title: "Error",
+				text: "Failed to remove item. Please try again later.",
+				icon: "error",
+				confirmButtonText: "OK",
+			});
+		}
 	};
 
 	const applyPromoCode = () => {
@@ -86,7 +112,7 @@ const MyCart = () => {
 	};
 
 	const subtotal = cartItems.reduce(
-		(sum, item) => sum + item.product.price * item.quantity,
+		(sum, item) => sum + item.price * item.quantity,
 		0
 	);
 	const discount = appliedPromo ? subtotal * appliedPromo.discount : 0;
@@ -118,119 +144,30 @@ const MyCart = () => {
 
 	return (
 		<div className="min-h-screen p-4 bg-white shadow-lg">
-			<div className="mb-8">
-				<h1 className="text-4xl font-bold text-gray-800 mb-2">
-					Shopping Cart
-				</h1>
-				<p className="text-gray-600">
-					{cartItems.length} item{cartItems.length !== 1 ? "s" : ""}{" "}
-					in your cart
-				</p>
-			</div>
+			<CartHeader cartItems={cartItems} icon={<ShoppingCart className="w-6 h-6 text-white" />} title={"Shopping Cart"} />
 
 			<div className="grid lg:grid-cols-3 gap-8">
 				{/* Cart Items */}
 				<div className="lg:col-span-2 space-y-6">
 					{cartItems.map((item) => (
-						<div
+						<CartItem
 							key={item._id}
-							className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
-							<div className="flex flex-col sm:flex-row gap-4">
-								<div className="border border-gray-400 rounded-xl overflow-hidden p-2">
-									<img
-										src={item.product.thumb}
-										alt={item.product.title}
-										className="sm:w-32 h-34 object-cover"
-									/>
-								</div>
-
-								<div className="flex-1">
-									<div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
-										<div>
-											<Link
-												to={`/products/${item.product.category.toLowerCase()}/${
-													item.product._id
-												}/${item.product.slug}`}>
-												<h3 className="text-xl font-semibold cursor-pointer text-gray-800 mb-1 hover:text-blue-600 hover:underline">
-													{item.product.title}
-												</h3>
-											</Link>
-											<Link
-												to={`/products/${item.product.category.toLowerCase()}`}>
-												<h3 className="text-sm font-medium text-gray-600 mb-1">
-													Category:{" "}
-													{item.product.category}
-												</h3>
-											</Link>
-											<div className="text-sm text-gray-600 mb-3">
-												Color: {item.product.color}
-											</div>
-											<div className="text-sm text-gray-600 line-through">
-												Original Price:{" "}
-												{formatMoney(
-													item.product.originalPrice
-												)}
-												đ
-											</div>
-											<p className="text-lg font-semibold text-main">
-												Price:{" "}
-												{formatMoney(
-													item.product.price
-												)}
-												đ
-											</p>
-											<p className="text-sm text-main">
-												Save:{" "}
-												{formatMoney(
-													item.product.originalPrice -
-														item.product.price
-												)}
-												đ
-											</p>
-										</div>
-
-										<div className="flex items-center gap-2 text-slate-800">
-											<button
-												onClick={() =>
-													updateQuantity(item._id, -1)
-												}
-												className="bg-gray-100 cursor-pointer hover:bg-gray-200 p-2 rounded-full transition-colors duration-200">
-												<Minus className="w-4 h-4" />
-											</button>
-											<span className="text-lg font-semibold w-8 text-center">
-												{item.quantity}
-											</span>
-											<button
-												onClick={() =>
-													updateQuantity(item._id, 1)
-												}
-												className="bg-gray-100 cursor-pointer hover:bg-gray-200 p-2 rounded-full transition-colors duration-200">
-												<Plus className="w-4 h-4" />
-											</button>
-											<button
-												onClick={() =>
-													removeItem(item._id)
-												}
-												className="ml-4 cursor-pointer text-red-500 hover:text-red-700 p-2 transition-colors duration-200">
-												<Trash2 className="w-5 h-5" />
-											</button>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
+							item={item}
+							updateQuantity={updateQuantity}
+							removeItem={removeItem}
+						/>
 					))}
 				</div>
 
 				{/* Order Summary */}
 				<div className="space-y-6 text-slate-800">
 					{/* Promo Code */}
-					<div className="bg-white rounded-2xl shadow-lg p-6">
-						<h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+					<div className="bg-white rounded-2xl shadow-lg p-5">
+						<h3 className="text-lg font-semibold text-gray-800 mb-2 flex items-center gap-2">
 							<Tag className="w-5 h-5" />
 							Promo Code
 						</h3>
-						<div className="flex gap-3">
+						<div className="flex gap-2 items-center justify-center">
 							<input
 								type="text"
 								value={promoCode}
@@ -299,15 +236,19 @@ const MyCart = () => {
 							<div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
 								<p className="text-blue-700 text-sm">
 									Add{" "}
-									{formatMoney(2000000 - subtotal).toFixed(0)}
+									{formatMoney(
+										(2000000 - subtotal).toFixed(0)
+									)}
 									đ more for free shipping!
 								</p>
 							</div>
 						)}
 
-						<button className="w-full mt-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl font-semibold text-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg cursor-pointer">
-							Proceed to Checkout
-						</button>
+						<Link target="_blank" to={`/${path.CHECKOUT}`}>
+							<button className="w-full mt-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl font-semibold text-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg cursor-pointer">
+								Proceed to Checkout
+							</button>
+						</Link>
 
 						<Link to={`/${path.HOME}`}>
 							<button className="w-full mt-3 border-2 border-gray-300 text-gray-700 py-3 rounded-xl font-semibold hover:border-gray-400 hover:bg-gray-50 transition-all duration-300 cursor-pointer">
@@ -321,4 +262,4 @@ const MyCart = () => {
 	);
 };
 
-export default memo(MyCart);
+export default MyCart;

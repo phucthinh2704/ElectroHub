@@ -16,10 +16,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import { apiDeleteProduct, apiGetProducts } from "../../apis/product";
+import { EditProductForm } from "../../components";
 import Pagination from "../../components/public/pagination/Pagination";
 import formatMoney from "../../utils/formatMoney";
 import path from "../../utils/path";
-import { EditProductForm } from "../../components";
 
 const ManageProducts = () => {
 	const [products, setProducts] = useState([]);
@@ -582,7 +582,7 @@ const ManageProducts = () => {
 											{product.variants.length}
 										</span>
 									</td>
-									
+
 									{/* Stock */}
 									<td className="py-4 px-4">
 										<div className="flex flex-col items-center gap-1">

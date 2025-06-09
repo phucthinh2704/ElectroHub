@@ -148,7 +148,7 @@ const login = asyncHandler(async (req, res) => {
 
 	if (!email || !password) throw new Error("Missing required fields");
 
-	const user = await User.findOne({ email });
+	const user = await User.findOne({ email }).populate("cart.product");
 	if (!user)
 		throw new Error(
 			"Login failed: User not found. Please check your username and try again."
@@ -189,9 +189,9 @@ const login = asyncHandler(async (req, res) => {
 // [GET] /user/current
 const getCurrent = asyncHandler(async (req, res) => {
 	const { _id } = req.user;
-	const user = await User.findById(_id).select(
-		"-refreshToken -password"
-	).populate("cart.product");
+	const user = await User.findById(_id)
+		.select("-refreshToken -password")
+		.populate("cart.product");
 
 	if (!user) {
 		return res.status(400).json({
@@ -544,17 +544,36 @@ const updateCart = asyncHandler(async (req, res) => {
 	const { _id } = req.user;
 	if (!req.body) throw new Error("Missing request body");
 
-	const { pid, quantity, color } = req.body;
-	if (!pid || !quantity || !color) throw new Error("Missing required fields");
+	const { pid, quantity, color, thumb, price, stock } = req.body;
+	if (!pid || !quantity || !color || !thumb || !price)
+		throw new Error("Missing required fields");
 
-	const user = await User.findById(_id).select("cart");
+	const user = await User.findById(_id)
+		.select("cart")
+		.populate("cart.product");
+
 	const alreadyProduct = user?.cart?.find(
-		(item) => item.product.toString() === pid && item.color === color
+		(item) => item.product._id.toString() === pid && item.color === color
 	);
+
 	if (alreadyProduct) {
+		const inStock =
+			alreadyProduct.product?.color === color
+				? alreadyProduct.product?.stock
+				: alreadyProduct.product?.variants.find(
+						(variant) => variant.color === color
+				  )?.stock;
+				  
 		const response = await User.findOneAndUpdate(
 			{ cart: { $elemMatch: alreadyProduct } }, // sẽ cập nhật chính xác dù không cung cấp userId vì mỗi phần tử trong cart đều có id riêng
-			{ $set: { "cart.$.quantity": alreadyProduct.quantity + quantity } }, // cập nhật số lượng sản phẩm cho trường quantity của cart của user tìm được
+			{
+				$set: {
+					"cart.$.quantity": Math.min(
+						alreadyProduct.quantity + quantity,
+						inStock
+					),
+				},
+			},
 			{ new: true }
 		);
 		return res.status(200).json({
@@ -568,7 +587,11 @@ const updateCart = asyncHandler(async (req, res) => {
 		// Add new product to cart
 		const response = await User.findByIdAndUpdate(
 			_id,
-			{ $push: { cart: { product: pid, quantity, color } } },
+			{
+				$push: {
+					cart: { product: pid, quantity, color, thumb, price, stock },
+				},
+			},
 			{ new: true }
 		);
 		return res.status(200).json({
@@ -584,13 +607,12 @@ const updateCart = asyncHandler(async (req, res) => {
 // [DELETE] /user/remove-cart
 const removeCartItem = asyncHandler(async (req, res) => {
 	const { _id } = req.user;
-	if (!req.body) throw new Error("Missing request body");
 
 	const { pid } = req.params;
 
 	const user = await User.findById(_id).select("cart");
 	const alreadyProduct = user?.cart?.find(
-		(item) => item.product.toString() === pid && item.color === color
+		(item) => item._id.toString() === pid
 	);
 	if (!alreadyProduct) {
 		return res.status(400).json({
@@ -600,7 +622,7 @@ const removeCartItem = asyncHandler(async (req, res) => {
 	} else {
 		const response = await User.findByIdAndUpdate(
 			_id,
-			{ $pull: { cart: { product: pid } } }, // Sử dụng $pull để xóa sản phẩm khỏi mảng cart
+			{ $pull: { cart: { _id: pid } } }, // Sử dụng $pull để xóa sản phẩm khỏi mảng cart
 			{ new: true }
 		);
 		return res.status(200).json({

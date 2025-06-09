@@ -1,9 +1,11 @@
+import { UserCheck2 } from "lucide-react";
 import moment from "moment";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { apiUpdateCurrentUser } from "../../apis/user";
 import avatarDefault from "../../assets/avatarDefault.png";
+import { CartHeader } from "../../components";
 import { getCurrent } from "../../store/user/asyncAction";
 import toBase64 from "../../utils/toBase64";
 
@@ -86,8 +88,8 @@ const Personal = () => {
 					name: response.updatedUser.name,
 					email: response.updatedUser.email,
 					mobile: response.updatedUser.mobile,
-					avatar: response.updatedUser.avatar, 
-				}); 
+					avatar: response.updatedUser.avatar,
+				});
 				setPreviewAvatar(response.updatedUser.avatar);
 			} else {
 				setSubmitMessage(
@@ -114,13 +116,14 @@ const Personal = () => {
 	};
 
 	return (
-		<div className="min-h-screen p-6 bg-white shadow-lg">
-			<div className="mb-6">
-				<h2 className="text-2xl font-bold text-gray-800 mb-2">
+		<div className="min-h-screen p-4 bg-white shadow-lg">
+			{/* <div className="mb-6 relative p-4 bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 rounded-2xl">
+				<h2 className="text-2xl font-bold text-gray-800">
 					Personal Information
 				</h2>
 				<p className="text-gray-600">Update your account information</p>
-			</div>
+			</div> */}
+			<CartHeader title={"Personal Information"} icon={<UserCheck2></UserCheck2>} />
 
 			<div className="space-y-6">
 				{/* Avatar Section */}

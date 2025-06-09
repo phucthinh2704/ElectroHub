@@ -18,6 +18,9 @@ var userSchema = new mongoose.Schema(
 				},
 				quantity: { type: Number, default: 1 },
 				color: { type: String, required: true },
+				thumb: { type: String, required: true },
+				price: { type: Number, required: true },
+				stock: { type: Number, required: true },
 			},
 		],
 		address: {

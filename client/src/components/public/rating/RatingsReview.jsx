@@ -100,7 +100,9 @@ const RatingsReview = ({ product = {}, onReviewSubmitted }) => {
 			}).then((result) => {
 				if (result.isConfirmed) {
 					scrollTo(0, 0);
-					navigate(`/${path.LOGIN}`);
+					navigate(`/${path.LOGIN}`, {
+						state: window.location.pathname,
+					});
 				}
 			});
 			return;

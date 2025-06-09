@@ -13,7 +13,7 @@ import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
 import { useParams } from "react-router-dom";
 import Slider from "react-slick";
-import { apiGetProductById } from "../../apis";
+import { apiGetProductById, apiUpdateCart } from "../../apis";
 import {
 	Breadcrumbs,
 	InformationDetail,
@@ -23,9 +23,14 @@ import {
 import formatMoney from "../../utils/formatMoney";
 import renderRatingStar from "../../utils/renderRatingStar";
 import settings from "../../utils/settingsSlider";
+import Swal from "sweetalert2";
+import { toast } from "react-toastify";
+import { getCurrent } from "../../store/user/asyncAction";
+import { useDispatch } from "react-redux";
 
 const DetailProduct = () => {
 	const { productId } = useParams();
+	const dispatch = useDispatch();
 	const [product, setProduct] = useState({});
 	const [currentImageIndex, setCurrentImageIndex] = useState(0);
 	const [variant, setVariant] = useState(null);
@@ -71,6 +76,70 @@ const DetailProduct = () => {
 	const handleImageChange = (index) => {
 		setCurrentImageIndex(index);
 	};
+
+	const handleAddToCart = async () => {
+		if (variant) {
+			try {
+				const response = await apiUpdateCart({
+					pid: product._id,
+					color: variant.color,
+					quantity,
+					thumb: variant.thumb,
+					price: variant.price,
+					stock: variant.stock,
+				});
+				if (response.success) {
+					toast.success(response.message);
+					dispatch(getCurrent());
+				} else {
+					Swal.fire({
+						title: "Error",
+						text: response.message || "Failed to add product to cart",
+						icon: "error",
+					});
+				}
+			}
+			catch(error) {
+				console.error("Error adding to cart:", error);
+				Swal.fire({
+					title: "Error",
+					text: "Failed to add product to cart. Please try again later.",
+					icon: "error",
+				})
+				return;
+			}
+		} else {
+			try {
+				const response = await apiUpdateCart({
+					pid: product._id,
+					color: product.color,
+					quantity,
+					thumb: product.thumb,
+					price: product.price,
+					stock: product.stock,
+				});
+				if (response.success) {
+					toast.success(response.message);
+					dispatch(getCurrent());
+				} else {
+					Swal.fire({
+						title: "Error",
+						text: response.message || "Failed to add product to cart",
+						icon: "error",
+					});
+				}
+			}
+			catch(error) {
+				console.error("Error adding to cart:", error);
+				Swal.fire({
+					title: "Error",
+					text: "Failed to add product to cart. Please try again later.",
+					icon: "error",
+				})
+				return;
+			}
+		}
+	}
 
 	return (
 		<div className="bg-gray-100 min-h-screen py-2">
@@ -500,7 +569,7 @@ const DetailProduct = () => {
 
 									{/* Action Buttons */}
 									<div className="flex flex-col space-y-3">
-										<button className="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg font-medium flex items-center justify-center cursor-pointer">
+										<button className="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg font-medium flex items-center justify-center cursor-pointer" onClick={handleAddToCart}>
 											<ShoppingCart className="mr-2 h-5 w-5" />
 											Add to Cart
 										</button>
