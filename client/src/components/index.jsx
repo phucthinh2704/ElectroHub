@@ -7,6 +7,7 @@ export { default as HoverOption } from "./public/common/HoverOption";
 export { default as ScrollToTop } from "./public/common/ScrollToTop";
 export { default as InformationDetail } from "./public/detail/InformationDetail";
 export { default as OthersProduct } from "./public/detail/OthersProduct";
+export { default as Paypal } from "./public/payment/Paypal";
 export { default as Footer } from "./public/footer/Footer";
 export { default as CartHeader } from "./public/header/CartHeader";
 export { default as Header } from "./public/header/Header";

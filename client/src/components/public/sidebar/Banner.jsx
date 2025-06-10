@@ -28,11 +28,11 @@ const Banner = () => {
 		<div className="h-[455px] overflow-hidden">
 			<Slider {...settings}>
 				{banners.map((banner) => (
-					<div key={banner.id}>
+					<div key={banner.id} className="h-full w-full p-2.5">
 						<img
 							src={banner.src}
 							alt={banner.alt}
-							className="rounded-lg "
+							className="rounded-lg"
 						/>
 					</div>
 				))}

@@ -116,7 +116,7 @@ const MyCart = () => {
 		0
 	);
 	const discount = appliedPromo ? subtotal * appliedPromo.discount : 0;
-	const shipping = subtotal > 2000000 ? 0 : 50000;
+	const shipping = subtotal > 2000000 ? 0 : import.meta.VITE_SHIPPING_COST || 50000;
 	const total = subtotal - discount + shipping;
 
 	if (cartItems.length === 0) {

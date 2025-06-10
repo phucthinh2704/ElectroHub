@@ -72,7 +72,7 @@ const Footer = () => {
 							<span className="font-medium text-white">
 								Phone:
 							</span>
-							<span>(+84) 8000 8080</span>
+							<a href="https://zalo.me/0916660387" className="hover:underline">(+84) 8000 8080</a>
 						</div>
 						<div className="flex items-center gap-3 text-gray-300 hover:text-white transition-colors duration-200 group">
 							<Mail

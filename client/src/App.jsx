@@ -92,12 +92,12 @@ function App() {
 			<ScrollToTop />
 			<Routes>
 				<Route
+					path={path.PUBLIC}
+					element={<PublicLayout />}>
+				<Route
 					path={path.CHECKOUT}
 					element={<Checkout />}
 				/>
-				<Route
-					path={path.PUBLIC}
-					element={<PublicLayout />}>
 					<Route
 						path={path.HOME}
 						element={<Home />}
