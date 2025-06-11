@@ -3,13 +3,62 @@ import React, { memo } from "react";
 import { Link } from "react-router-dom";
 import formatMoney from "../../../utils/formatMoney";
 import renderRatingStar from "../../../utils/renderRatingStar";
+import { apiUpdateCart } from "../../../apis";
+import { toast } from "react-toastify";
+import { getCurrent } from "../../../store/user/asyncAction";
+import { useDispatch } from "react-redux";
 
 const CartItem = ({ item, updateQuantity, removeItem }) => {
+	const dispatch = useDispatch();
 	const discountPercentage = Math.round(
 		((item.product.originalPrice - item.price) /
 			item.product.originalPrice) *
 			100
 	);
+
+	const handleIncreaseItem = async () => {
+		updateQuantity(item._id, 1);
+		try {
+			const response = await apiUpdateCart({
+				pid: item.product._id,
+				color: item.color,
+				quantity: 1,
+				thumb: item.thumb,
+				price: item.price,
+				stock: item.stock,
+			});
+			if (response.success) {
+				dispatch(getCurrent());
+			} else {
+				toast.error(response.message || "Failed to add to cart");
+			}
+		} catch (error) {
+			console.log("Error adding to cart:", error);
+			toast.error("Failed to add to cart. Please try again later.");
+		}
+	};
+
+	const handleDecreaseItem = async () => {
+		updateQuantity(item._id, -1);
+		try {
+			const response = await apiUpdateCart({
+				pid: item.product._id,
+				color: item.color,
+				quantity: -1,
+				thumb: item.thumb,
+				price: item.price,
+				stock: item.stock,
+			});
+			if (response.success) {
+				dispatch(getCurrent());
+			} else {
+				toast.error(response.message || "Failed to add to cart");
+			}
+		} catch (error) {
+			console.log("Error adding to cart:", error);
+			toast.error("Failed to add to cart. Please try again later.");
+		}
+	}
 
 	return (
 		<div className="group bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-500 py-4 px-6 border border-gray-100 hover:border-gray-200 relative overflow-hidden">
@@ -128,7 +177,7 @@ const CartItem = ({ item, updateQuantity, removeItem }) => {
 						{/* Quantity Controls */}
 						<div className="flex items-center bg-gray-100 rounded-xl px-1">
 							<button
-								onClick={() => updateQuantity(item._id, -1)}
+								onClick={handleDecreaseItem}
 								className="bg-white hover:bg-gray-100 p-3 rounded-xl transition-all duration-200 shadow-sm hover:shadow-md active:scale-95 cursor-pointer">
 								<Minus className="w-4 h-4 text-gray-600" />
 							</button>
@@ -140,7 +189,7 @@ const CartItem = ({ item, updateQuantity, removeItem }) => {
 							</div>
 
 							<button
-								onClick={() => updateQuantity(item._id, 1)}
+								onClick={handleIncreaseItem}
 								className="bg-white hover:bg-gray-100 p-3 rounded-xl transition-all duration-200 shadow-sm hover:shadow-md active:scale-95 cursor-pointer">
 								<Plus className="w-4 h-4 text-gray-600" />
 							</button>

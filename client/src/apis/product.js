@@ -41,3 +41,21 @@ export const apiUpdateProductVariant = async (id, data) =>
 		url: `/product/variant/${id}`,
 		data,
 	});
+export const apiCreateOrder = async (data) =>
+	axios({
+		method: "POST",
+		url: `/order/`,
+		data,
+	});
+export const apiGetOrders = async (params) =>
+	axios({
+		method: "GET",
+		url: `/order/admin`,
+		params
+	});
+export const apiUserOrders = async (params) =>
+	axios({
+		method: "GET",
+		url: `/order/`,
+		params
+	});

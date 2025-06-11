@@ -120,11 +120,6 @@ const getAllProducts = asyncHandler(async (req, res) => {
 	const products = await queryCommand;
 	const count = await Product.find(formattedQueries).countDocuments();
 
-	// Example routes for testing price filtering:
-	// GET /api/product?price[gte]=100 - Get products with price >= 100
-	// GET /api/product?price[lte]=1000 - Get products with price <= 1000
-	// GET /api/product?price[gte]=100&price[lte]=1000 - Get products with 100 <= price <= 1000
-
 	return res.status(200).json({
 		success: products ? true : false,
 		count,

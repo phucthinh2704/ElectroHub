@@ -1,26 +1,28 @@
 import {
+	CheckCircle,
 	CirclePlus,
 	ContactRound,
+	CreditCard,
 	Heart,
 	Home,
 	HomeIcon,
 	MailQuestionIcon,
+	MapPin,
 	Rss,
 	Settings,
 	ShoppingCart,
 	User,
 } from "lucide-react";
 import {
-	AiOutlineBell,
 	AiOutlineHeart,
 	AiOutlineHistory,
 	AiOutlineHome,
-	AiOutlineSetting,
 	AiOutlineShoppingCart,
 	AiOutlineUser,
 } from "react-icons/ai";
 import icons from "./icons";
 import path from "./path";
+const { AiOutlineDashboard, MdGroups, TbBrandProducthunt, RiBillLine } = icons;
 
 export const navigation = [
 	{ id: 1, path: `/${path.HOME}`, value: "Home", icon: Home },
@@ -72,7 +74,12 @@ export const ratingLabels = {
 	5: "Excellent",
 };
 
-const { AiOutlineDashboard, MdGroups, TbBrandProducthunt, RiBillLine } = icons;
+export const stepsPayment = [
+	{ id: 1, title: "Shipping", icon: MapPin },
+	{ id: 2, title: "Payment", icon: CreditCard },
+	{ id: 3, title: "Review", icon: CheckCircle },
+];
+
 export const adminSidebar = [
 	{
 		id: 1,

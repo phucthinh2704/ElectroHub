@@ -123,7 +123,10 @@ const Personal = () => {
 				</h2>
 				<p className="text-gray-600">Update your account information</p>
 			</div> */}
-			<CartHeader title={"Personal Information"} icon={<UserCheck2></UserCheck2>} />
+			<CartHeader
+				title={"Personal Information"}
+				icon={<UserCheck2></UserCheck2>}
+			/>
 
 			<div className="space-y-6">
 				{/* Avatar Section */}
@@ -174,86 +177,91 @@ const Personal = () => {
 					</div>
 				</div>
 
-				{/* Name Field */}
-				<div className="text-gray-700">
-					<label className="block text-sm font-medium mb-2">
-						Full Name *
-					</label>
-					<input
-						type="text"
-						{...register("name", {
-							required: "Full name is required",
-							minLength: {
-								value: 2,
-								message: "Name must be at least 2 characters",
-							},
-							maxLength: {
-								value: 50,
-								message: "Name must not exceed 50 characters",
-							},
-						})}
-						className="w-full px-4 py-2 border border-gray-300 outline-none rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-						placeholder="Enter full name"
-					/>
-					{errors.name && (
-						<p className="mt-1 text-sm text-red-600">
-							{errors.name.message}
-						</p>
-					)}
-				</div>
+				<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+					{/* Name Field */}
+					<div className="text-gray-700">
+						<label className="block text-sm font-medium mb-2">
+							Full Name *
+						</label>
+						<input
+							type="text"
+							{...register("name", {
+								required: "Full name is required",
+								minLength: {
+									value: 2,
+									message:
+										"Name must be at least 2 characters",
+								},
+								maxLength: {
+									value: 50,
+									message:
+										"Name must not exceed 50 characters",
+								},
+							})}
+							className="w-full px-4 py-2 border border-gray-300 outline-none rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+							placeholder="Enter full name"
+						/>
+						{errors.name && (
+							<p className="mt-1 text-sm text-red-600">
+								{errors.name.message}
+							</p>
+						)}
+					</div>
 
-				{/* Email Field */}
-				<div className="text-gray-700">
-					<label className="block text-sm font-medium mb-2">
-						Email *
-					</label>
-					<input
-						type="email"
-						{...register("email", {
-							required: "Email is required",
-							pattern: {
-								value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-								message: "Invalid email address",
-							},
-						})}
-						className="w-full px-4 py-2 border border-gray-300 outline-none rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-						placeholder="example@email.com"
-					/>
-					{errors.email && (
-						<p className="mt-1 text-sm text-red-600">
-							{errors.email.message}
-						</p>
-					)}
-				</div>
+					{/* Email Field */}
+					<div className="text-gray-700">
+						<label className="block text-sm font-medium mb-2">
+							Email *
+						</label>
+						<input
+							type="email"
+							{...register("email", {
+								required: "Email is required",
+								pattern: {
+									value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+									message: "Invalid email address",
+								},
+							})}
+							className="w-full px-4 py-2 border border-gray-300 outline-none rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+							placeholder="example@email.com"
+						/>
+						{errors.email && (
+							<p className="mt-1 text-sm text-red-600">
+								{errors.email.message}
+							</p>
+						)}
+					</div>
 
-				{/* Mobile Field */}
-				<div className="text-gray-700">
-					<label className="block text-sm font-medium mb-2">
-						Phone Number *
-					</label>
-					<input
-						type="tel"
-						{...register("mobile", {
-							required: "Phone number is required",
-							pattern: {
-								value: /^[0-9]{10,11}$/,
-								message: "Phone number must be 10-11 digits",
-							},
-							validate: (value) => {
-								return (
-									value.startsWith("0") ||
-									"Phone number must start with 0"
-								);
-							},
-						})}
-						className="w-full px-4 py-2 border border-gray-300 outline-none rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-						placeholder="0123456789"
-					/>
-					{errors.mobile && (
-						<p className="mt-1 text-sm text-red-600">
-							{errors.mobile.message}
-						</p>
-					)}
+					{/* Mobile Field */}
+					<div className="text-gray-700">
+						<label className="block text-sm font-medium mb-2">
+							Phone Number *
+						</label>
+						<input
+							type="tel"
+							{...register("mobile", {
+								required: "Phone number is required",
+								pattern: {
+									value: /^[0-9]{10,11}$/,
+									message:
+										"Phone number must be 10-11 digits",
+								},
+								validate: (value) => {
+									return (
+										value.startsWith("0") ||
+										"Phone number must start with 0"
+									);
+								},
+							})}
+							className="w-full px-4 py-2 border border-gray-300 outline-none rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+							placeholder="0123456789"
+						/>
+						{errors.mobile && (
+							<p className="mt-1 text-sm text-red-600">
+								{errors.mobile.message}
+							</p>
+						)}
+					</div>
 				</div>
 
 				{/* Submit Message */}

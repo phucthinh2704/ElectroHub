@@ -5,32 +5,30 @@ var orderSchema = new mongoose.Schema({
 	products: [
 		{
 			product: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
-			count: { type: Number, default: 1 },
-			color: { type: String, default: "" },
+			quantity: { type: Number, default: 1 },
+			color: { type: String, required: true },
+			thumb: { type: String, required: true },
+			price: { type: Number, required: true },
 		},
 	],
 	status: {
 		type: String,
-		default: "Processing",
-		enum: [
-			"Processing",
-			"Shipped",
-			"Delivered",
-			"Cancelled",
-			"Returned",
-			"Cash on Delivery",
-			"Success",
-		],
+		default: "Cancelled",
+		enum: ["Cancelled", "Success"],
+	},
+	shippingAddress: {
+		type: String,
+		required: true,
 	},
 	total: {
 		type: Number,
 		default: 0,
 	},
-	coupon: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "Coupon",
-	},
-   orderBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+	// coupon: {
+	// 	type: mongoose.Schema.Types.ObjectId,
+	// 	ref: "Coupon",
+	// },
+	orderBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 });
 
 //Export the model

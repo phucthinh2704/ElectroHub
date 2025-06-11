@@ -34,7 +34,8 @@
     "slick-carousel": "^1.8.1",
     "sweetalert2": "^11.21.2",
     "tailwindcss": "^4.1.5",
-    "use-react-router-breadcrumbs": "^4.0.1"
+    "use-react-router-breadcrumbs": "^4.0.1",
+    "vietnam-provinces": "^0.0.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",

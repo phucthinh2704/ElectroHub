@@ -1,5 +1,5 @@
 import { ShoppingBag, ShoppingCart, Tag } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -18,6 +18,10 @@ const MyCart = () => {
 	const [promoCode, setPromoCode] = useState("");
 	const [appliedPromo, setAppliedPromo] = useState(null);
 
+	useEffect(() => {
+		dispatch(getCurrent());
+	}, [dispatch]);
+	
 	const updateQuantity = (id, change) => {
 		const itemQuantity = cartItems.find(
 			(item) => item._id === id
