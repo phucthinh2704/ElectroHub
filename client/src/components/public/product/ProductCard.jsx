@@ -56,6 +56,10 @@ const ProductCard = ({ data, isNew, normal }) => {
 					return;
 				}
 				try {
+					if(data.stock <= 0) {
+						toast.error("This product is out of stock");
+						return;
+					}
 					const response = await apiUpdateCart({
 						pid: data._id,
 						color: data.color,

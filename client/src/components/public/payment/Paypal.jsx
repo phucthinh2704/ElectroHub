@@ -3,7 +3,7 @@ import {
 	PayPalButtons,
 	usePayPalScriptReducer,
 } from "@paypal/react-paypal-js";
-import { useEffect } from "react";
+import { memo, useEffect } from "react";
 import { apiCreateOrder } from "../../../apis";
 import { useDispatch } from "react-redux";
 import { getCurrent } from "../../../store/user/asyncAction";
@@ -88,12 +88,12 @@ const ButtonWrapper = ({ currency, showSpinner, amount, payload }) => {
 	);
 };
 
-export default function Paypal({ amount, payload }) {
+function Paypal({ amount, payload }) {
 	return (
 		<div style={{ maxWidth: "750px", minHeight: "200px" }}>
 			<PayPalScriptProvider
 				options={{
-					clientId: "test",
+					clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID,
 					components: "buttons",
 					currency: "USD",
 				}}>
@@ -107,3 +107,5 @@ export default function Paypal({ amount, payload }) {
 		</div>
 	);
 }
+
+export default memo(Paypal);

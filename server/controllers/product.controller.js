@@ -144,8 +144,13 @@ const updateProduct = asyncHandler(async (req, res) => {
 		if (images.length > 0) req.body.images = images;
 	}
 	if (req.body.title) req.body.slug = slugify(req.body.title);
-
-	const updatedProduct = await Product.findByIdAndUpdate(id, req.body, {
+	console.log("req.body", req.body.description);
+	// Xử lý description nếu có
+	const updateData = { ...req.body };
+	if (req.body.description && Array.isArray(req.body.description)) {
+		updateData.description = req.body.description;
+	}
+	const updatedProduct = await Product.findByIdAndUpdate(id, updateData, {
 		new: true,
 	});
 	if (!updatedProduct) throw new Error("Product not found");
@@ -239,10 +244,10 @@ const uploadImagesProduct = asyncHandler(async (req, res) => {
 // [PUT] /product/variant/:id
 const addVariantProduct = asyncHandler(async (req, res) => {
 	const { stock, price, color } = req.body;
-	const files = req.files;
 	if (!stock || !price || !color) {
 		throw new Error("Please fill all the fields");
 	}
+	const files = req.files;
 	if (files) {
 		const thumb = files.thumb ? files.thumb[0].path : undefined;
 		const images = files.images
@@ -284,6 +289,41 @@ const addVariantProduct = asyncHandler(async (req, res) => {
 	});
 });
 
+// [PUT] /product/variant/:id/:color
+const updateVariantProduct = asyncHandler(async (req, res) => {
+	const { stock, price } = req.body;
+	
+	const files = req.files;
+	if (files) {
+		const thumb = files.thumb ? files.thumb[0].path : undefined;
+		const images = files.images
+			? files.images.map((file) => file.path)
+			: [];
+		if (thumb) req.body.thumb = thumb;
+		if (images.length > 0) req.body.images = images;
+	}
+
+	const product = await Product.findById(req.params.id);
+	if (!product) throw new Error("Product not found");
+
+	const variant = product.variants.find(
+		(variant) => variant.sku === req.params.sku
+	);
+	if (!variant) throw new Error("Variant not found");
+
+	variant.price = price || variant.price;
+	variant.stock = stock || variant.stock;
+	variant.thumb = req.body.thumb ? req.body.thumb : variant.thumb;
+	variant.images = req.body.images ? req.body.images : variant.images;
+	console.log(req.body.images);
+	await product.save();
+	
+	res.status(200).json({
+		success: true,
+		message: "Variant added successfully",
+		product,
+	});
+});
 module.exports = {
 	createProduct,
 	getProductById,
@@ -293,4 +333,5 @@ module.exports = {
 	ratingProduct,
 	uploadImagesProduct,
 	addVariantProduct,
+	updateVariantProduct,
 };

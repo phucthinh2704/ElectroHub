@@ -41,6 +41,12 @@ export const apiUpdateProductVariant = async (id, data) =>
 		url: `/product/variant/${id}`,
 		data,
 	});
+export const apiEditProductVariant = async (id, sku, data) =>
+	axios({
+		method: "PUT",
+		url: `/product/variant/${id}/${sku}`,
+		data,
+	});
 export const apiCreateOrder = async (data) =>
 	axios({
 		method: "POST",

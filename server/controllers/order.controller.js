@@ -1,5 +1,6 @@
 const Order = require("../models/order");
 const User = require("../models/user");
+const Product = require("../models/product");
 const Coupon = require("../models/coupon");
 const asyncHandler = require("express-async-handler");
 
@@ -30,10 +31,26 @@ const createNewOrder = asyncHandler(async (req, res) => {
 
 	await User.findByIdAndUpdate(_id, updateData);
 
+	products.forEach(async (product) => {
+		const productUpdate = await Product.findById(product.product);
+		if (productUpdate && product.color === productUpdate.color) {
+			productUpdate.stock -= product.quantity;
+			productUpdate.sold += product.quantity;
+			await productUpdate.save();
+		} else {
+			const variantProductUpdate = productUpdate.variants.find(
+				(variant) => variant.color === product.color
+			);
+			if (variantProductUpdate) {
+				variantProductUpdate.stock -= product.quantity;
+				variantProductUpdate.sold += product.quantity;
+				await productUpdate.save();
+			}
+		}
+	});
+
 	const newOrder = await Order.create({
 		products,
-		// coupon: req.body?.coupon || null,
-		// total: totalPrice,
 		shippingAddress: address,
 		total,
 		status,
@@ -71,10 +88,10 @@ const updateStatusOrder = asyncHandler(async (req, res) => {
 const getUserOrder = asyncHandler(async (req, res) => {
 	const { _id } = req.user;
 	const queries = { ...req.query };
-	
+
 	const excludeFields = ["page", "sort", "limit", "fields"];
 	excludeFields.forEach((el) => delete queries[el]);
-	let formattedQueries = {orderBy: _id};
+	let formattedQueries = { orderBy: _id };
 
 	let queryCommand = Order.find(formattedQueries);
 
@@ -111,7 +128,7 @@ const getUserOrder = asyncHandler(async (req, res) => {
 
 const getAllOrders = asyncHandler(async (req, res) => {
 	const queries = { ...req.query };
-	
+
 	const excludeFields = ["page", "sort", "limit", "fields"];
 	excludeFields.forEach((el) => delete queries[el]);
 	let formattedQueries = {};

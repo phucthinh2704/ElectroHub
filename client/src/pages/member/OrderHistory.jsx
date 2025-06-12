@@ -8,27 +8,29 @@ import {
 	Package,
 	Truck,
 	XCircle,
+	History,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { apiUserOrders } from "../../apis";
+import { CartHeader } from "../../components";
 
 const OrderHistory = () => {
 	const [activeTab, setActiveTab] = useState("all");
 	const [searchTerm, setSearchTerm] = useState("");
-   const [orderss, setOrders] = useState([]);
+	const [orderss, setOrders] = useState([]);
 
 	useEffect(() => {
 		const fetchOrders = async (params) => {
 			const response = await apiUserOrders(params);
-         if(response.success) {
-            setOrders(response.orders);
-            console.log(response);
-         }
+			if (response.success) {
+				setOrders(response.orders);
+				console.log(response);
+			}
 		};
-      
-      fetchOrders({ limit: 1 });
+
+		fetchOrders({ limit: 1 });
 	}, []);
-   console.log(orderss);
+	console.log(orderss);
 
 	// Sample order data
 	const orders = [
@@ -179,235 +181,224 @@ const OrderHistory = () => {
 	];
 
 	return (
-		<div className="min-h-screen bg-gray-50 py-8 text-black">
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-				{/* Header */}
-				<div className="mb-8">
-					<h1 className="text-3xl font-bold text-gray-900 mb-2">
-						Order History
-					</h1>
-					<p className="text-gray-600">
-						Track and manage your orders
-					</p>
-				</div>
+		<div className="min-h-screen p-4 bg-white shadow-lg text-slate-900">
+			{/* Header */}
+			<CartHeader
+				title={"Order History"}
+				icon={<History className="w-6 h-6 text-white" />}
+			/>
 
-				{/* Search and Filter */}
-				<div className="mb-8 bg-white rounded-lg shadow-sm p-6">
-					<div className="flex flex-col sm:flex-row gap-4 justify-between items-center">
-						<div className="relative flex-1 max-w-md">
-							<input
-								type="text"
-								placeholder="Search orders or products..."
-								value={searchTerm}
-								onChange={(e) => setSearchTerm(e.target.value)}
-								className="w-full pl-4 pr-4 py-2 outline-none border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-							/>
-						</div>
-						<div className="flex gap-2">
-							<button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-								<Download className="w-4 h-4" />
-								Export
-							</button>
-						</div>
+			{/* Search and Filter */}
+			<div className="mb-8 bg-white rounded-lg shadow-sm p-6">
+				<div className="flex flex-col sm:flex-row gap-4 justify-between items-center">
+					<div className="relative flex-1 max-w-md">
+						<input
+							type="text"
+							placeholder="Search orders or products..."
+							value={searchTerm}
+							onChange={(e) => setSearchTerm(e.target.value)}
+							className="w-full pl-4 pr-4 py-2 outline-none border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+						/>
+					</div>
+					<div className="flex gap-2">
+						<button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+							<Download className="w-4 h-4" />
+							Export
+						</button>
 					</div>
 				</div>
+			</div>
 
-				{/* Tabs */}
-				<div className="mb-6">
-					<nav className="flex space-x-8 overflow-x-auto">
-						{tabs.map((tab) => (
-							<button
-								key={tab.id}
-								onClick={() => setActiveTab(tab.id)}
-								className={`whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
-									activeTab === tab.id
-										? "border-blue-500 text-blue-600"
-										: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-								}`}>
-								{tab.label}
-								<span className="ml-2 bg-gray-100 text-gray-600 py-0.5 px-2 rounded-full text-xs">
-									{tab.count}
-								</span>
-							</button>
-						))}
-					</nav>
-				</div>
+			{/* Tabs */}
+			<div className="mb-6">
+				<nav className="flex space-x-8 overflow-x-auto">
+					{tabs.map((tab) => (
+						<button
+							key={tab.id}
+							onClick={() => setActiveTab(tab.id)}
+							className={`whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
+								activeTab === tab.id
+									? "border-blue-500 text-blue-600"
+									: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+							}`}>
+							{tab.label}
+							<span className="ml-2 bg-gray-100 text-gray-600 py-0.5 px-2 rounded-full text-xs">
+								{tab.count}
+							</span>
+						</button>
+					))}
+				</nav>
+			</div>
 
-				{/* Orders List */}
-				<div className="space-y-6">
-					{filteredOrders.length === 0 ? (
-						<div className="text-center py-12 bg-white rounded-lg shadow-sm">
-							<Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-							<h3 className="text-lg font-medium text-gray-900 mb-2">
-								No orders found
-							</h3>
-							<p className="text-gray-500">
-								Try adjusting your search or filter criteria
-							</p>
-						</div>
-					) : (
-						filteredOrders.map((order) => (
-							<div
-								key={order.id}
-								className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-								{/* Order Header */}
-								<div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
-									<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-										<div className="flex flex-col sm:flex-row gap-4 sm:items-center">
-											<div>
-												<h3 className="font-semibold text-gray-900">
-													{order.id}
-												</h3>
-												<div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
-													<Calendar className="w-4 h-4" />
-													{new Date(
-														order.date
-													).toLocaleDateString(
-														"en-US",
-														{
-															year: "numeric",
-															month: "long",
-															day: "numeric",
-														}
-													)}
-												</div>
-											</div>
-											<div
-												className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
-													order.status
-												)}`}>
-												{getStatusIcon(order.status)}
-												{order.status
-													.charAt(0)
-													.toUpperCase() +
-													order.status.slice(1)}
+			{/* Orders List */}
+			<div className="space-y-6">
+				{filteredOrders.length === 0 ? (
+					<div className="text-center py-12 bg-white rounded-lg shadow-sm">
+						<Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+						<h3 className="text-lg font-medium text-gray-900 mb-2">
+							No orders found
+						</h3>
+						<p className="text-gray-500">
+							Try adjusting your search or filter criteria
+						</p>
+					</div>
+				) : (
+					filteredOrders.map((order) => (
+						<div
+							key={order.id}
+							className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+							{/* Order Header */}
+							<div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
+								<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+									<div className="flex flex-col sm:flex-row gap-4 sm:items-center">
+										<div>
+											<h3 className="font-semibold text-gray-900">
+												{order.id}
+											</h3>
+											<div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
+												<Calendar className="w-4 h-4" />
+												{new Date(
+													order.date
+												).toLocaleDateString("en-US", {
+													year: "numeric",
+													month: "long",
+													day: "numeric",
+												})}
 											</div>
 										</div>
-										<div className="text-right">
-											<p className="text-lg font-semibold text-gray-900">
-												${order.total}
-											</p>
-											<p className="text-sm text-gray-500">
-												{order.items} items
-											</p>
+										<div
+											className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
+												order.status
+											)}`}>
+											{getStatusIcon(order.status)}
+											{order.status
+												.charAt(0)
+												.toUpperCase() +
+												order.status.slice(1)}
 										</div>
 									</div>
-								</div>
-
-								{/* Order Details */}
-								<div className="px-6 py-4">
-									{/* Products */}
-									<div className="mb-4">
-										<h4 className="font-medium text-gray-900 mb-3">
-											Items
-										</h4>
-										<div className="space-y-3">
-											{order.products.map(
-												(product, index) => (
-													<div
-														key={index}
-														className="flex items-center gap-4">
-														<div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
-															<Package className="w-6 h-6 text-gray-400" />
-														</div>
-														<div className="flex-1">
-															<p className="font-medium text-gray-900">
-																{product.name}
-															</p>
-															<p className="text-sm text-gray-500">
-																Qty:{" "}
-																{
-																	product.quantity
-																}
-															</p>
-														</div>
-														<p className="font-medium text-gray-900">
-															${product.price}
-														</p>
-													</div>
-												)
-											)}
-										</div>
-									</div>
-
-									{/* Payment and Shipping */}
-									<div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-gray-200">
-										<div>
-											<h4 className="font-medium text-gray-900 mb-2 flex items-center gap-2">
-												<CreditCard className="w-4 h-4" />
-												Payment Method
-											</h4>
-											<p className="text-gray-600">
-												{order.paymentMethod}
-											</p>
-										</div>
-										<div>
-											<h4 className="font-medium text-gray-900 mb-2 flex items-center gap-2">
-												<Truck className="w-4 h-4" />
-												Shipping Address
-											</h4>
-											<p className="text-gray-600">
-												{order.shippingAddress}
-											</p>
-										</div>
-									</div>
-								</div>
-
-								{/* Actions */}
-								<div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
-									<div className="flex flex-wrap gap-3">
-										<button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm">
-											<Eye className="w-4 h-4" />
-											View Details
-										</button>
-										{order.status === "delivered" && (
-											<button className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm">
-												<Download className="w-4 h-4" />
-												Download Invoice
-											</button>
-										)}
-										{order.status === "shipped" && (
-											<button className="flex items-center gap-2 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors text-sm">
-												<Truck className="w-4 h-4" />
-												Track Package
-											</button>
-										)}
-										{order.status === "processing" && (
-											<button className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm">
-												<XCircle className="w-4 h-4" />
-												Cancel Order
-											</button>
-										)}
+									<div className="text-right">
+										<p className="text-lg font-semibold text-gray-900">
+											${order.total}
+										</p>
+										<p className="text-sm text-gray-500">
+											{order.items} items
+										</p>
 									</div>
 								</div>
 							</div>
-						))
-					)}
-				</div>
 
-				{/* Pagination */}
-				{filteredOrders.length > 0 && (
-					<div className="mt-8 flex justify-center">
-						<nav className="flex items-center gap-2">
-							<button className="px-3 py-2 text-sm text-gray-500 hover:text-gray-700 disabled:opacity-50">
-								Previous
-							</button>
-							<button className="px-3 py-2 text-sm bg-blue-600 text-white rounded">
-								1
-							</button>
-							<button className="px-3 py-2 text-sm text-gray-500 hover:text-gray-700">
-								2
-							</button>
-							<button className="px-3 py-2 text-sm text-gray-500 hover:text-gray-700">
-								3
-							</button>
-							<button className="px-3 py-2 text-sm text-gray-500 hover:text-gray-700">
-								Next
-							</button>
-						</nav>
-					</div>
+							{/* Order Details */}
+							<div className="px-6 py-4">
+								{/* Products */}
+								<div className="mb-4">
+									<h4 className="font-medium text-gray-900 mb-3">
+										Items
+									</h4>
+									<div className="space-y-3">
+										{order.products.map(
+											(product, index) => (
+												<div
+													key={index}
+													className="flex items-center gap-4">
+													<div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+														<Package className="w-6 h-6 text-gray-400" />
+													</div>
+													<div className="flex-1">
+														<p className="font-medium text-gray-900">
+															{product.name}
+														</p>
+														<p className="text-sm text-gray-500">
+															Qty:{" "}
+															{product.quantity}
+														</p>
+													</div>
+													<p className="font-medium text-gray-900">
+														${product.price}
+													</p>
+												</div>
+											)
+										)}
+									</div>
+								</div>
+
+								{/* Payment and Shipping */}
+								<div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-gray-200">
+									<div>
+										<h4 className="font-medium text-gray-900 mb-2 flex items-center gap-2">
+											<CreditCard className="w-4 h-4" />
+											Payment Method
+										</h4>
+										<p className="text-gray-600">
+											{order.paymentMethod}
+										</p>
+									</div>
+									<div>
+										<h4 className="font-medium text-gray-900 mb-2 flex items-center gap-2">
+											<Truck className="w-4 h-4" />
+											Shipping Address
+										</h4>
+										<p className="text-gray-600">
+											{order.shippingAddress}
+										</p>
+									</div>
+								</div>
+							</div>
+
+							{/* Actions */}
+							<div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
+								<div className="flex flex-wrap gap-3">
+									<button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm">
+										<Eye className="w-4 h-4" />
+										View Details
+									</button>
+									{order.status === "delivered" && (
+										<button className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm">
+											<Download className="w-4 h-4" />
+											Download Invoice
+										</button>
+									)}
+									{order.status === "shipped" && (
+										<button className="flex items-center gap-2 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors text-sm">
+											<Truck className="w-4 h-4" />
+											Track Package
+										</button>
+									)}
+									{order.status === "processing" && (
+										<button className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm">
+											<XCircle className="w-4 h-4" />
+											Cancel Order
+										</button>
+									)}
+								</div>
+							</div>
+						</div>
+					))
 				)}
 			</div>
+
+			{/* Pagination */}
+			{filteredOrders.length > 0 && (
+				<div className="mt-8 flex justify-center">
+					<nav className="flex items-center gap-2">
+						<button className="px-3 py-2 text-sm text-gray-500 hover:text-gray-700 disabled:opacity-50">
+							Previous
+						</button>
+						<button className="px-3 py-2 text-sm bg-blue-600 text-white rounded">
+							1
+						</button>
+						<button className="px-3 py-2 text-sm text-gray-500 hover:text-gray-700">
+							2
+						</button>
+						<button className="px-3 py-2 text-sm text-gray-500 hover:text-gray-700">
+							3
+						</button>
+						<button className="px-3 py-2 text-sm text-gray-500 hover:text-gray-700">
+							Next
+						</button>
+					</nav>
+				</div>
+			)}
 		</div>
 	);
 };

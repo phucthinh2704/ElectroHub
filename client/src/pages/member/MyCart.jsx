@@ -147,7 +147,7 @@ const MyCart = () => {
 	}
 
 	return (
-		<div className="min-h-screen p-4 bg-white shadow-lg">
+		<div className="min-h-screen p-4 bg-white shadow-lg text-slate-900">
 			<CartHeader cartItems={cartItems} icon={<ShoppingCart className="w-6 h-6 text-white" />} title={"Shopping Cart"} />
 
 			<div className="grid lg:grid-cols-3 gap-8">
@@ -248,7 +248,7 @@ const MyCart = () => {
 							</div>
 						)}
 
-						<Link target="_blank" to={`/${path.CHECKOUT}`}>
+						<Link to={`/${path.CHECKOUT}`}>
 							<button className="w-full mt-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl font-semibold text-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg cursor-pointer">
 								Proceed to Checkout
 							</button>

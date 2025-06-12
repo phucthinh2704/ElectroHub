@@ -1,8 +1,10 @@
 import {
+	Award,
 	CheckCircle,
 	CirclePlus,
 	ContactRound,
 	CreditCard,
+	Headphones,
 	Heart,
 	Home,
 	HomeIcon,
@@ -10,8 +12,13 @@ import {
 	MapPin,
 	Rss,
 	Settings,
+	Shield,
 	ShoppingCart,
+	Truck,
 	User,
+	Users,
+	Wrench,
+	Zap,
 } from "lucide-react";
 import {
 	AiOutlineHeart,
@@ -78,6 +85,159 @@ export const stepsPayment = [
 	{ id: 1, title: "Shipping", icon: MapPin },
 	{ id: 2, title: "Payment", icon: CreditCard },
 	{ id: 3, title: "Review", icon: CheckCircle },
+];
+
+export const services = [
+	{
+		icon: <Truck className="w-8 h-8" />,
+		title: "Free Delivery",
+		description:
+			"Fast and reliable delivery to your doorstep within 24-48 hours for all orders above $50.",
+		features: [
+			"Same-day delivery available",
+			"Real-time tracking",
+			"Secure packaging",
+		],
+		color: "from-blue-400 to-cyan-400",
+	},
+	{
+		icon: <Shield className="w-8 h-8" />,
+		title: "Extended Warranty",
+		description:
+			"Comprehensive warranty coverage for all electronics with up to 3 years protection.",
+		features: [
+			"Accident protection",
+			"Free replacements",
+			"24/7 claim support",
+		],
+		color: "from-purple-400 to-pink-400",
+	},
+	{
+		icon: <Wrench className="w-8 h-8" />,
+		title: "Tech Support",
+		description:
+			"Expert technical assistance and troubleshooting for all your electronic devices.",
+		features: [
+			"Remote assistance",
+			"On-site repairs",
+			"Setup & installation",
+		],
+		color: "from-green-400 to-emerald-400",
+	},
+	{
+		icon: <Headphones className="w-8 h-8" />,
+		title: "24/7 Customer Care",
+		description:
+			"Round-the-clock customer support to assist you with any queries or concerns.",
+		features: ["Live chat support", "Phone assistance", "Email support"],
+		color: "from-orange-400 to-red-400",
+	},
+	{
+		icon: <Zap className="w-8 h-8" />,
+		title: "Device Setup",
+		description:
+			"Professional installation and setup services for complex electronic equipment.",
+		features: ["Home installation", "Data transfer", "Configuration"],
+		color: "from-yellow-400 to-orange-400",
+	},
+	{
+		icon: <Award className="w-8 h-8" />,
+		title: "Premium Care",
+		description:
+			"Exclusive membership program with special discounts and priority services.",
+		features: ["Priority support", "Exclusive deals", "Early access"],
+		color: "from-indigo-400 to-purple-400",
+	},
+];
+
+export const categoriesFAQ = [
+	{ id: "all", name: "All Questions", icon: Users },
+	{ id: "orders", name: "Orders & Shipping", icon: Truck },
+	{ id: "products", name: "Products", icon: Zap },
+	{ id: "payment", name: "Payment", icon: CreditCard },
+	{ id: "warranty", name: "Warranty", icon: Shield },
+	{ id: "support", name: "Support", icon: Headphones },
+];
+
+export const faqData = [
+	{
+		id: 1,
+		category: "orders",
+		question: "How long does shipping take?",
+		answer: "Standard shipping takes 3-7 business days within the continental US. Express shipping (1-3 days) and overnight shipping options are also available. International shipping times vary by destination, typically 7-21 business days.",
+	},
+	{
+		id: 2,
+		category: "orders",
+		question: "Do you offer free shipping?",
+		answer: "Yes! We offer free standard shipping on orders over $50 within the US. For orders under $50, shipping costs $5.99. Premium members enjoy free shipping on all orders regardless of amount.",
+	},
+	{
+		id: 3,
+		category: "orders",
+		question: "Can I track my order?",
+		answer: "Absolutely! Once your order ships, you'll receive a tracking number via email and SMS. You can also track your order in real-time through your account dashboard or our mobile app.",
+	},
+	{
+		id: 4,
+		category: "products",
+		question: "Are all products authentic and new?",
+		answer: "Yes, we guarantee that all products sold on Electro Hub Digital are 100% authentic and brand new. We work directly with manufacturers and authorized distributors to ensure product authenticity.",
+	},
+	{
+		id: 5,
+		category: "products",
+		question: "Do you test products before shipping?",
+		answer: "While we don't test every individual item, all our products undergo quality control checks. Our suppliers perform rigorous testing, and we have a comprehensive quality assurance process in place.",
+	},
+	{
+		id: 6,
+		category: "products",
+		question: "What if I receive a defective product?",
+		answer: "If you receive a defective product, contact us within 48 hours of delivery. We'll arrange a free return and send you a replacement immediately. No questions asked - your satisfaction is our priority.",
+	},
+	{
+		id: 7,
+		category: "payment",
+		question: "What payment methods do you accept?",
+		answer: "We accept all major credit cards (Visa, MasterCard, American Express, Discover), PayPal, Apple Pay, Google Pay, and bank transfers. We also offer financing options through Klarna and Affirm for eligible purchases.",
+	},
+	{
+		id: 8,
+		category: "payment",
+		question: "Is my payment information secure?",
+		answer: "Absolutely. We use industry-standard SSL encryption and are PCI DSS compliant. Your payment information is never stored on our servers and is processed through secure, encrypted channels.",
+	},
+	{
+		id: 9,
+		category: "payment",
+		question: "Can I get a refund?",
+		answer: "Yes, we offer a 30-day money-back guarantee on most items. Products must be in original condition with all accessories and packaging. Refunds are processed within 5-7 business days after we receive the returned item.",
+	},
+	{
+		id: 10,
+		category: "warranty",
+		question: "What warranty do you provide?",
+		answer: "All products come with manufacturer warranties, which vary by brand and product type. Additionally, we offer extended warranty options for added peace of mind. Warranty details are clearly listed on each product page.",
+	},
+	{
+		id: 11,
+		category: "warranty",
+		question: "How do I claim warranty service?",
+		answer: 'To claim warranty service, log into your account and navigate to your order history. Select the item and click "Warranty Claim." You can also contact our support team directly with your order number and product details.',
+	},
+	{
+		id: 12,
+		category: "support",
+		question: "How can I contact customer support?",
+		answer: "Our customer support team is available 24/7 via live chat, email (support@electrohub.com), or phone (1-800-ELECTRO). We also have a comprehensive help center with tutorials and troubleshooting guides.",
+	},
+	{
+		id: 13,
+		category: "support",
+		question: "Do you offer technical support?",
+		answer: "Yes! Our certified technicians provide free technical support for all products purchased from us. This includes setup assistance, troubleshooting, and product education. Support is available via phone, chat, or video call.",
+	},
 ];
 
 export const adminSidebar = [

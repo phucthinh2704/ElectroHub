@@ -20,13 +20,15 @@ const EditProductForm = ({
 }) => {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [submitMessage, setSubmitMessage] = useState("");
-	const [addVariantsMode, setAddVariantsMode] = useState(false);
-	const [description, setDescription] = useState(() => {
-		const selectedProduct = products.find(
-			(product) => product._id === selectedProductId
-		);
-		return formatDescription(selectedProduct?.description);
-	});
+	const [showAddVariantsModal, setShowAddVariantsModal] = useState(false);
+	const [addVariantsMode, setAddVariantsMode] = useState("add");
+	// const [description, setDescription] = useState(() => {
+	// 	const selectedProduct = products.find(
+	// 		(product) => product._id === selectedProductId
+	// 	);
+	// 	console.log(formatDescription(selectedProduct?.description));
+	// 	return formatDescription(selectedProduct?.description);
+	// });
 	const [previewImage, setPreviewImage] = useState(() => {
 		const selectedProduct = products.find(
 			(product) => product._id === selectedProductId
@@ -154,26 +156,29 @@ const EditProductForm = ({
 	}, [watch("images")]);
 
 	const onSubmit = (data) => {
-		if (
-			!description ||
-			description.trim() === "" ||
-			description.replace(/<[^>]*>/g, "").length < 10 ||
-			description.replace(/<[^>]*>/g, "").length > 5000
-		) {
-			return;
-		}
+		// if (
+		// 	!description ||
+		// 	description.trim() === "" ||
+		// 	description.replace(/<[^>]*>/g, "").length < 10 ||
+		// 	description.replace(/<[^>]*>/g, "").length > 5000
+		// ) {
+		// 	setError("description", {
+		// 		type: "manual",
+		// 		message:
+		// 			"Description must be between 10 and 5000 characters long.",
+		// 	});
+		// 	return;
+		// }
 
 		setSubmitMessage("");
 
 		const formData = new FormData();
 		for (const key in data) {
-			if (data[key] !== initialData[key]) {
-				formData.append(key, data[key]);
-			}
+			formData.append(key, data[key]);
 		}
 
 		formData.append("price", parseInt(data.originalPrice));
-		formData.append("description", [description]); // Chuyển đổi mô tả thành mảng
+		// formData.append("description", description.split(". "));
 
 		formData.delete("thumb");
 		formData.delete("images");
@@ -220,10 +225,10 @@ const EditProductForm = ({
 			thumb: initialData.thumb,
 			images: [...initialData.images],
 		});
-		const resetDescription = formatDescription(
-			selectedProduct?.description
-		);
-		setDescription(resetDescription);
+		// const resetDescription = formatDescription(
+		// 	selectedProduct?.description
+		// );
+		// setDescription(resetDescription);
 
 		setSubmitMessage("");
 	};
@@ -291,13 +296,13 @@ const EditProductForm = ({
 									Stock Quantity *
 								</label>
 								<input
-									type="number"
+									type="text"
 									{...register("stock", {
 										required: "Please enter stock quantity",
-										min: {
-											value: 0,
+										pattern: {
+											value: /^\d+$/,
 											message:
-												"Stock quantity must be at least 0",
+												"Stock must be a valid number",
 										},
 									})}
 									className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
@@ -319,14 +324,13 @@ const EditProductForm = ({
 									Original Price *
 								</label>
 								<input
-									type="number"
-									step="1000"
+									type="text"
 									{...register("originalPrice", {
 										required: "Please enter original price",
-										min: {
-											value: 0,
+										pattern: {
+											value: /^\d+(\.\d{1,2})?$/,
 											message:
-												"Price must be greater than 0",
+												"Original price must be a valid number (e.g., 100.00)",
 										},
 									})}
 									className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
@@ -440,24 +444,47 @@ const EditProductForm = ({
 					</div>
 				</div>
 
-				<p
-					className="px-2 text-sky-500 cursor-pointer hover:text-blue-700 hover:underline inline-block"
-					onClick={() => setAddVariantsMode(true)}>
-					Add variants to this product
-				</p>
-				{addVariantsMode && (
+				<div className="flex items-center justify-between bg-gray-50 p-4 rounded-lg">
+					<p
+						className="px-2 text-sky-600 cursor-pointer hover:text-sky-800 hover:underline inline-block"
+						onClick={() => {
+							setShowAddVariantsModal(true);
+							setAddVariantsMode("add");
+						}}>
+						Add variants to this product
+					</p>
+					<p
+						className="px-2 text-sky-600 cursor-pointer hover:text-sky-800 hover:underline inline-block"
+						onClick={() => {
+							if (
+								!selectedProduct.variants ||
+								selectedProduct.variants.length === 0
+							) {
+								toast.error(
+									"This product has no variants to edit."
+								);
+								return;
+							}
+							setShowAddVariantsModal(true);
+							setAddVariantsMode("edit");
+						}}>
+						Edit variants of this product
+					</p>
+				</div>
+				{showAddVariantsModal && (
 					<div
 						className="fixed right-0 left-0 top-0 min-h-screen bg-black/50 flex items-center justify-center z-57"
 						onClick={(e) => {
 							if (e.target === e.currentTarget) {
-								setAddVariantsMode(false);
+								setShowAddVariantsModal(false);
 							}
 						}}>
 						<AddVariants
 							products={products}
 							selectedProductId={selectedProductId}
 							fetchProducts={fetchProducts}
-							onClose={() => setAddVariantsMode(false)}
+							mode={addVariantsMode}
+							onClose={() => setShowAddVariantsModal(false)}
 						/>
 					</div>
 				)}
@@ -554,7 +581,7 @@ const EditProductForm = ({
 					</div>
 				</div>
 
-				{/* Product Description */}
+				{/* Product Description
 				<div className="bg-gray-50 p-4 rounded-lg">
 					<h2 className="text-lg font-semibold text-gray-700 mb-4">
 						Product Description
@@ -564,23 +591,6 @@ const EditProductForm = ({
 						<label className="block text-sm font-medium text-gray-700 mb-1">
 							Product Description *
 						</label>
-						{/* <textarea
-							{...register("description", {
-								required: "Please enter product description",
-								minLength: {
-									value: 10,
-									message:
-										"Description must be at least 10 characters",
-								},
-							})}
-							rows={6}
-							className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-vertical ${
-								errors.description
-									? "border-red-600"
-									: "border-gray-300"
-							}`}
-							placeholder="Describe your product in detail. Include features, specifications, and any other relevant information."
-						/> */}
 						<div className="min-h-[200px]">
 							<Editor
 								initialValue={description}
@@ -662,7 +672,7 @@ const EditProductForm = ({
 							</p>
 						)}
 					</div>
-				</div>
+				</div> */}
 
 				{/* System Information (Read Only) */}
 				<div className="bg-blue-50 p-4 rounded-lg">

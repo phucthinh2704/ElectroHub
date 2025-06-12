@@ -29,7 +29,7 @@ var orderSchema = new mongoose.Schema({
 	// 	ref: "Coupon",
 	// },
 	orderBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-});
+}, { timestamps: true });
 
 //Export the model
 module.exports = mongoose.model("Order", orderSchema);

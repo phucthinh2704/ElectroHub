@@ -6,35 +6,52 @@ import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
-import { apiUpdateProductVariant } from "../../../apis";
+import { apiEditProductVariant, apiUpdateProductVariant } from "../../../apis";
 
 const AddVariants = ({
 	onClose,
 	products,
 	selectedProductId,
 	fetchProducts,
+	mode,
 }) => {
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [variantSelected, setVariantSelected] = useState(() => {
+		const selectedProduct = products.find(
+			(product) => product._id === selectedProductId
+		);
+		return mode === "add" ? {} : selectedProduct.variants[0] || {};
+	});
 	const [previewImage, setPreviewImage] = useState(() => {
 		const selectedProduct = products.find(
 			(product) => product._id === selectedProductId
 		);
 		return {
-			thumb: selectedProduct.thumb || "",
-			images: [...selectedProduct.images],
+			thumb:
+				mode === "add"
+					? selectedProduct.thumb || ""
+					: variantSelected.thumb || "",
+			images:
+				mode === "add"
+					? [...selectedProduct.images]
+					: [...variantSelected.images],
 		};
 	});
 	const [thumb, setThumb] = useState(() => {
 		const selectedProduct = products.find(
 			(product) => product._id === selectedProductId
 		);
-		return selectedProduct.thumb || "";
+		return mode === "add"
+			? selectedProduct.thumb || ""
+			: variantSelected.thumb || "";
 	});
 	const [images, setImages] = useState(() => {
 		const selectedProduct = products.find(
 			(product) => product._id === selectedProductId
 		);
-		return [...selectedProduct.images];
+		return mode === "add"
+			? [...selectedProduct.images]
+			: [...variantSelected.images];
 	});
 
 	const selectedProduct = products.find(
@@ -43,14 +60,28 @@ const AddVariants = ({
 
 	const initialData = useMemo(
 		() => ({
-			sold: selectedProduct.sold || 0,
-			stock: selectedProduct.stock || 0,
-			color: selectedProduct.color || "",
-			thumb: selectedProduct.thumb || "",
-			images: selectedProduct.images || [],
-			price: selectedProduct.price || 0,
+			stock:
+				mode === "add"
+					? selectedProduct.stock || 0
+					: variantSelected.stock || 0,
+			color:
+				mode === "add"
+					? selectedProduct.color || ""
+					: variantSelected.color || "",
+			thumb:
+				mode === "add"
+					? selectedProduct.thumb || ""
+					: variantSelected.thumb || "",
+			images:
+				mode === "add"
+					? selectedProduct.images || []
+					: variantSelected.images || [],
+			price:
+				mode === "add"
+					? selectedProduct.price || 0
+					: variantSelected.price || 0,
 		}),
-		[selectedProduct]
+		[selectedProduct, mode, variantSelected]
 	);
 
 	const {
@@ -59,6 +90,8 @@ const AddVariants = ({
 		reset,
 		watch,
 		setError,
+		setValue,
+		clearErrors,
 		formState: { errors },
 	} = useForm({
 		defaultValues: initialData,
@@ -140,7 +173,8 @@ const AddVariants = ({
 	const onSubmit = (data) => {
 		if (
 			watchedValues.color.toLowerCase() ===
-			initialData.color.toLowerCase()
+				initialData.color.toLowerCase() &&
+			mode === "add"
 		) {
 			setError(
 				"color",
@@ -157,108 +191,206 @@ const AddVariants = ({
 		const formData = new FormData();
 
 		for (const key in data) {
-			formData.append(key, data[key]);
-		}
-
-		formData.delete("thumb");
-		formData.delete("images");
-		console.log({ thumb, images });
-		if (thumb instanceof FileList && thumb.length > 0) {
-			formData.append("thumb", thumb[0]);
-		} else if (typeof thumb === "string" && thumb) {
-			setError(
-				"thumb",
-				{
-					type: "manual",
-					message: "Please upload another thumb image.",
-				},
-				{ shouldFocus: true }
-			);
-			return;
-		} else {
-			console.log("No thumb uploaded or thumb field is empty.");
-		}
-
-		if (images instanceof FileList && images.length > 0) {
-			for (let image of images) {
-				formData.append("images", image);
+			if (key !== "thumb" && key !== "images") {
+				formData.append(key, data[key]);
 			}
-		} else if (Array.isArray(images) && images.length > 0) {
-			setError(
-				"images",
-				{
-					type: "manual",
-					message: "Please upload another images product.",
-				},
-				{ shouldFocus: true }
-			);
-			return;
-		} else if (Array.isArray(images) && images.length === 0) {
-			setError(
-				"images",
-				{
-					type: "manual",
-					message: "Please upload at least one image product.",
-				},
-				{ shouldFocus: true }
-			);
-			return;
-		} else {
-			console.log("No images uploaded or thumb field is empty.");
 		}
 
-		setIsSubmitting(true);
-		try {
-			setTimeout(async () => {
-				const response = await apiUpdateProductVariant(
-					selectedProductId,
-					formData
+		if (mode === "add") {
+			if (thumb instanceof FileList && thumb.length > 0) {
+				formData.append("thumb", thumb[0]);
+			} else if (typeof thumb === "string" && thumb) {
+				setError(
+					"thumb",
+					{
+						type: "manual",
+						message: "Please upload another thumb image.",
+					},
+					{ shouldFocus: true }
 				);
-				if (response.success) {
-					fetchProducts();
-					Swal.fire({
-						icon: "success",
-						title: "Success",
-						text:
-							response.message ||
-							"Product variant updated successfully!",
-					});
-					reset({
-						stock: response.product.variants[response.product.variants.length -1].stock || 0,
-						color: response.product.variants[response.product.variants.length -1].color || "",
-						thumb: response.product.variants[response.product.variants.length -1].thumb || "",
-						images: [...response.product.variants[response.product.variants.length -1].images],
-						price: response.product.variants[response.product.variants.length -1].price || 0,
-					});
-				} else {
-					Swal.fire({
-						icon: "error",
-						title: "Error",
-						text:
-							response.message ||
-							"Failed to update product variant!",
-					});
+				return;
+			} else {
+				console.log("No thumb uploaded or thumb field is empty.");
+			}
+
+			if (images instanceof FileList && images.length > 0) {
+				for (let image of images) {
+					formData.append("images", image);
 				}
+			} else if (Array.isArray(images) && images.length > 0) {
+				setError(
+					"images",
+					{
+						type: "manual",
+						message: "Please upload another images product.",
+					},
+					{ shouldFocus: true }
+				);
+				return;
+			} else if (Array.isArray(images) && images.length === 0) {
+				setError(
+					"images",
+					{
+						type: "manual",
+						message: "Please upload at least one image product.",
+					},
+					{ shouldFocus: true }
+				);
+				return;
+			} else {
+				console.log("No images uploaded or thumb field is empty.");
+			}
+
+			setIsSubmitting(true);
+			try {
+				setTimeout(async () => {
+					const response = await apiUpdateProductVariant(
+						selectedProductId,
+						formData
+					);
+					if (response.success) {
+						fetchProducts();
+						Swal.fire({
+							icon: "success",
+							title: "Success",
+							text:
+								response.message ||
+								"Product variant added successfully!",
+						});
+						reset({
+							stock:
+								response.product.variants[
+									response.product.variants.length - 1
+								].stock || 0,
+							color:
+								response.product.variants[
+									response.product.variants.length - 1
+								].color || "",
+							thumb:
+								response.product.variants[
+									response.product.variants.length - 1
+								].thumb || "",
+							images: [
+								...response.product.variants[
+									response.product.variants.length - 1
+								].images,
+							],
+							price:
+								response.product.variants[
+									response.product.variants.length - 1
+								].price || 0,
+						});
+					} else {
+						Swal.fire({
+							icon: "error",
+							title: "Error",
+							text:
+								response.message ||
+								"Failed to update product variant!",
+						});
+					}
+					setIsSubmitting(false);
+				}, 200);
+			} catch (error) {
+				console.log(
+					"An error occurred while updating the product:",
+					error
+				);
+				Swal.fire({
+					icon: "error",
+					title: "Error",
+					text: "An error occurred while updating the product!",
+				});
 				setIsSubmitting(false);
-			}, 200);
-		} catch (error) {
-			console.log("An error occurred while updating the product:", error);
-			Swal.fire({
-				icon: "error",
-				title: "Error",
-				text: "An error occurred while updating the product!",
-			});
-			setIsSubmitting(false);
+			}
+		} else if (mode === "edit") {
+			if (thumb instanceof FileList && thumb.length > 0) {
+				formData.append("thumb", thumb[0]);
+			}
+
+			if (images instanceof FileList && images.length > 0) {
+				for (let image of images) {
+					formData.append("images", image);
+				}
+			}
+
+			setIsSubmitting(true);
+			try {
+				setTimeout(async () => {
+					const response = await apiEditProductVariant(
+						selectedProductId,
+						variantSelected.sku,
+						formData
+					);
+
+					if (response.success) {
+						fetchProducts();
+						Swal.fire({
+							icon: "success",
+							title: "Success",
+							text:
+								response.message ||
+								"Product variant updated successfully!",
+						});
+
+						const variantUpdate = response.product.variants.find(
+							(variant) => variant.sku === variantSelected.sku
+						);
+						reset({
+							stock: variantUpdate.stock || 0,
+							color: variantUpdate.color || "",
+							thumb: variantUpdate.thumb || "",
+							images: [...variantUpdate.images],
+							price: variantUpdate.price || 0,
+						});
+					} else {
+						Swal.fire({
+							icon: "error",
+							title: "Error",
+							text:
+								response.message ||
+								"Failed to update product variant!",
+						});
+					}
+					setIsSubmitting(false);
+				}, 200);
+			} catch (error) {
+				console.log(
+					"An error occurred while updating the product:",
+					error
+				);
+				Swal.fire({
+					icon: "error",
+					title: "Error",
+					text: "An error occurred while updating the product!",
+				});
+				setIsSubmitting(false);
+			}
 		}
 	};
 
 	// Hàm reset form về dữ liệu ban đầu
 	const handleReset = () => {
+		setVariantSelected(selectedProduct.variants[0] || {});
 		reset(initialData);
 		setPreviewImage({
-			thumb: initialData.thumb,
-			images: [...initialData.images],
+			thumb:
+				mode === "add"
+					? initialData.thumb
+					: variantSelected.thumb || "",
+			images:
+				mode === "add"
+					? [...initialData.images]
+					: [...variantSelected.images],
 		});
+		setThumb(
+			mode === "add" ? initialData.thumb : variantSelected.thumb || ""
+		);
+		setImages(
+			mode === "add"
+				? [...initialData.images]
+				: [...variantSelected.images]
+		);
 	};
 
 	return (
@@ -271,10 +403,10 @@ const AddVariants = ({
 			</button>
 			<div className="mb-6">
 				<h1 className="text-2xl font-bold text-gray-800 mb-2 uppercase">
-					Add Variant
+					{mode === "add" ? "Add Variant" : "Edit Variant"}
 				</h1>
 				<p className="text-gray-600">
-					Add variant for product:{" "}
+					{mode === "add" ? "Add" : "Edit"} variant for product:{" "}
 					<span className="font-semibold">
 						{selectedProduct.title}
 					</span>
@@ -282,18 +414,104 @@ const AddVariants = ({
 			</div>
 			<form className="space-y-6">
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+					{mode === "add" ? (
+						<div>
+							<label className="block text-sm font-medium text-gray-700 mb-1">
+								Color *
+							</label>
+							<input
+								{...register("color", {
+									required: "Please enter color",
+								})}
+								className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+									errors.color
+										? "border-red-600"
+										: "border-gray-300"
+								}`}
+								placeholder="Enter color"
+							/>
+							{errors.color && (
+								<p className="text-red-500 text-sm mt-1">
+									{errors.color.message}
+								</p>
+							)}
+						</div>
+					) : (
+						<div>
+							<label className="block text-sm font-medium text-gray-700 mb-1">
+								Color *
+							</label>
+							<select
+								{...register("color", {
+									required: "Please enter color",
+								})}
+								onChange={(e) => {
+									clearErrors([
+										"stock",
+										"price",
+										"thumb",
+										"images",
+									]);
+									// setValue("color", e.target.value);
+									const variant =
+										selectedProduct.variants.find(
+											(variant) =>
+												variant.color === e.target.value
+										);
+									if (variant) {
+										setVariantSelected(variant);
+										setPreviewImage({
+											thumb: variant.thumb || "",
+											images: [...variant.images],
+										});
+										setThumb(variant.thumb || "");
+										setImages([...variant.images]);
+										setValue("stock", variant.stock || 0);
+										setValue("price", variant.price || 0);
+									} else {
+										setVariantSelected({});
+										setPreviewImage({
+											thumb: "",
+											images: [],
+										});
+									}
+								}}
+								className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+									errors.color
+										? "border-red-600"
+										: "border-gray-300"
+								}`}
+								defaultValue={variantSelected.color || ""}>
+								{selectedProduct.variants.map(
+									(variant, index) => (
+										<option
+											key={index}
+											value={variant.color}>
+											{variant.color}
+										</option>
+									)
+								)}
+							</select>
+							{errors.color && (
+								<p className="text-red-500 text-sm mt-1">
+									{errors.color.message}
+								</p>
+							)}
+						</div>
+					)}
+
 					<div>
 						<label className="block text-sm font-medium text-gray-700 mb-1">
 							Stock Quantity *
 						</label>
 						<input
-							type="number"
+							type="text"
+							// defaultValue={variantSelected.stock || ""}
 							{...register("stock", {
 								required: "Please enter stock quantity",
-								min: {
-									value: 0,
-									message:
-										"Stock quantity must be at least 0",
+								pattern: {
+									value: /^\d+$/,
+									message: "Stock must be a number",
 								},
 							})}
 							className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
@@ -315,13 +533,12 @@ const AddVariants = ({
 							Price *
 						</label>
 						<input
-							type="number"
-							step="1000"
+							type="text"
 							{...register("price", {
 								required: "Please enter price",
-								min: {
-									value: 0,
-									message: "Price must be greater than 0",
+								pattern: {
+									value: /^\d+(\.\d{1,2})?$/,
+									message: "Price must be a valid number",
 								},
 							})}
 							className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
@@ -334,28 +551,6 @@ const AddVariants = ({
 						{errors.price && (
 							<p className="text-red-500 text-sm mt-1">
 								{errors.price.message}
-							</p>
-						)}
-					</div>
-
-					<div>
-						<label className="block text-sm font-medium text-gray-700 mb-1">
-							Color *
-						</label>
-						<input
-							{...register("color", {
-								required: "Please enter color",
-							})}
-							className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-								errors.color
-									? "border-red-600"
-									: "border-gray-300"
-							}`}
-							placeholder="Enter color"
-						/>
-						{errors.color && (
-							<p className="text-red-500 text-sm mt-1">
-								{errors.color.message}
 							</p>
 						)}
 					</div>
@@ -440,7 +635,7 @@ const AddVariants = ({
 								{previewImage.images.map((image, index) => (
 									<Zoom key={index}>
 										<img
-											src={image}
+											src={image || null}
 											alt="Image Preview"
 											className="h-30 object-contain block rounded-lg shadow-md border-2 border-gray-200 hover:border-blue-500 transition-all duration-300"
 										/>
@@ -482,7 +677,11 @@ const AddVariants = ({
 								Updating...
 							</span>
 						) : (
-							"Add Variant"
+							<>
+								{mode === "add"
+									? "Add Variant"
+									: "Update Variant"}
+							</>
 						)}
 					</button>
 

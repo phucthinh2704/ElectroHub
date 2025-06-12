@@ -36,7 +36,6 @@ const CartHeader = ({ cartItems, icon, title }) => {
 						<div className="flex items-center gap-3">
 							<div className="relative">
 								<div className="bg-gradient-to-r from-blue-600 to-purple-600 p-3 rounded-2xl shadow-lg">
-									{/* <ShoppingCart className="w-6 h-6 text-white" /> */}
 									{icon}
 								</div>
 							</div>

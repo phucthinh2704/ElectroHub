@@ -145,6 +145,7 @@ const Products = () => {
 	};
 
 	const getPaginationInfo = (currentPage, pageSize, totalProducts) => {
+		if( totalProducts === 0 ) return { startItem: 0, endItem: 0 };
 		const startItem = (currentPage - 1) * pageSize + 1;
 		const endItem = Math.min(currentPage * pageSize, totalProducts);
 
@@ -252,11 +253,6 @@ const Products = () => {
 									setIsOpen={setIsOpen}
 									colorsFilter={colorsFilter}
 									name="Color"
-								/>
-								<FilterItem
-									isOpen={isOpen}
-									setIsOpen={setIsOpen}
-									name="Size"
 								/>
 								<FilterItem
 									isOpen={isOpen}

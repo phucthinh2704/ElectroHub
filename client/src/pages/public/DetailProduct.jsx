@@ -58,6 +58,12 @@ const DetailProduct = () => {
 		fetchProduct();
 	};
 
+	useEffect(() => {
+		if (variant?.stock <= 0 || product.stock <= 0) {
+			setQuantity(0);
+		}
+	}, [product.stock, variant?.stock]);
+
 	const discountPercentage = product.discount ? product.discount : 0;
 
 	const handleQuantityChange = (change) => {
@@ -80,6 +86,10 @@ const DetailProduct = () => {
 	const handleAddToCart = async () => {
 		if (variant) {
 			try {
+				if (variant.stock <= 0) {
+					toast.error("This variant of product is out of stock");
+					return;
+				}
 				const response = await apiUpdateCart({
 					pid: product._id,
 					color: variant.color,
@@ -94,22 +104,26 @@ const DetailProduct = () => {
 				} else {
 					Swal.fire({
 						title: "Error",
-						text: response.message || "Failed to add product to cart",
+						text:
+							response.message || "Failed to add product to cart",
 						icon: "error",
 					});
 				}
-			}
-			catch(error) {
+			} catch (error) {
 				console.error("Error adding to cart:", error);
 				Swal.fire({
 					title: "Error",
 					text: "Failed to add product to cart. Please try again later.",
 					icon: "error",
-				})
+				});
 				return;
 			}
 		} else {
 			try {
+				if (product.stock <= 0) {
+					toast.error("This product is out of stock");
+					return;
+				}
 				const response = await apiUpdateCart({
 					pid: product._id,
 					color: product.color,
@@ -124,22 +138,22 @@ const DetailProduct = () => {
 				} else {
 					Swal.fire({
 						title: "Error",
-						text: response.message || "Failed to add product to cart",
+						text:
+							response.message || "Failed to add product to cart",
 						icon: "error",
 					});
 				}
-			}
-			catch(error) {
+			} catch (error) {
 				console.error("Error adding to cart:", error);
 				Swal.fire({
 					title: "Error",
 					text: "Failed to add product to cart. Please try again later.",
 					icon: "error",
-				})
+				});
 				return;
 			}
 		}
-	}
+	};
 
 	return (
 		<div className="bg-gray-100 min-h-screen py-2">
@@ -407,13 +421,13 @@ const DetailProduct = () => {
 
 									{/* Color */}
 									{product.color && (
-										<div className="mb-4 min-w-2xl">
+										<div className="mb-4 min-w-xl">
 											<h3 className="text-sm font-medium text-gray-900 mb-2">
 												Color
 											</h3>
-											<div className="grid grid-cols-3 gap-2">
+											<div className="grid grid-cols-2 gap-2">
 												<div
-													className={`border relative border-gray-300 rounded-xl flex items-center gap-2 py-2 px-4 cursor-pointer ${
+													className={`border relative border-gray-300 rounded-xl flex items-center gap-2 py-2 px-3 cursor-pointer ${
 														!variant
 															? "border-blue-500 bg-blue-100 shadow-md"
 															: "border-gray-200 bg-white hover:border-gray-300"
@@ -569,7 +583,9 @@ const DetailProduct = () => {
 
 									{/* Action Buttons */}
 									<div className="flex flex-col space-y-3">
-										<button className="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg font-medium flex items-center justify-center cursor-pointer" onClick={handleAddToCart}>
+										<button
+											className="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg font-medium flex items-center justify-center cursor-pointer"
+											onClick={handleAddToCart}>
 											<ShoppingCart className="mr-2 h-5 w-5" />
 											Add to Cart
 										</button>
