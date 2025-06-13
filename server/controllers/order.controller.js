@@ -93,7 +93,7 @@ const getUserOrder = asyncHandler(async (req, res) => {
 	excludeFields.forEach((el) => delete queries[el]);
 	let formattedQueries = { orderBy: _id };
 
-	let queryCommand = Order.find(formattedQueries);
+	let queryCommand = Order.find(formattedQueries).populate("products.product", "title");
 
 	// Sorting
 	if (req.query.sort) {
@@ -133,7 +133,7 @@ const getAllOrders = asyncHandler(async (req, res) => {
 	excludeFields.forEach((el) => delete queries[el]);
 	let formattedQueries = {};
 
-	let queryCommand = Order.find(formattedQueries);
+	let queryCommand = Order.find(formattedQueries).populate("products.product"). populate("orderBy", "name mobile email address");
 
 	// Sorting
 	if (req.query.sort) {

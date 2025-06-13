@@ -33,9 +33,10 @@ const ButtonWrapper = ({ currency, showSpinner, amount, payload }) => {
 	const handleSaveOrder = async () => {
 		const orderData = {
 			products: payload.products,
-			total: payload.total,
+			total: payload.total * 25000,
 			orderBy: payload.orderBy,
-			status: "Success",
+			status: "delivered",
+			// status: "processing",
 			address: payload.address,
 		};
 		const response = await apiCreateOrder(orderData);

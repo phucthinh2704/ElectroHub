@@ -13,8 +13,8 @@ var orderSchema = new mongoose.Schema({
 	],
 	status: {
 		type: String,
-		default: "Cancelled",
-		enum: ["Cancelled", "Success"],
+		default: "processing",
+		enum: ["cancelled", "delivered", "shipped", "processing"],
 	},
 	shippingAddress: {
 		type: String,

@@ -1,4 +1,4 @@
-import { ChevronDown, LogOut, Phone, User } from "lucide-react";
+import { ChevronDown, LogOut, Phone, User, ShoppingBag, Heart, ShoppingCart } from "lucide-react";
 import React, { memo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
@@ -85,7 +85,7 @@ const TopHeader = () => {
 						</div>
 
 						{/* Dropdown menu */}
-						<div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-10 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all">
+						<div className="absolute top-full right-0 w-48 mt-1 border border-gray-300 bg-white rounded-lg shadow-xl py-2 z-10 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all">
 							<Link
 								to={`/${path.MEMBER}/${path.PERSONAL}`}
 								className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm">
@@ -93,21 +93,21 @@ const TopHeader = () => {
 								<span>My Profile</span>
 							</Link>
 							<Link
-								to="/orders"
+								to={`/${path.MEMBER}/${path.MY_CART}`}
 								className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm">
-								<svg
-									className="w-3.5 h-3.5"
-									xmlns="http://www.w3.org/2000/svg"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor">
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth={2}
-										d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-									/>
-								</svg>
+								<ShoppingCart size={14} />
+								<span>Cart</span>
+							</Link>
+							<Link
+								to={`/${path.MEMBER}/${path.WISHLIST}`}
+								className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm">
+								<Heart size={14} />
+								<span>Wishlist</span>
+							</Link>
+							<Link
+								to={`/${path.MEMBER}/${path.ORDER_HISTORY}`}
+								className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm">
+								<ShoppingBag size={14} />
 								<span>My Orders</span>
 							</Link>
 							<div className="border-t border-gray-100 my-1"></div>
