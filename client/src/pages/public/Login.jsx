@@ -160,12 +160,7 @@ const Login = () => {
       setIsSubmitting(false);
       toast.success(response.message);
       dispatch(login({ isLoggedIn: true, user: response.user, token: response.access_token }));
-      const state = location.state;
-      if(state) {
-        navigate(`${state}`)
-      } else {
-        navigate(`/${path.HOME}`, { replace: true });
-      }
+      // Tự động navigate vì khi dispatch => state thay đổi => thực hiện rerender và Navigate ở dòng 226
     }, 500);
   };
 
@@ -230,6 +225,10 @@ const Login = () => {
 
   const { isLoggedIn, current } = useSelector((state) => state.user);
   if (isLoggedIn && current) {
+    if(location.state) {
+      // Nếu có state, chuyển hướng đến trang đó
+      return <Navigate to={location.state} replace />;
+    }
     // Nếu đã đăng nhập và có thông tin người dùng, chuyển hướng đến trang chủ
     return <Navigate to={`/${path.HOME}`} replace />;
   }

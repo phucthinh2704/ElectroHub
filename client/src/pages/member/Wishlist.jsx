@@ -1,86 +1,54 @@
-import { Filter, Grid, Heart, List, Search } from "lucide-react";
-import React, { useState } from "react";
-import { CartHeader, WishlistItem } from "../../components";
+import { Filter, Heart, Search } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { CartHeader, Pagination, WishlistItem } from "../../components";
 
 const Wishlist = () => {
-	const [viewMode, setViewMode] = useState("grid");
+	const { current } = useSelector((state) => state.user);
+	const navigate = useNavigate();
+
 	const [searchTerm, setSearchTerm] = useState("");
 	const [sortBy, setSortBy] = useState("newest");
-	const [wishlistItems, setWishlistItems] = useState([
-		{
-			id: 1,
-			name: "Wireless Bluetooth Headphones",
-			price: 199.99,
-			originalPrice: 249.99,
-			image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=300&fit=crop",
-			category: "Electronics",
-			rating: 4.5,
-			inStock: true,
-			dateAdded: "2024-01-15",
-		},
-		{
-			id: 2,
-			name: "Minimalist Watch",
-			price: 129.99,
-			originalPrice: 159.99,
-			image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&h=300&fit=crop",
-			category: "Accessories",
-			rating: 4.8,
-			inStock: true,
-			dateAdded: "2024-01-12",
-		},
-		{
-			id: 3,
-			name: "Premium Coffee Maker",
-			price: 299.99,
-			originalPrice: 349.99,
-			image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=300&h=300&fit=crop",
-			category: "Home & Kitchen",
-			rating: 4.3,
-			inStock: false,
-			dateAdded: "2024-01-10",
-		},
-		{
-			id: 4,
-			name: "Ergonomic Office Chair",
-			price: 449.99,
-			originalPrice: 549.99,
-			image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300&h=300&fit=crop",
-			category: "Furniture",
-			rating: 4.6,
-			inStock: true,
-			dateAdded: "2024-01-08",
-		},
-		{
-			id: 5,
-			name: "Fitness Tracker",
-			price: 89.99,
-			originalPrice: 119.99,
-			image: "https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6?w=300&h=300&fit=crop",
-			category: "Electronics",
-			rating: 4.2,
-			inStock: true,
-			dateAdded: "2024-01-05",
-		},
-		{
-			id: 6,
-			name: "Designer Sunglasses",
-			price: 179.99,
-			originalPrice: 220.0,
-			image: "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=300&h=300&fit=crop",
-			category: "Accessories",
-			rating: 4.7,
-			inStock: true,
-			dateAdded: "2024-01-03",
-		},
-	]);
+	const [wishlistItems, setWishlistItems] = useState(current?.wishlist || []);
+
+	// Pagination state
+	const [currentPage, setCurrentPage] = useState(1);
+	const [wishlistItemPerPage] = useState(4); // Number of orders per page
+
+	useEffect(() => {
+		const params = new URLSearchParams(window.location.search);
+		const page = params.get("page") || 1;
+		setCurrentPage(Number(page));
+	}, []);
 
 	const removeFromWishlist = (id) => {
-		setWishlistItems((items) => items.filter((item) => item.id !== id));
+		setWishlistItems((items) => items.filter((item) => item._id !== id));
+	};
+
+	const handleSearchTerm = (e) => {
+		setSearchTerm(e.target.value);
+		const params = new URLSearchParams(window.location.search);
+		params.set("page", 1);
+		setCurrentPage(1);
+		navigate({
+			pathname: window.location.pathname,
+			search: params.toString(),
+		});
+	};
+	const handleSortBy = (e) => {
+		setSortBy(e.target.value);
+		const params = new URLSearchParams(window.location.search);
+		params.set("page", 1);
+		setCurrentPage(1);
+		navigate({
+			pathname: window.location.pathname,
+			search: params.toString(),
+		});
 	};
 
 	const filteredItems = wishlistItems.filter((item) =>
-		item.name.toLowerCase().includes(searchTerm.toLowerCase())
+		item.title.toLowerCase().includes(searchTerm.toLowerCase())
 	);
 
 	const sortedItems = [...filteredItems].sort((a, b) => {
@@ -90,13 +58,32 @@ const Wishlist = () => {
 			case "price-high":
 				return b.price - a.price;
 			case "name":
-				return a.name.localeCompare(b.name);
+				return a.title.localeCompare(b.title);
 			case "rating":
-				return b.rating - a.rating;
+				return b.totalRatings - a.totalRatings;
 			default:
-				return new Date(b.dateAdded) - new Date(a.dateAdded);
+				return new Date(b.createdAt) - new Date(a.createdAt);
 		}
 	});
+
+	const indexOfWishlistItem = currentPage * wishlistItemPerPage;
+	const indexOfFirstWishlistItem = indexOfWishlistItem - wishlistItemPerPage;
+	const currentWishlistItem = sortedItems.slice(
+		indexOfFirstWishlistItem,
+		indexOfWishlistItem
+	);
+
+	const getPaginationInfo = (currentPage, pageSize, totalWishlistItems) => {
+		const startItem = (currentPage - 1) * pageSize + 1;
+		const endItem = Math.min(currentPage * pageSize, totalWishlistItems);
+
+		return { startItem, endItem };
+	};
+	const { startItem, endItem } = getPaginationInfo(
+		currentPage,
+		wishlistItemPerPage,
+		wishlistItems.length
+	);
 
 	return (
 		<div className="min-h-screen p-4 bg-white shadow-lg text-slate-900">
@@ -107,7 +94,7 @@ const Wishlist = () => {
 			/>
 
 			{/* Controls */}
-			<div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8">
+			<div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-8">
 				<div className="flex flex-col md:flex-row gap-4 items-center justify-between">
 					{/* Search */}
 					<div className="relative flex-1 max-w-md">
@@ -119,8 +106,8 @@ const Wishlist = () => {
 							type="text"
 							placeholder="Search wishlist items..."
 							value={searchTerm}
-							onChange={(e) => setSearchTerm(e.target.value)}
-							className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+							onChange={(e) => handleSearchTerm(e)}
+							className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
 						/>
 					</div>
 
@@ -133,8 +120,8 @@ const Wishlist = () => {
 							/>
 							<select
 								value={sortBy}
-								onChange={(e) => setSortBy(e.target.value)}
-								className="border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white">
+								onChange={(e) => handleSortBy(e)}
+								className="border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white">
 								<option value="newest">Newest First</option>
 								<option value="price-low">
 									Price: Low to High
@@ -146,49 +133,54 @@ const Wishlist = () => {
 								<option value="rating">Highest Rated</option>
 							</select>
 						</div>
-
-						{/* View Mode */}
-						<div className="flex bg-gray-100 rounded-xl p-1">
-							<button
-								onClick={() => setViewMode("grid")}
-								className={`p-2 rounded-lg transition-all ${
-									viewMode === "grid"
-										? "bg-white shadow-sm text-blue-600"
-										: "text-gray-500"
-								}`}>
-								<Grid size={20} />
-							</button>
-							<button
-								onClick={() => setViewMode("list")}
-								className={`p-2 rounded-lg transition-all ${
-									viewMode === "list"
-										? "bg-white shadow-sm text-blue-600"
-										: "text-gray-500"
-								}`}>
-								<List size={20} />
-							</button>
-						</div>
 					</div>
 				</div>
 			</div>
 
 			{/* Wishlist Items */}
 			{sortedItems.length > 0 ? (
-				<div
-					className={`grid gap-6 ${
-						viewMode === "grid"
-							? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-							: "grid-cols-1"
-					}`}>
-					{sortedItems.map((item) => (
-						<WishlistItem
-							key={item.id}
-							item={item}
-							viewMode={viewMode}
-							removeFromWishlist={removeFromWishlist}
+				<>
+					<div
+						className={`grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4`}>
+						{currentWishlistItem.map((item) => (
+							<Link
+								to={`/products/${item.category.toLowerCase()}/${
+									item._id
+								}/${item.slug}`}
+								className="group"
+								key={item._id}>
+								<WishlistItem
+									item={item}
+									removeFromWishlist={removeFromWishlist}
+									currentWishlistItem={currentWishlistItem}
+									currentPage={currentPage}
+									setCurrentPage={setCurrentPage}
+								/>
+							</Link>
+						))}
+					</div>
+					<div className="flex items-center justify-between px-10 py-5 bg-slate-100 rounded-lg mt-3">
+						<div>
+							{wishlistItems.length > 0 && (
+								<div className="text-sm text-gray-500">
+									Showing {filteredItems.length} product
+									{filteredItems.length !== 1 ? "s" : ""}
+								</div>
+							)}
+							<div className="text-sm text-slate-600">
+								Show products {startItem} - {endItem} of{" "}
+								{filteredItems.length}
+							</div>
+						</div>
+						<Pagination
+							currentPage={currentPage}
+							totalCount={filteredItems.length}
+							onPageChange={setCurrentPage}
+							pageSize={wishlistItemPerPage}
+							siblingCount={1}
 						/>
-					))}
-				</div>
+					</div>
+				</>
 			) : (
 				<div className="text-center py-16">
 					<div className="mb-4">

@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import { apiBlockUser, apiDeleteUser, apiGetAllUsers } from "../../apis/user";
+import avatarDefault from "../../assets/avatarDefault.png";
 import EditUserForm from "../../components/admin/form/EditUserForm";
 import Pagination from "../../components/public/pagination/Pagination";
 
@@ -381,11 +382,11 @@ const ManageUsers = () => {
 														className="w-full h-full rounded-full object-cover"
 													/>
 												) : (
-													<>
-														{user.name
-															.charAt(0)
-															.toUpperCase()}
-													</>
+													<img
+														src={avatarDefault}
+														alt={user.name}
+														className="w-full h-full rounded-full object-cover"
+													/>
 												)}
 											</div>
 											<div>
@@ -486,7 +487,7 @@ const ManageUsers = () => {
 				</div>
 
 				{/* Pagination */}
-				<div className="flex items-center justify-between px-10 py-5 bg-slate-50">
+				<div className="flex items-center justify-between px-10 py-5 bg-slate-100">
 					<div>
 						{users.length > 0 && (
 							<div className="text-sm text-gray-500">

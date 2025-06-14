@@ -1,6 +1,7 @@
 import React, { memo, useState } from "react";
 import { AiOutlineCaretDown } from "react-icons/ai";
 import { NavLink } from "react-router-dom";
+import avatarDefault from "../../../assets/avatarDefault.png";
 import { adminSidebar } from "../../../utils/constants";
 
 const AdminSidebar = ({ admin }) => {
@@ -43,7 +44,13 @@ const AdminSidebar = ({ admin }) => {
 						{item.type === "SINGLE" && (
 							<NavLink
 								to={item.path}
-								className={({ isActive }) => `group flex items-center gap-2 px-4 py-3 rounded-xl transition-all duration-200 ${isActive ? "text-white font-semibold": "text-slate-300"} hover:text-white bg-gradient-to-r from-blue-600 to-purple-600`}>
+								className={({ isActive }) =>
+									`group flex items-center gap-2 px-4 py-3 rounded-xl transition-all duration-200 ${
+										isActive
+											? "text-white font-semibold"
+											: "text-slate-300"
+									} hover:text-white bg-gradient-to-r from-blue-600 to-purple-600`
+								}>
 								<span className="flex-shrink-0 transition-transform group-hover:scale-110">
 									{item.icon}
 								</span>
@@ -85,7 +92,13 @@ const AdminSidebar = ({ admin }) => {
 											<NavLink
 												to={subItem.path}
 												key={subItem.text}
-												className={({ isActive }) => `group flex items-center gap-2 px-8 rounded-2xl my-1 py-2.5 transition-all duration-200 ${isActive ? "font-semibold" : "font-medium"} text-white bg-gradient-to-r from-slate-500 to-slate-800 hover:from-slate-600 hover:to-slate-500`}
+												className={({ isActive }) =>
+													`group flex items-center gap-2 px-8 rounded-2xl my-1 py-2.5 transition-all duration-200 ${
+														isActive
+															? "font-semibold"
+															: "font-medium"
+													} text-white bg-gradient-to-r from-slate-500 to-slate-800 hover:from-slate-600 hover:to-slate-500`
+												}
 												onClick={(e) =>
 													e.stopPropagation()
 												}>
@@ -116,11 +129,10 @@ const AdminSidebar = ({ admin }) => {
 									alt=""
 								/>
 							) : (
-								<div className="w-full h-full bg-gray-300 flex items-center justify-center rounded-lg">
-									<span className="text-gray-500 font-bold">
-										{admin.name.charAt(0).toUpperCase()}
-									</span>
-								</div>
+								<img
+									src={avatarDefault}
+									alt=""
+								/>
 							)}
 						</div>
 						<div className="flex-1 min-w-0">

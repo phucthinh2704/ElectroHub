@@ -65,3 +65,9 @@ export const apiUserOrders = async (params) =>
 		url: `/order/`,
 		params
 	});
+export const apiGetAllOrders = async (params) =>
+	axios({
+		method: "GET",
+		url: `/order/admin/`,
+		params
+	});

@@ -1,22 +1,20 @@
-import React, { memo, useState } from "react";
-import {
-	AiOutlineGift,
-	AiOutlineLogout
-} from "react-icons/ai";
-import { NavLink, useNavigate } from "react-router-dom";
-import { memberSidebar } from "../../../utils/constants";
-import { apiLogout } from "../../../apis";
-import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";
-import path from "../../../utils/path";
-import { logout } from "../../../store/user/userSlice";
 import { LogOut } from "lucide-react";
+import React, { memo, useState } from "react";
+import { AiOutlineGift, AiOutlineLogout } from "react-icons/ai";
+import { useDispatch } from "react-redux";
+import { NavLink, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { apiLogout } from "../../../apis";
+import avatarDefault from "../../../assets/avatarDefault.png";
+import { logout } from "../../../store/user/userSlice";
+import { memberSidebar } from "../../../utils/constants";
+import path from "../../../utils/path";
 
 const MemberSidebar = ({ user }) => {
 	const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
-	
+
 	const handleLogoutClick = () => {
 		setShowLogoutConfirm(true);
 	};
@@ -51,9 +49,11 @@ const MemberSidebar = ({ user }) => {
 								/>
 							)}
 							{!user.avatar && (
-								<div className="w-full h-full flex items-center justify-center bg-blue-200 text-blue-700 font-bold text-lg">
-									{user.name.charAt(0).toUpperCase()}
-								</div>
+								<img
+									src={avatarDefault}
+									alt={user.name}
+									className="w-full h-full object-cover"
+								/>
 							)}
 						</div>
 						{/* Online indicator */}
@@ -84,7 +84,11 @@ const MemberSidebar = ({ user }) => {
 							<NavLink
 								to={item.path}
 								className={({ isActive }) =>
-									`group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 cursor-pointer  ${isActive ? "text-blue-600 bg-blue-50" : "text-gray-600"} hover:text-blue-600 hover:bg-blue-50 hover:scale-102`
+									`group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 cursor-pointer  ${
+										isActive
+											? "text-blue-600 bg-blue-50"
+											: "text-gray-600"
+									} hover:text-blue-600 hover:bg-blue-50 hover:scale-102`
 								}>
 								<span className="flex-shrink-0 transition-all duration-300 group-hover:scale-110">
 									{item.icon}
@@ -123,7 +127,9 @@ const MemberSidebar = ({ user }) => {
 				</div>
 
 				{/* Logout Button */}
-				<button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-600 hover:text-red-700 hover:bg-red-50 transition-all duration-300 group cursor-pointer" onClick={handleLogoutClick}>
+				<button
+					className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-600 hover:text-red-700 hover:bg-red-50 transition-all duration-300 group cursor-pointer"
+					onClick={handleLogoutClick}>
 					<AiOutlineLogout
 						size={20}
 						className="transition-transform duration-300 group-hover:scale-110"

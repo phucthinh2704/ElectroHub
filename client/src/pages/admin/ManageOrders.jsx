@@ -1,25 +1,21 @@
-import React, { useEffect, useState } from "react";
 import {
+	CheckCircle,
+	Clock,
+	DollarSign,
+	Eye,
 	Package,
+	Phone,
+	Search,
 	ShoppingCart,
 	Truck,
-	CheckCircle,
-	XCircle,
-	Clock,
-	Search,
-	Eye,
-	Edit,
-	Trash2,
-	DollarSign,
-	Calendar,
-	MapPin,
-	User,
-	Phone,
-	Filter,
+	XCircle
 } from "lucide-react";
 import moment from "moment";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import Swal from "sweetalert2";
+import { apiGetAllOrders } from "../../apis";
+import { Pagination } from "../../components";
 
 const ManageOrders = () => {
 	const [orders, setOrders] = useState([
@@ -118,7 +114,31 @@ const ManageOrders = () => {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [filterStatus, setFilterStatus] = useState("all");
 	const [currentPage, setCurrentPage] = useState(1);
-	const [ordersPerPage] = useState(5);
+	const [ordersPerPage] = useState(3);
+
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		const fetchOrders = async () => {
+			try {
+				const response = await apiGetAllOrders();
+				if (response.success) {
+					setOrders(response.orders);
+					console.log(
+						"Orders fetched successfully:",
+						response.orders
+					);
+				}
+			} catch (error) {
+				console.log("Failed to fetch orders:", error);
+				toast.error("Failed to fetch orders. Please try again later.");
+			}
+		};
+		fetchOrders();
+		const params = new URLSearchParams(window.location.search);
+		const page = params.get("page") || 1;
+		setCurrentPage(Number(page));
+	}, []);
 
 	// Filter orders
 	const filteredOrders = orders.filter((order) => {
@@ -154,13 +174,17 @@ const ManageOrders = () => {
 		} else if (field === "status") {
 			setFilterStatus(value);
 		}
+		const params = new URLSearchParams(window.location.search);
+		params.set("page", 1);
 		setCurrentPage(1);
+		navigate({
+			pathname: window.location.pathname,
+			search: params.toString(),
+		});
 	};
 
 	const getStatusBadgeColor = (status) => {
 		switch (status) {
-			case "pending":
-				return "bg-yellow-100 text-yellow-800 border-yellow-200";
 			case "processing":
 				return "bg-blue-100 text-blue-800 border-blue-200";
 			case "shipped":
@@ -176,8 +200,6 @@ const ManageOrders = () => {
 
 	const getStatusIcon = (status) => {
 		switch (status) {
-			case "pending":
-				return <Clock className="w-3 h-3" />;
 			case "processing":
 				return <Package className="w-3 h-3" />;
 			case "shipped":
@@ -196,23 +218,6 @@ const ManageOrders = () => {
 			style: "currency",
 			currency: "VND",
 		}).format(amount);
-	};
-
-	const handleDeleteOrder = (orderId) => {
-		Swal.fire({
-			title: "Are you sure?",
-			text: "You won't be able to revert this!",
-			icon: "warning",
-			showCancelButton: true,
-			confirmButtonColor: "#d33",
-			cancelButtonColor: "#3085d6",
-			confirmButtonText: "Yes, delete it!",
-		}).then((result) => {
-			if (result.isConfirmed) {
-				setOrders(orders.filter((order) => order._id !== orderId));
-				toast.success("Order deleted successfully");
-			}
-		});
 	};
 
 	const handleUpdateStatus = (orderId, newStatus) => {
@@ -240,6 +245,18 @@ const ManageOrders = () => {
 		(o) => o.status === "delivered"
 	).length;
 	const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
+
+	const getPaginationInfo = (currentPage, pageSize, totalOrders) => {
+		const startItem = (currentPage - 1) * pageSize + 1;
+		const endItem = Math.min(currentPage * pageSize, totalOrders);
+
+		return { startItem, endItem };
+	};
+	const { startItem, endItem } = getPaginationInfo(
+		currentPage,
+		ordersPerPage,
+		filteredOrders.length
+	);
 
 	return (
 		<div className="p-4 bg-slate-100 min-h-screen text-slate-900">
@@ -566,14 +583,6 @@ const ManageOrders = () => {
 													Cancelled
 												</option>
 											</select>
-											<button
-												onClick={() =>
-													handleDeleteOrder(order._id)
-												}
-												className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-150"
-												title="Delete Order">
-												<Trash2 className="w-4 h-4" />
-											</button>
 										</div>
 									</td>
 								</tr>
@@ -581,61 +590,26 @@ const ManageOrders = () => {
 						</tbody>
 					</table>
 				</div>
-
-				{/* Pagination Info */}
-				<div className="flex items-center justify-between px-6 py-4 bg-slate-50 border-t border-slate-200">
-					<div className="text-sm text-slate-600">
-						Showing {indexOfFirstOrder + 1} to{" "}
-						{Math.min(indexOfLastOrder, filteredOrders.length)} of{" "}
-						{filteredOrders.length} orders
+				<div className="flex items-center justify-between px-10 py-5 bg-slate-100">
+					<div>
+						{orders.length > 0 && (
+							<div className="text-sm text-gray-500">
+								Showing {filteredOrders.length} order
+								{filteredOrders.length !== 1 ? "s" : ""}
+							</div>
+						)}
+						<div className="text-sm text-slate-600">
+							Show orders {startItem} - {endItem} of{" "}
+							{filteredOrders.length}
+						</div>
 					</div>
-					<div className="flex items-center gap-2">
-						<button
-							onClick={() =>
-								setCurrentPage((prev) => Math.max(prev - 1, 1))
-							}
-							disabled={currentPage === 1}
-							className="px-3 py-2 text-sm text-slate-600 hover:text-slate-800 disabled:opacity-50 disabled:cursor-not-allowed">
-							Previous
-						</button>
-
-						{[
-							...Array(
-								Math.ceil(filteredOrders.length / ordersPerPage)
-							),
-						].map((_, i) => (
-							<button
-								key={i + 1}
-								onClick={() => setCurrentPage(i + 1)}
-								className={`px-3 py-2 text-sm rounded-lg transition-colors duration-150 ${
-									currentPage === i + 1
-										? "bg-blue-600 text-white"
-										: "text-slate-600 hover:bg-slate-200"
-								}`}>
-								{i + 1}
-							</button>
-						))}
-
-						<button
-							onClick={() =>
-								setCurrentPage((prev) =>
-									Math.min(
-										prev + 1,
-										Math.ceil(
-											filteredOrders.length /
-												ordersPerPage
-										)
-									)
-								)
-							}
-							disabled={
-								currentPage ===
-								Math.ceil(filteredOrders.length / ordersPerPage)
-							}
-							className="px-3 py-2 text-sm text-slate-600 hover:text-slate-800 disabled:opacity-50 disabled:cursor-not-allowed">
-							Next
-						</button>
-					</div>
+					<Pagination
+						currentPage={currentPage}
+						pageSize={ordersPerPage}
+						onPageChange={setCurrentPage}
+						totalCount={filteredOrders.length}
+						siblingCount={1}
+					/>
 				</div>
 			</div>
 

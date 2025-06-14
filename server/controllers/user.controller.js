@@ -191,7 +191,7 @@ const getCurrent = asyncHandler(async (req, res) => {
 	const { _id } = req.user;
 	const user = await User.findById(_id)
 		.select("-refreshToken -password")
-		.populate("cart.product");
+		.populate("cart.product").populate("wishlist");
 
 	if (!user) {
 		return res.status(400).json({
@@ -635,6 +635,34 @@ const removeCartItem = asyncHandler(async (req, res) => {
 	}
 });
 
+// [PUT] /user/wishlist/:pid
+const updateWishlist = asyncHandler(async (req, res) => {
+	const { _id } = req.user;
+	const { pid } = req.params;
+
+	const user = await User.findById(_id).select("wishlist");
+	
+	const alreadyProduct = user?.wishlist?.find(
+		(item) => item.toString() === pid
+	);
+	if(alreadyProduct) {
+		user.wishlist = user.wishlist.filter(
+			(item) => item.toString() !== pid
+		);
+	}
+	else {
+		user.wishlist.push(pid);
+	}
+	await user.save();
+	return res.status(200).json({
+		success: true,
+		message: alreadyProduct
+			? "Removed product from wishlist successfully"
+			: "Added product to wishlist successfully",
+		wishlist: user.wishlist,
+	});
+})
+
 module.exports = {
 	register,
 	authRegister,
@@ -652,4 +680,5 @@ module.exports = {
 	updateUserAddress,
 	updateCart,
 	removeCartItem,
+	updateWishlist,
 };

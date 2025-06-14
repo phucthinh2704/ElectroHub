@@ -17,6 +17,7 @@ import { apiLogout, apiRatings } from "../../../apis";
 import { logout } from "../../../store/user/userSlice";
 import { ratingLabels } from "../../../utils/constants";
 import path from "../../../utils/path";
+import avatarDefault from "../../../assets/avatarDefault.png";
 
 const RatingsReview = ({ product = {}, onReviewSubmitted }) => {
 	const [sortBy, setSortBy] = useState("newest");
@@ -289,11 +290,11 @@ const RatingsReview = ({ product = {}, onReviewSubmitted }) => {
 												className="rounded-full w-full h-full object-cover"
 											/>
 										) : (
-											<div className="w-full h-full flex items-center justify-center bg-blue-200 text-blue-700 font-bold text-lg">
-												{review.postedBy.name
-													.charAt(0)
-													.toUpperCase()}
-											</div>
+											<img
+												src={avatarDefault}
+												alt="avatar"
+												className="rounded-full w-full h-full object-cover"
+											/>
 										)}
 									</div>
 									<div className="ml-3">

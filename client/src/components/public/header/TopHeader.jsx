@@ -1,11 +1,20 @@
-import { ChevronDown, LogOut, Phone, User, ShoppingBag, Heart, ShoppingCart } from "lucide-react";
+import {
+	ChevronDown,
+	Heart,
+	LogOut,
+	Phone,
+	ShoppingBag,
+	ShoppingCart,
+	User,
+} from "lucide-react";
 import React, { memo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { apiLogout } from "../../../apis";
+import avatarDefault from "../../../assets/avatarDefault.png";
 import { logout } from "../../../store/user/userSlice";
 import path from "../../../utils/path";
-import { apiLogout } from "../../../apis";
-import { toast } from "react-toastify";
 
 const TopHeader = () => {
 	const dispatch = useDispatch();
@@ -73,9 +82,11 @@ const TopHeader = () => {
 										className="w-full h-full object-cover rounded-full"
 									/>
 								) : (
-									<span className="text-lg">
-										{current.name.charAt(0).toUpperCase()}
-									</span>
+									<img
+										src={avatarDefault}
+										alt={current.name}
+										className="w-full h-full object-cover rounded-full"
+									/>
 								)}
 							</div>
 							<span className="text-sm font-medium">

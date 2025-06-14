@@ -46,9 +46,7 @@ export const navigation = [
 		value: "Our Services",
 		icon: ContactRound,
 	},
-	{ id: 5, path: `/${path.FAVORITE}`, value: "Favorites", icon: Heart },
-	{ id: 6, path: `/${path.FAQ}`, value: "FAQs", icon: MailQuestionIcon },
-	{ id: 7, path: `/${path.ACCOUNT}`, value: "Account", icon: User },
+	{ id: 5, path: `/${path.FAQ}`, value: "FAQs", icon: MailQuestionIcon },
 ];
 
 export const colors = [

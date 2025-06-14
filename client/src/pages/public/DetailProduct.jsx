@@ -13,7 +13,11 @@ import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
 import { useParams } from "react-router-dom";
 import Slider from "react-slick";
-import { apiGetProductById, apiUpdateCart } from "../../apis";
+import {
+	apiGetProductById,
+	apiUpdateCart,
+	apiUpdateWishlist,
+} from "../../apis";
 import {
 	Breadcrumbs,
 	InformationDetail,
@@ -26,7 +30,7 @@ import settings from "../../utils/settingsSlider";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import { getCurrent } from "../../store/user/asyncAction";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const DetailProduct = () => {
 	const { productId } = useParams();
@@ -36,6 +40,7 @@ const DetailProduct = () => {
 	const [variant, setVariant] = useState(null);
 	const [quantity, setQuantity] = useState(1);
 	const [loading, setLoading] = useState(true);
+	const { current } = useSelector((state) => state.user);
 
 	const fetchProduct = async () => {
 		setLoading(true);
@@ -81,6 +86,21 @@ const DetailProduct = () => {
 
 	const handleImageChange = (index) => {
 		setCurrentImageIndex(index);
+	};
+
+	const handleUpdateWishlist = async () => {
+		try {
+			const response = await apiUpdateWishlist(product._id);
+			if (response.success) {
+				toast.success(response.message);
+				dispatch(getCurrent());
+			} else {
+				toast.error(response.message || "Failed to update wishlist");
+			}
+		} catch (error) {
+			console.log("Error adding to wishlist:", error);
+			toast.error("Failed to add to wishlist. Please try again later.");
+		}
 	};
 
 	const handleAddToCart = async () => {
@@ -591,8 +611,22 @@ const DetailProduct = () => {
 										</button>
 
 										<div className="grid grid-cols-2 gap-3">
-											<button className="border border-gray-300 hover:border-gray-400 bg-white text-gray-700 py-2 px-4 rounded-lg font-medium flex items-center justify-center cursor-pointer">
-												<Heart className="mr-2 h-5 w-5" />
+											<button
+												onClick={handleUpdateWishlist}
+												className="border border-gray-300 hover:border-gray-400 bg-white text-gray-700 py-2 px-4 rounded-lg font-medium flex items-center justify-center cursor-pointer">
+												{current.wishlist.some(
+													(productItem) =>
+														productItem._id ===
+														product._id
+												) ? (
+													<Heart
+														className="mr-2 h-5 w-5"
+														fill="red"
+														color="red"
+													/>
+												) : (
+													<Heart className="mr-2 h-5 w-5" />
+												)}
 												Wishlist
 											</button>
 											<button className="border border-gray-300 hover:border-gray-400 bg-white text-gray-700 py-2 px-4 rounded-lg font-medium flex items-center justify-center cursor-pointer">

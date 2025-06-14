@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Swal from "sweetalert2";
+import { apiGetCurrent, apiLogout } from "./apis";
 import "./App.css";
 import { ScrollToTop } from "./components";
 import {
@@ -15,12 +17,12 @@ import {
 	ManageUsers,
 } from "./pages/admin";
 import {
-	MemberLayout,
-	Personal,
-	MyCart,
-	Wishlist,
-	OrderHistory,
 	Checkout,
+	MemberLayout,
+	MyCart,
+	OrderHistory,
+	Personal,
+	Wishlist,
 } from "./pages/member";
 import {
 	Blogs,
@@ -35,10 +37,8 @@ import {
 	Services,
 } from "./pages/public";
 import { getCategories } from "./store/app/asyncActions";
-import path from "./utils/path";
-import Swal from "sweetalert2";
-import { apiGetCurrent, apiLogout } from "./apis";
 import { logout } from "./store/user/userSlice";
+import path from "./utils/path";
 
 function App() {
 	const dispatch = useDispatch();

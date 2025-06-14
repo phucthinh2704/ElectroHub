@@ -1,19 +1,18 @@
 import React, { memo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { apiUpdateCart } from "../../../apis/user";
+import Swal from "sweetalert2";
+import { apiUpdateCart, apiUpdateWishlist } from "../../../apis/user";
 import newLabel from "../../../assets/new.png";
 import trendingLabel from "../../../assets/trending.png";
+import { getCurrent } from "../../../store/user/asyncAction";
 import formatMoney from "../../../utils/formatMoney";
 import icons from "../../../utils/icons";
+import path from "../../../utils/path";
 import renderRatingStar from "../../../utils/renderRatingStar";
 import HoverOption from "../common/HoverOption";
 import QuickView from "./QuickView";
-import Swal from "sweetalert2";
-import { getCurrent } from "../../../store/user/asyncAction";
-import path from "../../../utils/path";
 
 const { AiFillEye, BsFillSuitHeartFill, FaCartPlus } = icons;
 
@@ -25,6 +24,7 @@ const ProductCard = ({ data, isNew, normal }) => {
 	const navigate = useNavigate();
 	const { current } = useSelector((state) => state.user);
 
+	const isFavorite = current?.wishlist?.some((item) => item._id === data._id);
 	const handleClickOptions = async (e, type) => {
 		e.preventDefault();
 		e.stopPropagation();
@@ -32,9 +32,44 @@ const ProductCard = ({ data, isNew, normal }) => {
 			case "QUICK_VIEW":
 				setIsShowQuickView(true);
 				break;
-			case "WISHLIST":
-				console.log("Wishlist clicked");
+			case "WISHLIST": {
+				if (!current) {
+					Swal.fire({
+						title: "Please login to continue",
+						icon: "warning",
+						showCancelButton: true,
+						confirmButtonText: "Login",
+						cancelButtonText: "Cancel",
+					}).then((result) => {
+						if (result.isConfirmed) {
+							window.scrollTo(0, 0);
+							navigate(`/${path.LOGIN}`, {
+								state: `/products/${data.category.toLowerCase()}/${
+									data._id
+								}/${data.slug}`,
+							});
+						}
+					});
+					return;
+				}
+				try {
+					const response = await apiUpdateWishlist(data._id);
+					if (response.success) {
+						toast.success(response.message);
+						dispatch(getCurrent());
+					} else {
+						toast.error(
+							response.message || "Failed to update wishlist"
+						);
+					}
+				} catch (error) {
+					console.log("Error adding to wishlist:", error);
+					toast.error(
+						"Failed to add to wishlist. Please try again later."
+					);
+				}
 				break;
+			}
 			case "ADD_TO_CART": {
 				if (!current) {
 					Swal.fire({
@@ -56,8 +91,13 @@ const ProductCard = ({ data, isNew, normal }) => {
 					return;
 				}
 				try {
-					if(data.stock <= 0) {
-						toast.error("This product is out of stock");
+					if (data.stock <= 0) {
+						Swal.fire({
+							title: "Out of Stock",
+							text: "This item is currently out of stock.",
+							icon: "warning",
+							confirmButtonText: "OK",
+						});
 						return;
 					}
 					const response = await apiUpdateCart({
@@ -95,6 +135,14 @@ const ProductCard = ({ data, isNew, normal }) => {
 			className="w-full h-full text-base border-2 border-gray-300 p-4 rounded-xl relative hover:border-main/80 transition-all duration-300 cursor-pointer overflow-hidden"
 			onMouseEnter={() => setIsShowOptions(true)}
 			onMouseLeave={() => setIsShowOptions(false)}>
+			{isFavorite && (
+				<div className="absolute left-4 top-4 z-99 flex justify-end">
+					<BsFillSuitHeartFill
+						size={22}
+						color="red"
+					/>
+				</div>
+			)}
 			<Link
 				to={`/products/${data.category.toLowerCase()}/${data._id}/${
 					data.slug
@@ -117,7 +165,10 @@ const ProductCard = ({ data, isNew, normal }) => {
 						<span
 							title="Add to Wishlist"
 							onClick={(e) => handleClickOptions(e, "WISHLIST")}>
-							<HoverOption icon={<BsFillSuitHeartFill />} />
+							<HoverOption
+								icon={<BsFillSuitHeartFill />}
+								isFavorite={isFavorite}
+							/>
 						</span>
 						<span
 							title="Add to Cart"

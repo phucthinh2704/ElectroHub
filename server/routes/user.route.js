@@ -16,6 +16,7 @@ router.put("/current", verifyAccessToken, uploader.single("avatar"),user.updateU
 router.put("/address", verifyAccessToken, user.updateUserAddress);
 router.put("/cart", verifyAccessToken, user.updateCart);
 router.delete("/remove-cart/:pid", verifyAccessToken, user.removeCartItem);
+router.put("/wishlist/:pid", verifyAccessToken, user.updateWishlist);
 
 // Admin routes
 router.get("/", [verifyAccessToken, isAdmin], user.getAllUsers);

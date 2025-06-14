@@ -20,97 +20,12 @@ const OrderHistory = () => {
 				setOrders(response.orders);
 			}
 		};
-
 		fetchOrders();
 
 		const params = new URLSearchParams(window.location.search);
 		const page = params.get("page") || 1;
 		setCurrentPage(Number(page));
 	}, []);
-
-	// Sample order data
-	// const orders = [
-	// 	{
-	// 		id: "ORD-2024-001",
-	// 		date: "2024-06-10",
-	// 		status: "delivered",
-	// 		total: 299.99,
-	// 		items: 3,
-	// 		paymentMethod: "Credit Card",
-	// 		shippingAddress: "123 Main St, New York, NY 10001",
-	// 		products: [
-	// 			{
-	// 				name: "Wireless Headphones",
-	// 				price: 149.99,
-	// 				quantity: 1,
-	// 				image: "/api/placeholder/60/60",
-	// 			},
-	// 			{
-	// 				name: "Phone Case",
-	// 				price: 29.99,
-	// 				quantity: 2,
-	// 				image: "/api/placeholder/60/60",
-	// 			},
-	// 		],
-	// 	},
-	// 	{
-	// 		id: "ORD-2024-002",
-	// 		date: "2024-06-08",
-	// 		status: "shipped",
-	// 		total: 159.99,
-	// 		items: 2,
-	// 		paymentMethod: "PayPal",
-	// 		shippingAddress: "456 Oak Ave, Los Angeles, CA 90210",
-	// 		products: [
-	// 			{
-	// 				name: "Bluetooth Speaker",
-	// 				price: 89.99,
-	// 				quantity: 1,
-	// 				image: "/api/placeholder/60/60",
-	// 			},
-	// 			{
-	// 				name: "USB Cable",
-	// 				price: 19.99,
-	// 				quantity: 1,
-	// 				image: "/api/placeholder/60/60",
-	// 			},
-	// 		],
-	// 	},
-	// 	{
-	// 		id: "ORD-2024-003",
-	// 		date: "2024-06-05",
-	// 		status: "processing",
-	// 		total: 89.99,
-	// 		items: 1,
-	// 		paymentMethod: "Credit Card",
-	// 		shippingAddress: "789 Pine St, Chicago, IL 60601",
-	// 		products: [
-	// 			{
-	// 				name: "Laptop Stand",
-	// 				price: 89.99,
-	// 				quantity: 1,
-	// 				image: "/api/placeholder/60/60",
-	// 			},
-	// 		],
-	// 	},
-	// 	{
-	// 		id: "ORD-2024-004",
-	// 		date: "2024-06-01",
-	// 		status: "cancelled",
-	// 		total: 199.99,
-	// 		items: 1,
-	// 		paymentMethod: "Credit Card",
-	// 		shippingAddress: "321 Elm St, Miami, FL 33101",
-	// 		products: [
-	// 			{
-	// 				name: "Smart Watch",
-	// 				price: 199.99,
-	// 				quantity: 1,
-	// 				image: "/api/placeholder/60/60",
-	// 			},
-	// 		],
-	// 	},
-	// ];
 
 	const filteredOrders = orders.filter((order) => {
 		const matchesTab = activeTab === "all" || order.status === activeTab;
@@ -159,11 +74,11 @@ const OrderHistory = () => {
 		});
 	};
 
-	const indexOfLastUser = currentPage * ordersPerPage;
-	const indexOfFirstUser = indexOfLastUser - ordersPerPage;
+	const indexOfLastOrder = currentPage * ordersPerPage;
+	const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
 	const currentOrders = filteredOrders.slice(
-		indexOfFirstUser,
-		indexOfLastUser
+		indexOfFirstOrder,
+		indexOfLastOrder
 	);
 
 	return (

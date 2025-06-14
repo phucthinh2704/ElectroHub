@@ -661,7 +661,7 @@ const ManageProducts = () => {
 				</div>
 
 				{/* Pagination */}
-				<div className="flex items-center justify-between px-10 py-5 bg-slate-50">
+				<div className="flex items-center justify-between px-10 py-5 bg-slate-100">
 					<div>
 						{products.length > 0 && (
 							<div className="text-sm text-gray-500">
