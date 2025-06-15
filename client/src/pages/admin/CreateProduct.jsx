@@ -12,7 +12,6 @@ import toBase64 from "../../utils/toBase64";
 const CreateProduct = () => {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [submitMessage, setSubmitMessage] = useState("");
-	const [description, setDescription] = useState("");
 	const [previewImage, setPreviewImage] = useState({
 		thumb: "",
 		images: [],
@@ -25,6 +24,7 @@ const CreateProduct = () => {
 		handleSubmit,
 		reset,
 		watch,
+		setValue,
 		formState: { errors },
 	} = useForm({
 		defaultValues: {},
@@ -34,14 +34,16 @@ const CreateProduct = () => {
 	const watchedValues = watch();
 
 	const handlePreviewImage = async (file) => {
-		if (file && file.type.startsWith("image/")) {
-			const base64Thumb = await toBase64(file);
-			setPreviewImage((prev) => ({
-				...prev,
-				thumb: base64Thumb,
-			}));
-		} else {
-			toast.error("Please upload a valid image file");
+		if (file) {
+			if (file.type.startsWith("image/")) {
+				const base64Thumb = await toBase64(file);
+				setPreviewImage((prev) => ({
+					...prev,
+					thumb: base64Thumb,
+				}));
+			} else {
+				toast.error("Please upload a valid image file");
+			}
 		}
 	};
 
@@ -65,7 +67,7 @@ const CreateProduct = () => {
 	};
 
 	useEffect(() => {
-		if (watch("thumb")[0]) {
+		if (watch("thumb") instanceof FileList && watch("thumb").length > 0) {
 			handlePreviewImage(watch("thumb")[0]);
 		} else {
 			setPreviewImage((prev) => ({
@@ -77,10 +79,16 @@ const CreateProduct = () => {
 	}, [watch("thumb")]);
 
 	useEffect(() => {
-		if (watch("images") && watch("images").length > 0) {
+		if (
+			watch("images") instanceof FileList &&
+			watch("images").length > 0 &&
+			watch("images").length <= 5
+		) {
 			handlePreviewMultipleImage(watch("images"));
-		}
-		else {
+		} else {
+			if(watch("images") instanceof FileList && watch("images").length > 5) {
+				setValue("images", []);
+			}
 			setPreviewImage((prev) => ({
 				...prev,
 				images: [],
@@ -90,41 +98,30 @@ const CreateProduct = () => {
 	}, [watch("images")]);
 
 	const onSubmit = async (data) => {
-		if (
-			!description ||
-			description.trim() === "" ||
-			description.replace(/<[^>]*>/g, "").length < 10 ||
-			description.replace(/<[^>]*>/g, "").length > 5000
-		) {
-			return;
-		}
-
 		setSubmitMessage("");
-		// Tạo FormData để gửi files
+
 		const formData = new FormData();
 
-		for(const key in data) {
+		const description = data.description.split(". ") || [];
+		for (const key in data) {
 			if (key === "thumb" && data[key]) {
 				formData.append("thumb", data[key][0]);
 			} else if (key === "images" && data[key]) {
 				for (let image of data[key]) {
 					formData.append("images", image);
 				}
+			} else if (key === "description") {
+				for (let i = 0; i < description.length; i++) {
+					if (description[i].trim() !== "") {
+						formData.append(`description`, description[i].trim());
+					}
+				}
 			} else {
 				formData.append(key, data[key]);
 			}
 		}
 
-		formData.append("price", parseInt(data.originalPrice));
-		formData.append("description", description);
-
-// 		if (data.thumb) {
-// 			formData.append("thumb", data.thumb[0]);
-// 		}
-// 
-// 		if (data.images) {
-// 			for (let image of data.images) formData.append("images", image);
-// 		}
+		formData.append("price", data.originalPrice);
 
 		setIsSubmitting(true);
 		setTimeout(async () => {
@@ -161,10 +158,12 @@ const CreateProduct = () => {
 			stock: "",
 			category: "",
 			brand: "",
+			description: "",
+			color: "",
 			thumb: "",
 			images: [],
 		});
-		setDescription("");
+		// setDescription("");
 		setPreviewImage({
 			thumb: "",
 			images: [],
@@ -175,7 +174,7 @@ const CreateProduct = () => {
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 text-gray-800">
 			{/* Header */}
-			<div className="bg-white/70 backdrop-blur-sm border-b border-gray-200/50 sticky top-20 z-10">
+			<div className="bg-white/70 backdrop-blur-sm border-b border-gray-200/50 sticky top-0 z-10">
 				<div className="max-w-6xl mx-auto p-6">
 					<div className="flex items-center space-x-4">
 						<div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
@@ -204,7 +203,7 @@ const CreateProduct = () => {
 				</div>
 			</div>
 
-			<div className="max-w-6xl mx-auto py-4">
+			<div className="max-w-7xl mx-auto py-4">
 				<div className="space-y-8">
 					{/* Basic Information Card */}
 					<div className="bg-white/70 backdrop-blur-sm rounded-3xl shadow-xl border border-gray-200/50 overflow-hidden">
@@ -691,109 +690,34 @@ const CreateProduct = () => {
 										features, specifications, and any other
 										relevant information.
 									</div>
-									<div className="min-h-[200px]">
-										<Editor
-											initialValue={description}
-											onChange={(e) =>
-												setDescription(
-													e.target.getContent()
-												)
-											}
-											apiKey={
-												import.meta.env
-													.VITE_TINYMCE_API_KEY
-											}
-											init={{
-												plugins: [
-													// Core editing features
-													"anchor",
-													"autolink",
-													"charmap",
-													"codesample",
-													"emoticons",
-													"image",
-													"link",
-													"lists",
-													"media",
-													"searchreplace",
-													"table",
-													"visualblocks",
-													"wordcount",
-													// Your account includes a free trial of TinyMCE premium features
-													// Try the most popular premium features until Jun 13, 2025:
-													"checklist",
-													"mediaembed",
-													"casechange",
-													"formatpainter",
-													"pageembed",
-													"a11ychecker",
-													"tinymcespellchecker",
-													"permanentpen",
-													"powerpaste",
-													"advtable",
-													"advcode",
-													"editimage",
-													"advtemplate",
-													"ai",
-													"mentions",
-													"tinycomments",
-													"tableofcontents",
-													"footnotes",
-													"mergetags",
-													"autocorrect",
-													"typography",
-													"inlinecss",
-													"markdown",
-													"importword",
-													"exportword",
-													"exportpdf",
-												],
-												toolbar:
-													"undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat",
-												tinycomments_mode: "embedded",
-												tinycomments_author:
-													"Author name",
-												mergetags_list: [
-													{
-														value: "First.Name",
-														title: "First Name",
-													},
-													{
-														value: "Email",
-														title: "Email",
-													},
-												],
-												ai_request: (
-													request,
-													respondWith
-												) =>
-													respondWith.string(() =>
-														Promise.reject(
-															"See docs to implement AI Assistant"
-														)
-													),
-											}}
-										/>
-									</div>
+									<textarea
+										className="w-full min-h-[150px] p-4 border-none outline-none bg-white text-sm leading-relaxed text-gray-700 resize-y transition-all duration-300 placeholder:text-gray-400 focus:bg-gray-50"
+										{...register("description", {
+											required:
+												"Please enter product description",
+											minLength: {
+												value: 10,
+												message:
+													"Description must be at least 10 characters",
+											},
+										})}
+										placeholder="Enter detailed product description..."
+									/>
 								</div>
-								{!description || description.trim() === "" ? (
-									<div className="flex items-center text-red-500 pointer-events-none">
-										<span className="text-sm">
-											Please enter product description
-										</span>
+								{errors.description && (
+									<div className="text-red-500 text-sm mt-2 flex items-center">
+										<svg
+											className="w-4 h-4 mr-1"
+											fill="currentColor"
+											viewBox="0 0 20 20">
+											<path
+												fillRule="evenodd"
+												d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+												clipRule="evenodd"
+											/>
+										</svg>
+										{errors.description.message}
 									</div>
-								) : description.replace(/<[^>]*>/g, "").length <
-										10 ||
-								  description.replace(/<[^>]*>/g, "").length >
-										5000 ? (
-									<div className="flex items-center text-red-500 pointer-events-none">
-										<span className="text-sm">
-											Description must be between 10 and
-											5000 characters
-										</span>
-									</div>
-								) : (
-									<></>
 								)}
 							</div>
 						</div>

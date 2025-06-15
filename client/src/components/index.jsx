@@ -23,6 +23,7 @@ export { default as HotCollections } from "./public/product/HotCollections";
 export { default as WishlistItem } from "./public/wishlist/WishlistItem";
 export { default as NewArrivals } from "./public/product/NewArrivals";
 export { default as ProductCard } from "./public/product/ProductCard";
+export { default as ProductListItem } from "./public/product/ProductListItem";
 export { default as ProductFeaturedItem } from "./public/product/ProductFeaturedItem";
 export { default as QuickView } from "./public/product/QuickView";
 export { default as RatingsReview } from "./public/rating/RatingsReview";
@@ -36,5 +37,6 @@ export { default as Sidebar } from "./public/sidebar/Sidebar";
 export { default as AddVariants } from "./admin/form/AddVariants";
 export { default as EditProductForm } from "./admin/form/EditProductForm";
 export { default as EditUserForm } from "./admin/form/EditUserForm";
+export { default as OrderDetailModal } from "./admin/form/OrderDetailModal ";
 export { default as AdminSidebar } from "./admin/sidebar/AdminSidebar";
 

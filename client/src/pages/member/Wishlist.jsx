@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { CartHeader, Pagination, WishlistItem } from "../../components";
+import getPaginationInfo from "../../utils/getPaginationInfo";
 
 const Wishlist = () => {
 	const { current } = useSelector((state) => state.user);
@@ -73,12 +74,6 @@ const Wishlist = () => {
 		indexOfWishlistItem
 	);
 
-	const getPaginationInfo = (currentPage, pageSize, totalWishlistItems) => {
-		const startItem = (currentPage - 1) * pageSize + 1;
-		const endItem = Math.min(currentPage * pageSize, totalWishlistItems);
-
-		return { startItem, endItem };
-	};
 	const { startItem, endItem } = getPaginationInfo(
 		currentPage,
 		wishlistItemPerPage,

@@ -301,41 +301,69 @@ const DetailProduct = () => {
 												)}{" "}
 											</>
 										)
-									) : (
-										product.images &&
-										product.images.length > 0 && (
-											<Slider
-												{...settings}
-												slidesToShow={3}>
-												{product.images.map(
-													(image, index) => (
-														<div
-															key={image}
-															className={`aspect-square h-[140px] rounded-md overflow-hidden cursor-pointer border-2 ${
-																currentImageIndex ===
+									) : product.images &&
+									  product.images.length > 2 ? (
+										<Slider
+											{...settings}
+											slidesToShow={3}>
+											{product.images.map(
+												(image, index) => (
+													<div
+														key={image}
+														className={`aspect-square h-[140px] rounded-md overflow-hidden cursor-pointer border-2 ${
+															currentImageIndex ===
+															index
+																? "border-blue-500"
+																: "border-gray-300"
+														}`}
+														onClick={() =>
+															handleImageChange(
 																index
-																	? "border-blue-500"
-																	: "border-gray-300"
+															)
+														}>
+														<img
+															src={image}
+															alt={`${
+																product.title
+															} thumbnail ${
+																index + 1
 															}`}
-															onClick={() =>
-																handleImageChange(
-																	index
-																)
-															}>
-															<img
-																src={image}
-																alt={`${
-																	product.title
-																} thumbnail ${
-																	index + 1
-																}`}
-																className="h-full object-contain display-block mx-auto"
-															/>
-														</div>
-													)
-												)}
-											</Slider>
-										)
+															className="h-full object-contain display-block mx-auto"
+														/>
+													</div>
+												)
+											)}
+										</Slider>
+									) : (
+										<>
+											{product.images.map(
+												(image, index) => (
+													<div
+														key={image}
+														className={`aspect-square h-[140px] rounded-md overflow-hidden cursor-pointer border-2 ${
+															currentImageIndex ===
+															index
+																? "border-blue-500"
+																: "border-gray-300"
+														}`}
+														onClick={() =>
+															handleImageChange(
+																index
+															)
+														}>
+														<img
+															src={image}
+															alt={`${
+																product.title
+															} thumbnail ${
+																index + 1
+															}`}
+															className="h-full object-contain display-block mx-auto"
+														/>
+													</div>
+												)
+											)}{" "}
+										</>
 									)}
 								</div>
 								{/* Product Info Section */}

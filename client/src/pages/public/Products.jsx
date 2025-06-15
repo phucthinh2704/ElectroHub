@@ -2,6 +2,8 @@ import { ChevronDown, Filter, Grid2x2, Grid3x3, Loader2 } from "lucide-react";
 import React, { memo, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useParams, useSearchParams } from "react-router-dom";
+import getPaginationInfo from "../../utils/getPaginationInfo";
+
 import { apiGetProducts } from "../../apis";
 import {
 	Breadcrumbs,
@@ -20,6 +22,7 @@ const Products = () => {
 	const [gridView, setGridView] = useState(4); // 3 or 4 columns
 	const [showFilters, setShowFilters] = useState(false); // for mobile view
 	const [colorsFilter, setColorsFilter] = useState([]);
+	const [brandsFilter, setBrandsFilter] = useState([]);
 	const [activeFilters, setActiveFilters] = useState({});
 	const { category } = useParams();
 	const [params] = useSearchParams();
@@ -61,9 +64,9 @@ const Products = () => {
 					filters.price = { min: min || "", max: max || "" };
 					break;
 				}
-				case "brand":
-					queries.brand = value;
-					filters.brand = value.split(",");
+				case "brands":
+					queries.brands = value;
+					filters.brands = value.split(",");
 					break;
 				case "sort":
 					queries.sort = value;
@@ -90,7 +93,9 @@ const Products = () => {
 				if (response.success) {
 					const products = response.products;
 					const colors = [...new Set(products.map((p) => p.color))];
-					setColorsFilter(colors);
+					const brands = [...new Set(products.map((p) => p.brand))];
+					setBrandsFilter(brands.map((b) => b.toLowerCase()));
+					setColorsFilter(colors.map((c) => c.toLowerCase()));
 				}
 			} catch (error) {
 				console.error("Error fetching products:", error);
@@ -133,7 +138,7 @@ const Products = () => {
 		let count = 0;
 		if (activeFilters.color?.length > 0) count++;
 		if (activeFilters.price?.min || activeFilters.price?.max) count++;
-		if (activeFilters.brand?.length > 0) count++;
+		if (activeFilters.brands?.length > 0) count++;
 		return count;
 	};
 
@@ -144,13 +149,6 @@ const Products = () => {
 		setShowFilters(!showFilters);
 	};
 
-	const getPaginationInfo = (currentPage, pageSize, totalProducts) => {
-		if( totalProducts === 0 ) return { startItem: 0, endItem: 0 };
-		const startItem = (currentPage - 1) * pageSize + 1;
-		const endItem = Math.min(currentPage * pageSize, totalProducts);
-
-		return { startItem, endItem };
-	};
 	const { startItem, endItem } = getPaginationInfo(
 		currentPage,
 		pageSize,
@@ -193,6 +191,14 @@ const Products = () => {
 								className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
 								Color:{" "}
 								{color.charAt(0).toUpperCase() + color.slice(1)}
+							</span>
+						))}
+						{activeFilters.brands?.map((brand) => (
+							<span
+								key={brand}
+								className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+								Brand:{" "}
+								{brand.charAt(0).toUpperCase() + brand.slice(1)}
 							</span>
 						))}
 
@@ -258,6 +264,7 @@ const Products = () => {
 									isOpen={isOpen}
 									setIsOpen={setIsOpen}
 									name="Brand"
+									brandsFilter={brandsFilter}
 								/>
 							</div>
 						</div>

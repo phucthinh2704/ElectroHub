@@ -35,6 +35,7 @@ import {
 	PublicLayout,
 	ResetPassword,
 	Services,
+	ProductsPage
 } from "./pages/public";
 import { getCategories } from "./store/app/asyncActions";
 import { logout } from "./store/user/userSlice";
@@ -133,6 +134,10 @@ function App() {
 					<Route
 						path={path.RESET_PASSWORD}
 						element={<ResetPassword />}
+					/>
+					<Route
+						path={path.PRODUCTS_ALL}
+						element={<ProductsPage />}
 					/>
 					<Route
 						path={path.ALL}

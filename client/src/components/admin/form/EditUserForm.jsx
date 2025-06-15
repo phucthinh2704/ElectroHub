@@ -220,7 +220,6 @@ const EditUserForm = ({ users, setUsers, selectedUserId, onClose }) => {
 											: "border-gray-300"
 									}`}>
 									<option value="user">User</option>
-									<option value="moderator">Moderator</option>
 									<option value="admin">Admin</option>
 								</select>
 								{errors.role && (

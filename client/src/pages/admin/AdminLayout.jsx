@@ -45,16 +45,6 @@ const AdminLayout = () => {
 
 			{/* Main Content */}
 			<div className="flex-1 ml-72 transition-all duration-300">
-				{/* Top Bar */}
-				<div className="bg-slate-800 border-b border-slate-700/50 px-6 py-4 sticky top-0 z-30">
-					<h2 className="text-xl font-semibold text-white uppercase">
-						Dashboard
-					</h2>
-					<p className="text-slate-400 text-sm">
-						Welcome back to your admin panel
-					</p>
-				</div>
-
 				{/* Page Content */}
 				<div>
 					<div className="bg-slate-800/90 rounded-lg">

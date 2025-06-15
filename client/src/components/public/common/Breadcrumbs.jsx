@@ -1,5 +1,5 @@
+import { ChevronRight, Home, Package, Tag } from "lucide-react";
 import React, { memo } from "react";
-import { ChevronRight, Home, Tag } from "lucide-react";
 import { Link } from "react-router-dom";
 import useBreadCrumbs from "use-react-router-breadcrumbs";
 
@@ -25,6 +25,15 @@ const Breadcrumbs = ({ title, category }) => {
 			),
 		},
 		{ path: "products/:category/:productId/:slug", breadcrumb: title },
+		{
+			path: "products/all",
+			breadcrumb: () => (
+				<div className="flex items-center gap-1">
+					<Package size={15} />
+					<span>ALL PRODUCTS</span>
+				</div>
+			),
+		},
 	];
 
 	const breadcrumbs = useBreadCrumbs(routes);

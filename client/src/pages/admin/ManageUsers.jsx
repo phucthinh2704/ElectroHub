@@ -17,6 +17,7 @@ import { apiBlockUser, apiDeleteUser, apiGetAllUsers } from "../../apis/user";
 import avatarDefault from "../../assets/avatarDefault.png";
 import EditUserForm from "../../components/admin/form/EditUserForm";
 import Pagination from "../../components/public/pagination/Pagination";
+import getPaginationInfo from "../../utils/getPaginationInfo";
 
 const ManageUsers = () => {
 	const [users, setUsers] = useState([]);
@@ -154,8 +155,6 @@ const ManageUsers = () => {
 		switch (role) {
 			case "admin":
 				return "bg-red-100 text-red-800 border-red-200";
-			case "moderator":
-				return "bg-blue-100 text-blue-800 border-blue-200";
 			default:
 				return "bg-gray-200 text-gray-800 border-gray-200";
 		}
@@ -167,12 +166,6 @@ const ManageUsers = () => {
 			: "bg-green-100 text-green-800 border-green-200 uppercase";
 	};
 
-	const getPaginationInfo = (currentPage, pageSize, totalUsers) => {
-		const startItem = (currentPage - 1) * pageSize + 1;
-		const endItem = Math.min(currentPage * pageSize, totalUsers);
-
-		return { startItem, endItem };
-	};
 	const { startItem, endItem } = getPaginationInfo(
 		currentPage,
 		usersPerPage,
@@ -180,7 +173,7 @@ const ManageUsers = () => {
 	);
 
 	return (
-		<div className="p-4 bg-slate-100 min-h-screen">
+		<div className="p-6 bg-slate-100 min-h-screen">
 			{/* Header */}
 			<div className="mb-6">
 				<div className="flex items-center justify-between mb-6">
@@ -314,7 +307,6 @@ const ManageUsers = () => {
 							className="px-4 py-3 border uppercase border-slate-300 rounded-xl hover:shadow-lg focus:outline-none cursor-pointer focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white">
 							<option value="all">All Roles</option>
 							<option value="admin">Admin</option>
-							<option value="moderator">Moderator</option>
 							<option value="user">User</option>
 						</select>
 
@@ -339,25 +331,25 @@ const ManageUsers = () => {
 					<table className="w-full">
 						<thead className="bg-slate-50 border-b border-slate-200">
 							<tr className="text-center">
-								<th className="py-4 px-6 font-semibold text-slate-700">
+								<th className="p-4 font-semibold text-slate-700">
 									#
 								</th>
-								<th className="py-4 px-6 font-semibold text-slate-700">
+								<th className="p-4 font-semibold text-slate-700">
 									User
 								</th>
-								<th className="py-4 px-6 font-semibold text-slate-700">
+								<th className="p-4 font-semibold text-slate-700">
 									Contact
 								</th>
 								<th className="py-4 px-10 font-semibold text-slate-700">
 									Status
 								</th>
-								<th className="py-4 px-6 font-semibold text-slate-700">
+								<th className="p-4 font-semibold text-slate-700">
 									Role
 								</th>
-								<th className="py-4 px-6 font-semibold text-slate-700">
+								<th className="p-4 font-semibold text-slate-700">
 									Joined
 								</th>
-								<th className="py-4 px-6 font-semibold text-slate-700">
+								<th className="p-4 font-semibold text-slate-700">
 									Actions
 								</th>
 							</tr>
@@ -444,7 +436,7 @@ const ManageUsers = () => {
 
 									{/* Actions */}
 									<td className="py-4 px-6">
-										<div className="flex items-center gap-2">
+										<div className="flex justify-center items-center gap-2">
 											<button
 												onClick={() =>
 													handleBlock(user._id)

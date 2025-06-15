@@ -35,7 +35,7 @@ export const navigation = [
 	{ id: 1, path: `/${path.HOME}`, value: "Home", icon: Home },
 	{
 		id: 2,
-		path: `/${path.PRODUCTS_CATEGORY}`,
+		path: `/${path.PRODUCTS_ALL}`,
 		value: "Products",
 		icon: ShoppingCart,
 	},
@@ -64,11 +64,12 @@ export const colors = [
 
 export const priceRanges = [
 	{ label: "Under 2.000.000", min: 0, max: 2000000 },
-	{ label: "2.000.000 - 4.000.000", min: 2000000, max: 4000000 },
-	{ label: "4.000.000 - 6.000.000", min: 4000000, max: 6000000 },
-	{ label: "6.000.000 - 8.000.000", min: 6000000, max: 8000000 },
-	{ label: "8.000.000 - 10.000.000", min: 8000000, max: 10000000 },
-	{ label: "Over 10.000.000", min: 10000000, max: null },
+	{ label: "2.000.000 - 5.000.000", min: 2000000, max: 5000000 },
+	{ label: "5.000.000 - 10.000.000", min: 5000000, max: 10000000 },
+	{ label: "10.000.000 - 15.000.000", min: 10000000, max: 15000000 },
+	{ label: "15.000.000 - 30.000.000", min: 15000000, max: 30000000 },
+	{ label: "30.000.000 - 50.000.000", min: 30000000, max: 50000000 },
+	{ label: "Above 50.000.000", min: 50000000, max: null },
 ];
 
 export const ratingLabels = {

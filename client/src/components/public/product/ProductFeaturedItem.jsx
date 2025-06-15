@@ -1,9 +1,56 @@
 import React, { memo } from "react";
 import renderRatingStar from "../../../utils/renderRatingStar";
 import formatMoney from "../../../utils/formatMoney";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+import path from "../../../utils/path";
+import { apiUpdateWishlist } from "../../../apis";
+import { toast } from "react-toastify";
+import { getCurrent } from "../../../store/user/asyncAction";
+import { useDispatch, useSelector } from "react-redux";
 
 const ProductFeaturedItem = ({ product }) => {
+	const { current } = useSelector((state) => state.user);
+	const dispatch = useDispatch();
+	const navigate = useNavigate();
+
+	const isFavorite = current?.wishlist?.some(
+		(item) => item._id === product._id
+	);
+	const handleAddToWishlist = async (e) => {
+		e.preventDefault();
+		if (!current) {
+			Swal.fire({
+				title: "Please login to continue",
+				icon: "warning",
+				showCancelButton: true,
+				confirmButtonText: "Login",
+				cancelButtonText: "Cancel",
+			}).then((result) => {
+				if (result.isConfirmed) {
+					window.scrollTo(0, 0);
+					navigate(`/${path.LOGIN}`, {
+						state: `/products/${product.category.toLowerCase()}/${
+							product._id
+						}/${product.slug}`,
+					});
+				}
+			});
+			return;
+		}
+		try {
+			const response = await apiUpdateWishlist(product._id);
+			if (response.success) {
+				toast.success(response.message);
+				dispatch(getCurrent());
+			} else {
+				toast.error(response.message || "Failed to update wishlist");
+			}
+		} catch (error) {
+			console.log("Error adding to wishlist:", error);
+			toast.error("Failed to add to wishlist. Please try again later.");
+		}
+	};
 	return (
 		<Link
 			to={`/products/${product.category.toLowerCase()}/${product._id}/${
@@ -36,13 +83,12 @@ const ProductFeaturedItem = ({ product }) => {
 						<button className="text-gray-400 hover:text-main transition-colors duration-300">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
-								onClick={(e) => {
-									e.preventDefault();
-								}}
+								onClick={(e) => handleAddToWishlist(e)}
 								className="h-4 w-4 cursor-pointer"
-								fill="none"
+								fill={`${isFavorite ? "red" : "none"}`}
+								stroke={`${isFavorite ? "none" : "red"}`}
 								viewBox="0 0 24 24"
-								stroke="currentColor">
+								strokeWidth={2}>
 								<path
 									strokeLinecap="round"
 									strokeLinejoin="round"

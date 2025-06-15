@@ -19,6 +19,7 @@ import { apiDeleteProduct, apiGetProducts } from "../../apis/product";
 import { EditProductForm } from "../../components";
 import Pagination from "../../components/public/pagination/Pagination";
 import formatMoney from "../../utils/formatMoney";
+import getPaginationInfo from "../../utils/getPaginationInfo";
 import path from "../../utils/path";
 
 const ManageProducts = () => {
@@ -234,12 +235,6 @@ const ManageProducts = () => {
 		}
 	};
 
-	const getPaginationInfo = (currentPage, pageSize, totalProducts) => {
-		const startItem = (currentPage - 1) * pageSize + 1;
-		const endItem = Math.min(currentPage * pageSize, totalProducts);
-		return { startItem, endItem };
-	};
-
 	const { startItem, endItem } = getPaginationInfo(
 		currentPage,
 		productsPerPage,
@@ -250,7 +245,7 @@ const ManageProducts = () => {
 	const categories = [...new Set(products.map((p) => p.category))];
 
 	return (
-		<div className="p-4 bg-slate-100 min-h-screen">
+		<div className="p-6 bg-slate-100 min-h-screen">
 			{/* Header */}
 			<div className="mb-6">
 				<div className="flex items-center justify-between mb-6">

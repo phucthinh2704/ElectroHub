@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { priceRanges } from "../../../utils/constants";
 import formatMoney from "../../../utils/formatMoney";
 
-const FilterItem = ({ name, isOpen, setIsOpen, colorsFilter }) => {
+const FilterItem = ({ name, isOpen, setIsOpen, colorsFilter, brandsFilter }) => {
 	const navigate = useNavigate();
 	const [colorsSelected, setColorsSelected] = useState(() => {
 		const params = new URLSearchParams(window.location.search);
@@ -39,6 +39,15 @@ const FilterItem = ({ name, isOpen, setIsOpen, colorsFilter }) => {
 		}
 		return { min: "", max: "" };
 	});
+
+	const [brandsSelected, setBrandsSelected] = useState(() => {
+		const params = new URLSearchParams(window.location.search);
+		const brandsParam = params.get("brands");
+		if (brandsParam) {
+			return brandsParam.split(",").map((brand) => brand.toLowerCase());
+		}
+		return [];
+	});
 	const { category } = useParams();
 
 	useEffect(() => {
@@ -64,6 +73,18 @@ const FilterItem = ({ name, isOpen, setIsOpen, colorsFilter }) => {
 			}
 		}
 
+		if(name === "Brand") {
+			if (brandsSelected.length > 0) {
+				params.set(
+					"brands",
+					brandsSelected.map((brand) => brand.toLowerCase()).join(",")
+				);
+				// console.log("Brands selected:", brandsSelected);
+			} else {
+				params.delete("brands");
+			}
+		}
+
 		params.set("page", "1"); // Reset to page 1 when filters change
 
 		if (params.toString()) {
@@ -74,16 +95,27 @@ const FilterItem = ({ name, isOpen, setIsOpen, colorsFilter }) => {
 		} else {
 			navigate(`/products/${category}`);
 		}
-	}, [colorsSelected, priceRange, category, navigate, name]);
+	}, [colorsSelected, brandsSelected, priceRange, category, navigate, name]);
 
-	const handleCheckboxChange = (color) => {
-		setColorsSelected((prev) => {
-			if (prev.includes(color)) {
-				return prev.filter((c) => c !== color);
-			} else {
-				return [...prev, color];
-			}
-		});
+	const handleCheckboxChange = (value, name) => {
+		if(name === "color") {
+			setColorsSelected((prev) => {
+				if (prev.includes(value)) {
+					return prev.filter((c) => c !== value);
+				} else {
+					return [...prev, value];
+				}
+			});
+		}
+		if(name === "brand") {
+			setBrandsSelected((prev) => {
+				if (prev.includes(value)) {
+					return prev.filter((c) => c !== value);
+				} else {
+					return [...prev, value];
+				}
+			});
+		}
 	};
 
 	const handlePriceRangeSelect = (range) => {
@@ -129,6 +161,10 @@ const FilterItem = ({ name, isOpen, setIsOpen, colorsFilter }) => {
 			setTempPriceRange({ min: "", max: "" });
 			params.delete("price");
 		}
+		if (name === "Brand") {
+			setBrandsSelected([]);
+			params.delete("brands");
+		}
 		navigate({
 			pathname: `/products/${category}`,
 			search: params.toString(),
@@ -145,7 +181,7 @@ const FilterItem = ({ name, isOpen, setIsOpen, colorsFilter }) => {
 			? colorsSelected.length > 0
 			: name === "Price"
 			? priceRange.min || priceRange.max
-			: false;
+			: name === "Brand" ? brandsSelected.length > 0 : false;
 
 	return (
 		<div className="relative inline-block">
@@ -161,6 +197,11 @@ const FilterItem = ({ name, isOpen, setIsOpen, colorsFilter }) => {
 				{name === "Color" && colorsSelected.length > 0 && (
 					<span className="mr-2 px-2 py-0.5 text-xs bg-blue-500 text-white rounded-full font-medium">
 						{colorsSelected.length}
+					</span>
+				)}
+				{name === "Brand" && brandsSelected.length > 0 && (
+					<span className="mr-2 px-2 py-0.5 text-xs bg-blue-500 text-white rounded-full font-medium">
+						{brandsSelected.length}
 					</span>
 				)}
 
@@ -179,7 +220,7 @@ const FilterItem = ({ name, isOpen, setIsOpen, colorsFilter }) => {
 
 			{/* Dropdown content */}
 			{isItemOpen && (
-				<div className="absolute z-10 mt-2 w-64 p-3 bg-white rounded-lg shadow-lg border border-gray-100">
+				<div className="absolute z-30 mt-2 w-64 p-3 bg-white rounded-lg shadow-lg border border-gray-100">
 					{name === "Color" && (
 						<div className="space-y-2">
 							<div className="flex justify-between items-center pb-2 border-b border-gray-100">
@@ -204,7 +245,7 @@ const FilterItem = ({ name, isOpen, setIsOpen, colorsFilter }) => {
 									<div
 										key={index}
 										onClick={() =>
-											handleCheckboxChange(color)
+											handleCheckboxChange(color, "color")
 										}
 										className="flex items-center p-2 cursor-pointer rounded hover:bg-gray-50 transition-colors animate-fade-in">
 										<div
@@ -221,8 +262,7 @@ const FilterItem = ({ name, isOpen, setIsOpen, colorsFilter }) => {
 											)}
 										</div>
 										<span className="ml-2 text-sm text-gray-700">
-											{color.charAt(0).toUpperCase() +
-												color.slice(1)}
+											{color.toUpperCase()}
 										</span>
 									</div>
 								))}
@@ -331,6 +371,55 @@ const FilterItem = ({ name, isOpen, setIsOpen, colorsFilter }) => {
 									</span>
 								</div>
 							)}
+						</div>
+					)}
+
+					{name === "Brand" && (
+						<div className="space-y-2">
+							<div className="flex justify-between items-center pb-2 border-b border-gray-100">
+								<span className="text-sm text-gray-500">
+									{brandsSelected.length} selected
+								</span>
+								{brandsSelected.length > 0 && (
+									<button
+										onClick={handleReset}
+										className="flex items-center text-xs text-red-500 hover:text-red-700 transition-colors cursor-pointer">
+										<X
+											size={14}
+											className="mr-1"
+										/>
+										Reset
+									</button>
+								)}
+							</div>
+
+							<div className="grid grid-cols-2 gap-2 mt-2">
+								{brandsFilter.map((brand, index) => (
+									<div
+										key={index}
+										onClick={() =>
+											handleCheckboxChange(brand, "brand")
+										}
+										className="flex items-center p-2 cursor-pointer rounded hover:bg-gray-50 transition-colors animate-fade-in">
+										<div
+											className={`w-4 h-4 border rounded flex items-center justify-center ${
+												brandsSelected.includes(brand)
+													? "bg-blue-500 border-blue-500"
+													: "border-gray-300"
+											}`}>
+											{brandsSelected.includes(brand) && (
+												<Check
+													size={12}
+													className="text-white"
+												/>
+											)}
+										</div>
+										<span className="ml-2 text-sm text-gray-700">
+											{brand.toUpperCase()}
+										</span>
+									</div>
+								))}
+							</div>
 						</div>
 					)}
 				</div>

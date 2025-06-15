@@ -24,6 +24,7 @@ const createProduct = asyncHandler(async (req, res) => {
 	const newProduct = await Product.create({
 		...req.body,
 		color: req.body.color.toUpperCase(),
+		brand: req.body.brand.toUpperCase(),
 	});
 
 	res.status(201).json({
@@ -89,13 +90,29 @@ const getAllProducts = asyncHandler(async (req, res) => {
 
 	const colorQueryObject = queries.color
 		? {
-				$or: queries.color.split(",").map((color) => ({
-					color: { $regex: color, $options: "i" },
-				})),
+				color: {
+					$in: queries.color
+						.split(",")
+						.map((color) => color.trim().toUpperCase()),
+				},
+		  }
+		: {};
+	const brandQueryObject = queries.brands
+		? {
+				brand: {
+					$in: queries.brands
+						.split(",")
+						.map((brand) => brand.trim().toUpperCase()),
+				},
 		  }
 		: {};
 
-	formattedQueries = { ...colorQueryObject, ...formattedQueries };
+	formattedQueries = {
+		...colorQueryObject,
+		...brandQueryObject,
+		...formattedQueries,
+	};
+
 	let queryCommand = Product.find(formattedQueries);
 
 	// Sorting
@@ -144,7 +161,7 @@ const updateProduct = asyncHandler(async (req, res) => {
 		if (images.length > 0) req.body.images = images;
 	}
 	if (req.body.title) req.body.slug = slugify(req.body.title);
-	console.log("req.body", req.body.description);
+
 	// Xử lý description nếu có
 	const updateData = { ...req.body };
 	if (req.body.description && Array.isArray(req.body.description)) {
@@ -292,7 +309,7 @@ const addVariantProduct = asyncHandler(async (req, res) => {
 // [PUT] /product/variant/:id/:color
 const updateVariantProduct = asyncHandler(async (req, res) => {
 	const { stock, price } = req.body;
-	
+
 	const files = req.files;
 	if (files) {
 		const thumb = files.thumb ? files.thumb[0].path : undefined;
@@ -317,7 +334,7 @@ const updateVariantProduct = asyncHandler(async (req, res) => {
 	variant.images = req.body.images ? req.body.images : variant.images;
 	console.log(req.body.images);
 	await product.save();
-	
+
 	res.status(200).json({
 		success: true,
 		message: "Variant added successfully",

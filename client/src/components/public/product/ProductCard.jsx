@@ -136,7 +136,7 @@ const ProductCard = ({ data, isNew, normal }) => {
 			onMouseEnter={() => setIsShowOptions(true)}
 			onMouseLeave={() => setIsShowOptions(false)}>
 			{isFavorite && (
-				<div className="absolute left-4 top-4 z-99 flex justify-end">
+				<div className="absolute left-4 top-4 z-10 flex justify-end">
 					<BsFillSuitHeartFill
 						size={22}
 						color="red"
@@ -205,7 +205,7 @@ const ProductCard = ({ data, isNew, normal }) => {
 
 					<div>
 						{data.originalPrice && (
-							<p className="text-gray-400 text-xs line-through">
+							<p className="text-gray-500 text-xs line-through">
 								{formatMoney(data.originalPrice)} VND
 							</p>
 						)}
