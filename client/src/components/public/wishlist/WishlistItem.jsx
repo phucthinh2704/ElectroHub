@@ -9,7 +9,13 @@ import { useDispatch } from "react-redux";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 
-const WishlistItem = ({ item, removeFromWishlist, currentWishlistItem, currentPage, setCurrentPage }) => {
+const WishlistItem = ({
+	item,
+	removeFromWishlist,
+	currentWishlistItem,
+	currentPage,
+	setCurrentPage,
+}) => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const handleAddToCart = async (e) => {
@@ -68,7 +74,7 @@ const WishlistItem = ({ item, removeFromWishlist, currentWishlistItem, currentPa
 			console.log("Error updating wishlist:", error);
 			toast.error("Failed to update wishlist. Please try again later.");
 		}
-	}
+	};
 	return (
 		<div
 			className={`bg-white rounded-2xl shadow-sm border border-gray-300 overflow-hidden group hover:shadow-lg transition-all duration-300`}>
@@ -89,7 +95,10 @@ const WishlistItem = ({ item, removeFromWishlist, currentWishlistItem, currentPa
 					onClick={(e) => handleUpdateWishlist(e)}
 					title="Remove from Wishlist"
 					className="absolute top-3 right-3 p-2.5 bg-red-500 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:scale-110 cursor-pointer">
-					<Trash2 size={21} color="white" />
+					<Trash2
+						size={21}
+						color="white"
+					/>
 				</button>
 			</div>
 
@@ -108,11 +117,9 @@ const WishlistItem = ({ item, removeFromWishlist, currentWishlistItem, currentPa
 				</div>
 
 				<div className="flex flex-col mb-3">
-					{item.originalPrice > item.price && (
-						<span className="text-sm text-gray-500 line-through">
-							{formatMoney(item.originalPrice)} đ
-						</span>
-					)}
+					<span className="text-sm text-gray-500 line-through">
+						{formatMoney(item.originalPrice)} đ
+					</span>
 					<div className="flex items-center gap-2">
 						<span className="text-lg font-bold text-gray-900">
 							{formatMoney(item.price)} đ
