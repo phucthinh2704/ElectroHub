@@ -9,28 +9,14 @@ import {
 } from "../../components";
 import { priceRanges } from "../../utils/constants";
 import getPaginationInfo from "../../utils/getPaginationInfo";
+import { useSelector } from "react-redux";
 
 const ProductsPage = () => {
-	const categories = [
-		"All",
-		"Smartphone",
-		"Laptop",
-		"Headphones",
-		"Speaker",
-		"Tablet",
-		"Smartwatch",
-	];
-	const brands = [
-		"All",
-		"APPLE",
-		"SAMSUNG",
-		"SONY",
-		"DELL",
-		"JBL",
-		"XIAOMI",
-		"HUAWEI",
-	];
+	const { categories } = useSelector((state) => state.app);
+
 	const [products, setProducts] = useState([]);
+	const [categoriesWithAll, setCategoriesWithAll] = useState([]);
+	const [brandsWithAll, setBrandsWithAll] = useState([]);
 
 	const [selectedCategory, setSelectedCategory] = useState("All");
 	const [selectedBrand, setSelectedBrand] = useState("All");
@@ -63,6 +49,12 @@ const ProductsPage = () => {
 		};
 		fetchAllProducts();
 	}, []);
+	//
+	useEffect(() => {
+		setCategoriesWithAll(["All", ...categories.map((cat) => cat.title)]);
+		const uniqueBrands = ["All", ...new Set(products.map((p) => p.brand))];
+		setBrandsWithAll(uniqueBrands);
+	}, [categories, products]);
 
 	const filteredProducts = useMemo(() => {
 		let filtered = products.filter((product) => {
@@ -196,17 +188,26 @@ const ProductsPage = () => {
 								<select
 									className="w-full p-3 pr-10 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white cursor-pointer appearance-none"
 									value={selectedCategory}
-									onChange={(e) =>
-										setSelectedCategory(e.target.value)
-									}>
-									{categories.map((category) => (
-										<option
-											key={category}
-											value={category}
-											className="py-2">
-											{category}
-										</option>
-									))}
+									onChange={(e) => {
+										setSelectedCategory(e.target.value);
+										setBrandsWithAll([
+											"All",
+											...categories.find(
+												(cat) =>
+													cat.title === e.target.value
+											).brand,
+										]);
+									}}>
+									{categoriesWithAll.map(
+										(category, index) => (
+											<option
+												key={index}
+												value={category}
+												className="py-2">
+												{category}
+											</option>
+										)
+									)}
 								</select>
 								<div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
 									<svg
@@ -236,9 +237,9 @@ const ProductsPage = () => {
 									onChange={(e) =>
 										setSelectedBrand(e.target.value)
 									}>
-									{brands.map((brand) => (
+									{brandsWithAll.map((brand, index) => (
 										<option
-											key={brand}
+											key={index}
 											value={brand}
 											className="py-2">
 											{brand}
@@ -339,7 +340,7 @@ const ProductsPage = () => {
 
 								<div className="flex items-center gap-4">
 									<select
-										className="p-2 border border-gray-300 rounded"
+										className="p-3 border border-gray-300 rounded-xl cursor-pointer outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
 										value={sortBy}
 										onChange={(e) =>
 											setSortBy(e.target.value)
@@ -364,22 +365,22 @@ const ProductsPage = () => {
 
 									<div className="flex border border-gray-300 rounded">
 										<button
-											className={`p-2 ${
+											className={`p-3 cursor-pointer ${
 												viewMode === "grid"
 													? "bg-blue-600 text-white"
 													: "bg-white text-gray-600"
 											}`}
 											onClick={() => setViewMode("grid")}>
-											<Grid size={16} />
+											<Grid size={20} />
 										</button>
 										<button
-											className={`p-2 ${
+											className={`p-3 cursor-pointer ${
 												viewMode === "list"
 													? "bg-blue-600 text-white"
 													: "bg-white text-gray-600"
 											}`}
 											onClick={() => setViewMode("list")}>
-											<List size={16} />
+											<List size={20} />
 										</button>
 									</div>
 								</div>
