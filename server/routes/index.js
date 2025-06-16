@@ -19,6 +19,9 @@ const initRoutes = (app) => {
 	app.use("/api/coupon", couponRouter);
 	app.use("/api/order", orderRouter);
 	app.use("/api/insert", insertRouter);
+	app.use("/", (req, res) => {
+		res.status(200).json({ message: "Welcome to the API" });
+	});
 
 	app.use(notFound);
 	app.use(errorHandler);
