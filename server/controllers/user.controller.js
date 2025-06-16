@@ -173,8 +173,11 @@ const login = asyncHandler(async (req, res) => {
 	const refreshToken = generateRefreshToken(user._id);
 	// Lưu refresh token vào cookie và db
 	await User.findByIdAndUpdate(user._id, { refreshToken }, { new: true }); // new:true là trả về data sau khi update
+
 	res.cookie("refresh_token", refreshToken, {
-		httpOnly: true,
+		httpOnly: true, // Nên để true để bảo mật hơn
+		secure: true, // Bắt buộc với HTTPS
+		sameSite: "strict", // Bảo vệ chống CSRF
 		maxAge: 7 * 24 * 60 * 60 * 1000, // 7 ngày
 	});
 
@@ -191,7 +194,8 @@ const getCurrent = asyncHandler(async (req, res) => {
 	const { _id } = req.user;
 	const user = await User.findById(_id)
 		.select("-refreshToken -password")
-		.populate("cart.product").populate("wishlist");
+		.populate("cart.product")
+		.populate("wishlist");
 
 	if (!user) {
 		return res.status(400).json({
@@ -244,9 +248,10 @@ const logout = asyncHandler(async (req, res) => {
 
 	// Xóa refresh token trong cookie
 	res.clearCookie("refresh_token", {
-		httpOnly: true,
-		secure: true,
-	});
+		httpOnly: true, // Phải giống với lúc set
+		secure: true,   // Bắt buộc với HTTPS
+		sameSite: 'strict'
+  });
 	return res.status(200).json({
 		success: true,
 		message: "Logout successfully",
@@ -563,7 +568,7 @@ const updateCart = asyncHandler(async (req, res) => {
 				: alreadyProduct.product?.variants.find(
 						(variant) => variant.color === color
 				  )?.stock;
-				  
+
 		const response = await User.findOneAndUpdate(
 			{ cart: { $elemMatch: alreadyProduct } }, // sẽ cập nhật chính xác dù không cung cấp userId vì mỗi phần tử trong cart đều có id riêng
 			{
@@ -589,7 +594,14 @@ const updateCart = asyncHandler(async (req, res) => {
 			_id,
 			{
 				$push: {
-					cart: { product: pid, quantity, color, thumb, price, stock },
+					cart: {
+						product: pid,
+						quantity,
+						color,
+						thumb,
+						price,
+						stock,
+					},
 				},
 			},
 			{ new: true }
@@ -641,16 +653,13 @@ const updateWishlist = asyncHandler(async (req, res) => {
 	const { pid } = req.params;
 
 	const user = await User.findById(_id).select("wishlist");
-	
+
 	const alreadyProduct = user?.wishlist?.find(
 		(item) => item.toString() === pid
 	);
-	if(alreadyProduct) {
-		user.wishlist = user.wishlist.filter(
-			(item) => item.toString() !== pid
-		);
-	}
-	else {
+	if (alreadyProduct) {
+		user.wishlist = user.wishlist.filter((item) => item.toString() !== pid);
+	} else {
 		user.wishlist.push(pid);
 	}
 	await user.save();
@@ -661,7 +670,7 @@ const updateWishlist = asyncHandler(async (req, res) => {
 			: "Added product to wishlist successfully",
 		wishlist: user.wishlist,
 	});
-})
+});
 
 module.exports = {
 	register,
