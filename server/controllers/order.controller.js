@@ -93,7 +93,9 @@ const getUserOrder = asyncHandler(async (req, res) => {
 	excludeFields.forEach((el) => delete queries[el]);
 	let formattedQueries = { orderBy: _id };
 
-	let queryCommand = Order.find(formattedQueries).populate("products.product", "title");
+	let queryCommand = Order.find(formattedQueries)
+		.populate("products.product", "title")
+		.sort({ createdAt: -1 });
 
 	// Sorting
 	if (req.query.sort) {
@@ -117,13 +119,6 @@ const getUserOrder = asyncHandler(async (req, res) => {
 		currentPage: page,
 		totalPages: Math.ceil(count / limit),
 	});
-	// const orders = await Order.find({ orderBy: _id });
-	// if (!orders) throw new Error("No orders found");
-	// return res.status(200).json({
-	// 	success: true,
-	// 	message: "Orders fetched successfully",
-	// 	orders,
-	// });
 });
 
 const getAllOrders = asyncHandler(async (req, res) => {
@@ -133,13 +128,9 @@ const getAllOrders = asyncHandler(async (req, res) => {
 	excludeFields.forEach((el) => delete queries[el]);
 	let formattedQueries = {};
 
-	let queryCommand = Order.find(formattedQueries).populate("products.product"). populate("orderBy", "name mobile email address");
-
-	// Sorting
-	if (req.query.sort) {
-		const sortBy = req.query.sort.split(",").join(" ");
-		queryCommand = queryCommand.sort(sortBy);
-	}
+	let queryCommand = Order.find(formattedQueries)
+		.populate("products.product")
+		.populate("orderBy", "name mobile email address").sort({ createdAt: -1 });
 
 	// Pagination
 	const page = parseInt(req.query.page) || 1;
