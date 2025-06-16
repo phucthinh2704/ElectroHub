@@ -6,7 +6,6 @@ const blogCategory = require("./blogCategory.controller");
 const brand = require("./brand.controller");
 const coupon = require("./coupon.controller");
 const order = require("./order.controller");
-const insert = require("./insertData");
 
 module.exports = {
 	user,
@@ -17,5 +16,4 @@ module.exports = {
 	brand,
 	coupon,
 	order,
-	insert,
 };

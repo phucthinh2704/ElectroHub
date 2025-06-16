@@ -6,7 +6,6 @@ const blogRouter = require("./blog.route");
 const brandRouter = require("./brand.route");
 const couponRouter = require("./coupon.route");
 const orderRouter = require("./order.route");
-const insertRouter = require("./insert.route");
 const { notFound, errorHandler } = require("../middlewares/error-handler");
 
 const initRoutes = (app) => {
@@ -18,10 +17,6 @@ const initRoutes = (app) => {
 	app.use("/api/brand", brandRouter);
 	app.use("/api/coupon", couponRouter);
 	app.use("/api/order", orderRouter);
-	app.use("/api/insert", insertRouter);
-	app.use("/", (req, res) => {
-		res.status(200).json({ message: "Welcome to the API" });
-	});
 
 	app.use(notFound);
 	app.use(errorHandler);
