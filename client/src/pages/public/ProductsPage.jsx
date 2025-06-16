@@ -1,4 +1,4 @@
-import { Filter, Grid, List, Search } from "lucide-react";
+import { Filter, Grid, List, Loader2, Search } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
 import { apiGetProducts } from "../../apis";
 import {
@@ -31,6 +31,7 @@ const ProductsPage = () => {
 	const [sortBy, setSortBy] = useState("newest");
 	const [viewMode, setViewMode] = useState("grid");
 	const [showFilters, setShowFilters] = useState(false);
+	const [loading, setLoading] = useState(true);
 
 	// Pagination state
 	const [currentPage, setCurrentPage] = useState(1);
@@ -43,7 +44,9 @@ const ProductsPage = () => {
 				if (response.success) {
 					setProducts(response.products);
 				}
+				setLoading(false);
 			} catch (error) {
+				setLoading(false);
 				console.log("Error fetching products:", error);
 			}
 		};
@@ -387,34 +390,46 @@ const ProductsPage = () => {
 							</div>
 						</div>
 
-						{/* Products Grid/List */}
-						{filteredProducts.length === 0 ? (
-							<div className="bg-white rounded-lg shadow-md p-8 text-center">
-								<p className="text-gray-500">
-									No products found matching your criteria.
-								</p>
+						{loading ? (
+							<div className="flex items-center justify-center py-12">
+								<Loader2
+									size={40}
+									className="animate-spin text-main"
+								/>
 							</div>
 						) : (
-							<div
-								className={
-									viewMode === "grid"
-										? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-										: "space-y-4"
-								}>
-								{currentProducts.map((product) =>
-									viewMode === "grid" ? (
-										<ProductCard
-											key={product._id}
-											data={product}
-										/>
-									) : (
-										<ProductListItem
-											key={product._id}
-											product={product}
-										/>
-									)
+							<>
+								{/* Products Grid/List */}
+								{filteredProducts.length === 0 ? (
+									<div className="bg-white rounded-lg shadow-md p-8 text-center">
+										<p className="text-gray-500">
+											No products found matching your
+											criteria.
+										</p>
+									</div>
+								) : (
+									<div
+										className={
+											viewMode === "grid"
+												? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+												: "space-y-4"
+										}>
+										{currentProducts.map((product) =>
+											viewMode === "grid" ? (
+												<ProductCard
+													key={product._id}
+													data={product}
+												/>
+											) : (
+												<ProductListItem
+													key={product._id}
+													product={product}
+												/>
+											)
+										)}
+									</div>
 								)}
-							</div>
+							</>
 						)}
 					</div>
 				</div>

@@ -5,6 +5,7 @@ import formatMoney from "../../../utils/formatMoney";
 import icons from "../../../utils/icons";
 import renderRatingStar from "../../../utils/renderRatingStar";
 import CountDown from "../common/CountDown";
+import { Loader2 } from "lucide-react";
 
 const { AiFillStar, IoMdMenu } = icons;
 
@@ -23,7 +24,7 @@ const DealDaily = () => {
 		minute: 0,
 		second: 0,
 	});
-	const [dealDaily, setDealDaily] = useState(null);
+	const [dealDaily, setDealDaily] = useState({});
 
 	// Khởi tạo thời gian hết hạn từ localStorage hoặc tạo mới nếu không có
 	const [expireTime, setExpireTime] = useState(() => {
@@ -42,6 +43,8 @@ const DealDaily = () => {
 	const [productId, setProductId] = useState(
 		() => localStorage.getItem(STORAGE_KEYS.PRODUCT_ID) || null
 	);
+
+	const [loading, setLoading] = useState(true);
 
 	// Lưu expireTime vào localStorage khi nó thay đổi
 	useEffect(() => {
@@ -98,6 +101,7 @@ const DealDaily = () => {
 				// Nếu không có ID, lấy sản phẩm ngẫu nhiên
 				await fetchRandomProduct();
 			}
+			setLoading(false);
 		};
 
 		fetchInitialProduct();
@@ -155,41 +159,55 @@ const DealDaily = () => {
 				<div></div>
 			</div>
 
-			<Link
-				to={`/products/${dealDaily?.category.toLowerCase()}/${
-					dealDaily?._id
-				}/${dealDaily?.slug}`}>
-				<div className="flex flex-col gap-2 border-t border-gray-400 pt-6">
-					{/* Product image */}
-					<img
-						src={
-							dealDaily?.thumb ||
-							"https://niteair.co.uk/wp-content/uploads/2023/08/default-product-image.png"
-						}
-						alt="Product image"
-						className="object-cover"
+			{loading ? (
+				<div className="flex items-center justify-center py-12">
+					<Loader2
+						size={40}
+						className="animate-spin text-main"
 					/>
-
-					{/* Product details */}
-					<div className="flex flex-col gap-2 mt-6 border-t border-gray-400 pt-2 text-center">
-						<p className="line-clamp-1 text-lg">
-							{dealDaily?.title}
-						</p>
-						<p className="flex justify-center items-center">
-							{renderRatingStar(dealDaily?.totalRatings, 21)}{" "}
-							<span className="text-[15px] ml-1">
-								({dealDaily?.totalRatings})
-							</span>
-						</p>
-						<p className="text-gray-400 text-xs line-through">
-							{formatMoney(dealDaily?.originalPrice)} VND
-						</p>
-						<p className="font-semibold text-main">
-							{formatMoney(dealDaily?.price)} VND
-						</p>
-					</div>
 				</div>
-			</Link>
+			) : (
+				<>
+					<Link
+						to={`/products/${dealDaily?.category.toLowerCase()}/${
+							dealDaily?._id
+						}/${dealDaily?.slug}`}>
+						<div className="flex flex-col gap-2 border-t border-gray-400 pt-6">
+							{/* Product image */}
+							<img
+								src={
+									dealDaily?.thumb ||
+									"https://niteair.co.uk/wp-content/uploads/2023/08/default-product-image.png"
+								}
+								alt="Product image"
+								className="object-cover"
+							/>
+
+							{/* Product details */}
+							<div className="flex flex-col gap-2 mt-6 border-t border-gray-400 pt-2 text-center">
+								<p className="line-clamp-1 text-lg">
+									{dealDaily?.title}
+								</p>
+								<p className="flex justify-center items-center">
+									{renderRatingStar(
+										dealDaily?.totalRatings,
+										21
+									)}{" "}
+									<span className="text-[15px] ml-1">
+										({dealDaily?.totalRatings})
+									</span>
+								</p>
+								<p className="text-gray-400 text-xs line-through">
+									{formatMoney(dealDaily?.originalPrice)} VND
+								</p>
+								<p className="font-semibold text-main">
+									{formatMoney(dealDaily?.price)} VND
+								</p>
+							</div>
+						</div>
+					</Link>
+				</>
+			)}
 
 			{/* Countdown timer */}
 			<div className="flex justify-between items-center mt-4">
