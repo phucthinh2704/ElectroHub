@@ -177,7 +177,7 @@ const login = asyncHandler(async (req, res) => {
 	res.cookie("refresh_token", refreshToken, {
 		httpOnly: true, // Nên để true để bảo mật hơn
 		secure: true, // Bắt buộc với HTTPS
-		sameSite: "strict", // Bảo vệ chống CSRF
+		sameSite: "none",
 		maxAge: 7 * 24 * 60 * 60 * 1000, // 7 ngày
 	});
 
@@ -249,9 +249,9 @@ const logout = asyncHandler(async (req, res) => {
 	// Xóa refresh token trong cookie
 	res.clearCookie("refresh_token", {
 		httpOnly: true, // Phải giống với lúc set
-		secure: true,   // Bắt buộc với HTTPS
-		sameSite: 'strict'
-  });
+		secure: true, // Bắt buộc với HTTPS
+		sameSite: "none",
+	});
 	return res.status(200).json({
 		success: true,
 		message: "Logout successfully",
