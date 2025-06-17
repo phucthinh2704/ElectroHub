@@ -5,6 +5,8 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const createToken = require("uniqid");
 require("dotenv").config();
+// const { LocalStorage } = require('node-localstorage');
+// const localStorage = new LocalStorage('./scratch');
 const sendMail = require("../utils/sendMail");
 const {
 	generateAccessToken,
@@ -13,6 +15,7 @@ const {
 const { hashPassword, createPasswordResetToken } = require("../utils/password");
 
 // [POST] /user/register
+const pendingUser = new Map();
 const register = asyncHandler(async (req, res) => {
 	const { name, email, mobile, password } = req.body || {};
 
@@ -48,17 +51,31 @@ const register = asyncHandler(async (req, res) => {
 	const token = createToken();
 
 	// Tam thời lưu thông tin người dùng vào cookie, nếu người dùng click vào link xác thực thì mới lưu vào db
-	res.cookie(
-		"dataRegister",
-		{
-			name,
-			email,
-			mobile,
-			password: passwordHash,
-			token,
-		},
-		{ httpOnly: true, maxAge: 15 * 60 * 1000, sameSite: "none", secure: true } // Lưu cookie trong 15 phút
-	); // 15 phút
+	// res.cookie(
+	// 	"dataRegister",
+	// 	{
+	// 		name,
+	// 		email,
+	// 		mobile,
+	// 		password: passwordHash,
+	// 		token,
+	// 		date: Date.now()
+	// 	},
+	// 	{ httpOnly: true, maxAge: 15 * 60 * 1000, sameSite: "none", secure: true } // Lưu cookie trong 15 phút
+	// ); // 15 phút
+	
+	pendingUser.set(token, {
+		name,
+		email,
+		mobile,
+		password: passwordHash,
+		token,
+		expiresAt: Date.now() + 15 * 60 * 1000,
+	});
+
+	setTimeout(() => {
+		pendingUser.delete(token);
+	}, 15 * 60 * 1000);
 
 	const html = `<div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);">
         <div style="background: linear-gradient(135deg, #4776E6, #8E54E9); padding: 30px 20px; text-align: center;">
@@ -117,26 +134,22 @@ const register = asyncHandler(async (req, res) => {
 // [GET] /user/auth-register/:token
 const authRegister = asyncHandler(async (req, res) => {
 	const { token } = req.params;
-	const cookies = req.cookies;
-
-	if (
-		!cookies ||
-		!cookies?.dataRegister ||
-		cookies?.dataRegister?.token != token
-	) {
-		res.clearCookie("dataRegister");
+	
+	const userData = pendingUser.get(token);
+	if (userData.token !== token || userData.expiresAt < Date.now()) {
+		pendingUser.delete(token);
 		return res.redirect(
 			`${process.env.CLIENT_URL}/login?error=An error occurred during authentication. Please try again later!`
 		);
 	}
-	const { name, email, mobile, password } = cookies.dataRegister || {};
+	const { name, email, mobile, password } = userData || {};
 	const newUser = await User.create({
 		name,
 		email,
 		mobile,
 		password,
 	});
-	res.clearCookie("dataRegister");
+	pendingUser.delete(token);
 	return res.redirect(
 		`${process.env.CLIENT_URL}/login?message=Register successfully. Please log in!&email=${email}`
 	);
