@@ -57,7 +57,7 @@ const register = asyncHandler(async (req, res) => {
 			password: passwordHash,
 			token,
 		},
-		{ httpOnly: true, maxAge: 15 * 60 * 1000 }
+		{ httpOnly: true, maxAge: 15 * 60 * 1000, sameSite: "none", secure: true } // Lưu cookie trong 15 phút
 	); // 15 phút
 
 	const html = `<div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);">
