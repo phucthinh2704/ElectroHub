@@ -57,12 +57,13 @@ const HotCollections = ({ categories }) => {
 								))}
 							</div>
 
-							<button className="w-full mt-auto py-2 bg-gray-100 text-gray-700 rounded-md font-medium text-sm uppercase tracking-wide transition-all duration-200 hover:bg-main hover:text-white cursor-pointer">
-								<Link
-									to={`/products/${category.title.toLowerCase()}`}>
+							<Link
+								to={`/products/${category.title.toLowerCase()}`}
+								className="w-full mt-2">
+								<button className="w-full mt-auto py-2 bg-gray-100 text-gray-700 rounded-md font-medium text-sm uppercase tracking-wide transition-all duration-200 hover:bg-main hover:text-white cursor-pointer">
 									View Collection
-								</Link>
-							</button>
+								</button>
+							</Link>
 						</div>
 					</div>
 				))}

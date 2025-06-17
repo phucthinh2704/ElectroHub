@@ -1,15 +1,14 @@
-import { Editor } from "@tinymce/tinymce-react";
 import { X } from "lucide-react";
 import moment from "moment";
 import React, { memo, useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
-import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import toBase64 from "../../../utils/toBase64";
 import { apiUpdateProduct } from "../../../apis";
 import formatDescription from "../../../utils/formatDescription";
+import toBase64 from "../../../utils/toBase64";
 import AddVariants from "./AddVariants";
 
 const EditProductForm = ({
@@ -22,13 +21,6 @@ const EditProductForm = ({
 	const [submitMessage, setSubmitMessage] = useState("");
 	const [showAddVariantsModal, setShowAddVariantsModal] = useState(false);
 	const [addVariantsMode, setAddVariantsMode] = useState("add");
-	// const [description, setDescription] = useState(() => {
-	// 	const selectedProduct = products.find(
-	// 		(product) => product._id === selectedProductId
-	// 	);
-	// 	console.log(formatDescription(selectedProduct?.description));
-	// 	return formatDescription(selectedProduct?.description);
-	// });
 	const [previewImage, setPreviewImage] = useState(() => {
 		const selectedProduct = products.find(
 			(product) => product._id === selectedProductId
@@ -64,6 +56,7 @@ const EditProductForm = ({
 			title: selectedProduct.title || "",
 			stock: selectedProduct.stock || 0,
 			originalPrice: selectedProduct.originalPrice || 0,
+			discount: selectedProduct.discount || 0,
 			color: selectedProduct.color || "",
 			category: selectedProduct.category || "",
 			brand: selectedProduct.brand || "",
@@ -156,29 +149,23 @@ const EditProductForm = ({
 	}, [watch("images")]);
 
 	const onSubmit = (data) => {
-		// if (
-		// 	!description ||
-		// 	description.trim() === "" ||
-		// 	description.replace(/<[^>]*>/g, "").length < 10 ||
-		// 	description.replace(/<[^>]*>/g, "").length > 5000
-		// ) {
-		// 	setError("description", {
-		// 		type: "manual",
-		// 		message:
-		// 			"Description must be between 10 and 5000 characters long.",
-		// 	});
-		// 	return;
-		// }
-
 		setSubmitMessage("");
 
 		const formData = new FormData();
 		for (const key in data) {
-			formData.append(key, data[key]);
+			if(key === "description") {
+				const descriptionArray = data.description.split("\n").map((line) => line.trim());
+				for(let i = 0; i < descriptionArray.length; i++) {
+					if(descriptionArray[i]) {
+						formData.append(`description`, descriptionArray[i]);
+					}
+				}
+			} else {
+				formData.append(key, data[key]);
+			}
 		}
 
-		formData.append("price", parseInt(data.originalPrice));
-		// formData.append("description", description.split(". "));
+		formData.append("price", parseInt(data.originalPrice) * (1 - parseInt(data.discount) / 100));
 
 		formData.delete("thumb");
 		formData.delete("images");
@@ -225,11 +212,8 @@ const EditProductForm = ({
 			thumb: initialData.thumb,
 			images: [...initialData.images],
 		});
-		// const resetDescription = formatDescription(
-		// 	selectedProduct?.description
-		// );
-		// setDescription(resetDescription);
-
+		setThumb(initialData.thumb);
+		setImages([...initialData.images]);
 		setSubmitMessage("");
 	};
 
@@ -290,7 +274,7 @@ const EditProductForm = ({
 							)}
 						</div>
 
-						<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+						<div className="grid grid-cols-1 md:grid-cols-4 gap-4">
 							<div>
 								<label className="block text-sm font-medium text-gray-700 mb-1">
 									Stock Quantity *
@@ -343,6 +327,33 @@ const EditProductForm = ({
 								{errors.originalPrice && (
 									<p className="text-red-500 text-sm mt-1">
 										{errors.originalPrice.message}
+									</p>
+								)}
+							</div>
+							<div>
+								<label className="block text-sm font-medium text-gray-700 mb-1">
+									Discount (%) *
+								</label>
+								<input
+									type="text"
+									{...register("discount", {
+										required: "Please enter discount",
+										pattern: {
+											value: /^\d+(\.\d{1,2})?$/,
+											message:
+												"Discount must be a valid number (e.g., 10.00)",
+										},
+									})}
+									className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+										errors.discount
+											? "border-red-600"
+											: "border-gray-300"
+									}`}
+									placeholder="0.00"
+								/>
+								{errors.discount && (
+									<p className="text-red-500 text-sm mt-1">
+										{errors.discount.message}
 									</p>
 								)}
 							</div>
@@ -581,7 +592,7 @@ const EditProductForm = ({
 					</div>
 				</div>
 
-				{/* Product Description
+				{/* Product Description */}
 				<div className="bg-gray-50 p-4 rounded-lg">
 					<h2 className="text-lg font-semibold text-gray-700 mb-4">
 						Product Description
@@ -591,79 +602,24 @@ const EditProductForm = ({
 						<label className="block text-sm font-medium text-gray-700 mb-1">
 							Product Description *
 						</label>
-						<div className="min-h-[200px]">
-							<Editor
-								initialValue={description}
-								onChange={(e) =>
-									setDescription(e.target.getContent())
-								}
-								apiKey={import.meta.env.VITE_TINYMCE_API_KEY}
-								init={{
-									plugins: [
-										// Core editing features
-										"anchor",
-										"autolink",
-										"charmap",
-										"codesample",
-										"emoticons",
-										"image",
-										"link",
-										"lists",
-										"media",
-										"searchreplace",
-										"table",
-										"visualblocks",
-										"wordcount",
-										// Your account includes a free trial of TinyMCE premium features
-										// Try the most popular premium features until Jun 13, 2025:
-										"checklist",
-										"mediaembed",
-										"casechange",
-										"formatpainter",
-										"pageembed",
-										"a11ychecker",
-										"tinymcespellchecker",
-										"permanentpen",
-										"powerpaste",
-										"advtable",
-										"advcode",
-										"editimage",
-										"advtemplate",
-										"ai",
-										"mentions",
-										"tinycomments",
-										"tableofcontents",
-										"footnotes",
-										"mergetags",
-										"autocorrect",
-										"typography",
-										"inlinecss",
-										"markdown",
-										"importword",
-										"exportword",
-										"exportpdf",
-									],
-									toolbar:
-										"undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat",
-									tinycomments_mode: "embedded",
-									tinycomments_author: "Author name",
-									mergetags_list: [
-										{
-											value: "First.Name",
-											title: "First Name",
-										},
-										{
-											value: "Email",
-											title: "Email",
-										},
-									],
-									ai_request: (request, respondWith) =>
-										respondWith.string(() =>
-											Promise.reject(
-												"See docs to implement AI Assistant"
-											)
-										),
-								}}
+						<div className="rounded-2xl overflow-hidden border-2 border-gray-200 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/20 transition-all duration-300">
+							<div className="bg-gray-100 p-4 text-sm text-gray-600">
+								Describe your product in detail. Include
+								features, specifications, and any other relevant
+								information.
+							</div>
+							<textarea
+								className="w-full min-h-[200px] p-4 border-none outline-none bg-white text-sm leading-relaxed text-gray-700 resize-y transition-all duration-300 placeholder:text-gray-400 focus:bg-gray-50"
+								{...register("description", {
+									required:
+										"Please enter product description",
+									minLength: {
+										value: 10,
+										message:
+											"Description must be at least 10 characters",
+									},
+								})}
+								placeholder="Enter detailed product description..."
 							/>
 						</div>
 						{errors.description && (
@@ -672,7 +628,7 @@ const EditProductForm = ({
 							</p>
 						)}
 					</div>
-				</div> */}
+				</div>
 
 				{/* System Information (Read Only) */}
 				<div className="bg-blue-50 p-4 rounded-lg">

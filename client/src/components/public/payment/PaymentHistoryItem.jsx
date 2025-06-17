@@ -100,7 +100,7 @@ const PaymentHistoryItem = ({ order }) => {
 									<img
 										src={product.thumb}
 										alt={product.product.title}
-										className="w-full h-full object-cover rounded-lg border border-gray-300"
+										className="w-full h-full object-contain rounded-lg border border-gray-300"
 									/>
 								</div>
 								<div className="flex-1">

@@ -10,9 +10,11 @@ import {
 import { priceRanges } from "../../utils/constants";
 import getPaginationInfo from "../../utils/getPaginationInfo";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const ProductsPage = () => {
 	const { categories } = useSelector((state) => state.app);
+	const navigate = useNavigate();
 
 	const [products, setProducts] = useState([]);
 	const [categoriesWithAll, setCategoriesWithAll] = useState([]);
@@ -51,6 +53,9 @@ const ProductsPage = () => {
 			}
 		};
 		fetchAllProducts();
+		const params = new URLSearchParams(window.location.search);
+		const page = params.get("page") || 1;
+		setCurrentPage(Number(page));
 	}, []);
 	//
 	useEffect(() => {
@@ -189,9 +194,10 @@ const ProductsPage = () => {
 							</h4>
 							<div className="relative">
 								<select
-									className="w-full p-3 pr-10 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white cursor-pointer appearance-none"
+									className="w-full p-3 pr-10 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white cursor-pointer appearance-none uppercase"
 									value={selectedCategory}
 									onChange={(e) => {
+										window.scrollTo(0, 120);
 										setSelectedCategory(e.target.value);
 										setBrandsWithAll([
 											"All",
@@ -200,6 +206,15 @@ const ProductsPage = () => {
 													cat.title === e.target.value
 											).brand,
 										]);
+										const params = new URLSearchParams(
+											window.location.search
+										);
+										params.set("page", 1);
+										setCurrentPage(1);
+										navigate({
+											pathname: window.location.pathname,
+											search: params.toString(),
+										});
 									}}>
 									{categoriesWithAll.map(
 										(category, index) => (
@@ -237,9 +252,19 @@ const ProductsPage = () => {
 								<select
 									className="w-full p-3 pr-10 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white cursor-pointer appearance-none"
 									value={selectedBrand}
-									onChange={(e) =>
-										setSelectedBrand(e.target.value)
-									}>
+									onChange={(e) => {
+										window.scrollTo(0, 120);
+										setSelectedBrand(e.target.value);
+										const params = new URLSearchParams(
+											window.location.search
+										);
+										params.set("page", 1);
+										setCurrentPage(1);
+										navigate({
+											pathname: window.location.pathname,
+											search: params.toString(),
+										});
+									}}>
 									{brandsWithAll.map((brand, index) => (
 										<option
 											key={index}
@@ -274,15 +299,25 @@ const ProductsPage = () => {
 								<select
 									className="w-full p-3 pr-10 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white cursor-pointer appearance-none"
 									value={selectedPriceRange.label}
-									onChange={(e) =>
+									onChange={(e) => {
+										window.scrollTo(0, 120);
+										const params = new URLSearchParams(
+											window.location.search
+										);
+										params.set("page", 1);
+										setCurrentPage(1);
+										navigate({
+											pathname: window.location.pathname,
+											search: params.toString(),
+										});
 										setSelectedPriceRange(
 											priceRangesWithAll.find(
 												(range) =>
 													range.label ===
 													e.target.value
 											)
-										)
-									}>
+										);
+									}}>
 									{priceRangesWithAll.map((range) => (
 										<option
 											key={range.label}
@@ -419,6 +454,7 @@ const ProductsPage = () => {
 												<ProductCard
 													key={product._id}
 													data={product}
+													normal={true}
 												/>
 											) : (
 												<ProductListItem

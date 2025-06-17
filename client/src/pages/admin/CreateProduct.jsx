@@ -1,4 +1,3 @@
-import { Editor } from "@tinymce/tinymce-react";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import Zoom from "react-medium-image-zoom";
@@ -102,7 +101,7 @@ const CreateProduct = () => {
 
 		const formData = new FormData();
 
-		const description = data.description.split(". ") || [];
+		const description = data.description.split("\n") || [];
 		for (const key in data) {
 			if (key === "thumb" && data[key]) {
 				formData.append("thumb", data[key][0]);
@@ -163,7 +162,6 @@ const CreateProduct = () => {
 			thumb: "",
 			images: [],
 		});
-		// setDescription("");
 		setPreviewImage({
 			thumb: "",
 			images: [],
@@ -691,7 +689,7 @@ const CreateProduct = () => {
 										relevant information.
 									</div>
 									<textarea
-										className="w-full min-h-[150px] p-4 border-none outline-none bg-white text-sm leading-relaxed text-gray-700 resize-y transition-all duration-300 placeholder:text-gray-400 focus:bg-gray-50"
+										className="w-full min-h-[200px] p-4 border-none outline-none bg-white text-sm leading-relaxed text-gray-700 resize-y transition-all duration-300 placeholder:text-gray-400 focus:bg-gray-50"
 										{...register("description", {
 											required:
 												"Please enter product description",

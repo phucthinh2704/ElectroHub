@@ -85,7 +85,7 @@ const CartItem = ({ item, updateQuantity, removeItem }) => {
 							<img
 								src={item.thumb}
 								alt={item.product.title}
-								className="w-full lg:w-40 h-40 object-cover rounded-xl group-hover:scale-105 transition-transform duration-500"
+								className="w-full lg:w-40 h-40 object-contain rounded-xl group-hover:scale-105 transition-transform duration-500"
 							/>
 						</div>
 					</Link>

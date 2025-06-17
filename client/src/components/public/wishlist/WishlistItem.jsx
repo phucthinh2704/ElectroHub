@@ -82,7 +82,7 @@ const WishlistItem = ({
 				<img
 					src={item.thumb}
 					alt={item.title}
-					className="w-full h-full object-cover"
+					className="w-full h-full object-contain"
 				/>
 				{!item.stock && (
 					<div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">

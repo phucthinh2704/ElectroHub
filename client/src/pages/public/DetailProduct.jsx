@@ -11,7 +11,7 @@ import {
 import React, { useEffect, useState } from "react";
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Slider from "react-slick";
 import {
 	apiGetProductById,
@@ -31,6 +31,7 @@ import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import { getCurrent } from "../../store/user/asyncAction";
 import { useDispatch, useSelector } from "react-redux";
+import path from "../../utils/path";
 
 const DetailProduct = () => {
 	const { productId } = useParams();
@@ -41,6 +42,7 @@ const DetailProduct = () => {
 	const [quantity, setQuantity] = useState(1);
 	const [loading, setLoading] = useState(true);
 	const { current } = useSelector((state) => state.user);
+	const navigate = useNavigate();
 
 	const fetchProduct = async () => {
 		setLoading(true);
@@ -89,6 +91,25 @@ const DetailProduct = () => {
 	};
 
 	const handleUpdateWishlist = async () => {
+		if (!current) {
+			Swal.fire({
+				title: "Please login to continue",
+				icon: "warning",
+				showCancelButton: true,
+				confirmButtonText: "Login",
+				cancelButtonText: "Cancel",
+			}).then((result) => {
+				if (result.isConfirmed) {
+					window.scrollTo(0, 0);
+					navigate(`/${path.LOGIN}`, {
+						state: `/products/${product.category.toLowerCase()}/${
+							product._id
+						}/${product.slug}`,
+					});
+				}
+			});
+			return;
+		}
 		try {
 			const response = await apiUpdateWishlist(product._id);
 			if (response.success) {

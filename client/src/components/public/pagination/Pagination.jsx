@@ -42,7 +42,7 @@ const Pagination = ({
 	const handlePageChange = (pageNumber) => {
 		const params = new URLSearchParams(window.location.search);
 		params.set("page", pageNumber);
-
+		window.scrollTo(0, 0); 
 		navigate(
 			{
 				pathname: window.location.pathname,

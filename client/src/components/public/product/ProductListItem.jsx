@@ -3,7 +3,7 @@ import formatMoney from "../../../utils/formatMoney";
 import { Star, Heart, Eye, ShoppingCart } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { apiUpdateCart, apiUpdateWishlist } from "../../../apis";
 import { toast } from "react-toastify";
 import { getCurrent } from "../../../store/user/asyncAction";
@@ -125,12 +125,13 @@ const ProductListItem = ({ product }) => {
 		}
 	};
 	return (
-		<div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden flex">
-			<div className="relative w-48 h-full">
+		<div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden flex items-center gap-2 p-3 border border-gray-200 hover:border-gray-300 relative group">
+			{/* Product Image and Discount Badge */}
+			<div className="relative w-50 min-h-[250px] border border-gray-300 rounded-2xl flex items-center justify-center overflow-hidden">
 				<img
 					src={product.thumb}
 					alt={product.title}
-					className="w-full h-full object-cover"
+					className="h-full object-contain"
 				/>
 				{product.discount > 0 && (
 					<span className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded text-sm">
@@ -140,7 +141,7 @@ const ProductListItem = ({ product }) => {
 			</div>
 
 			<div className="flex-1 p-4">
-				<div className="flex justify-between items-start">
+				<div className="flex justify-between items-center">
 					<div className="flex-1">
 						<div className="flex items-center gap-2 mb-2">
 							<span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
@@ -151,12 +152,27 @@ const ProductListItem = ({ product }) => {
 							</span>
 						</div>
 
-						<h3 className="font-semibold text-gray-800 mb-2">
-							{product.title}
-						</h3>
+						<Link
+							to={`/products/${product.category.toLowerCase()}/${
+								product._id
+							}/${product.slug}`}>
+							<h3 className="font-semibold text-gray-800 mb-2 hover:text-main transition-colors duration-200">
+								{product.title}
+							</h3>
+						</Link>
 
 						<p className="text-sm text-gray-600 mb-2">
-							{product.description.join(" • ")}
+							{/* {product.description.join("\n")} */}
+							{product.description.map((desc, index) => (
+								<li
+									key={index}
+									className="flex items-start">
+									<span className="mr-2 mt-1 text-blue-500">
+										•
+									</span>
+									<span>{desc}</span>
+								</li>
+							))}
 						</p>
 
 						<div className="flex items-center gap-4 mb-2">
@@ -186,11 +202,11 @@ const ProductListItem = ({ product }) => {
 
 					<div className="text-right">
 						<div className="mb-2">
-							<div className="text-lg font-bold text-red-600">
+							<div className="text-2xl font-bold text-red-600">
 								{formatMoney(product.price)} đ
 							</div>
 							{product.discount > 0 && (
-								<div className="text-sm text-gray-500 line-through">
+								<div className="text-gray-500 line-through">
 									{formatMoney(product.originalPrice)} đ
 								</div>
 							)}

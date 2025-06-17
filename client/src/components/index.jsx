@@ -37,6 +37,7 @@ export { default as Sidebar } from "./public/sidebar/Sidebar";
 export { default as AddVariants } from "./admin/form/AddVariants";
 export { default as EditProductForm } from "./admin/form/EditProductForm";
 export { default as EditUserForm } from "./admin/form/EditUserForm";
+export { default as EditCategoryForm } from "./admin/form/EditCategoryForm";
 export { default as OrderDetailModal } from "./admin/form/OrderDetailModal ";
 export { default as AdminSidebar } from "./admin/sidebar/AdminSidebar";
 

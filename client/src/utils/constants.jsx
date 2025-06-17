@@ -261,6 +261,13 @@ export const adminSidebar = [
 	},
 	{
 		id: 4,
+		type: "SINGLE",
+		text: "MANAGE CATEGORIES",
+		icon: <RiBillLine size={20} />,
+		path: `/${path.ADMIN}/${path.MANAGE_CATEGORIES}`,
+	},
+	{
+		id: 5,
 		type: "PARENT",
 		text: "MANAGE PRODUCTS",
 		icon: <TbBrandProducthunt size={20} />,
@@ -278,7 +285,7 @@ export const adminSidebar = [
 		],
 	},
 	{
-		id: 5,
+		id: 6,
 		type: "SINGLE",
 		text: "HOME PAGE",
 		icon: <HomeIcon size={20} />,

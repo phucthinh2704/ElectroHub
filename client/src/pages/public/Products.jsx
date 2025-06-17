@@ -160,9 +160,7 @@ const Products = () => {
 			{/* Header with category name and breadcrumbs */}
 			<div className="bg-white rounded-lg shadow-sm p-4 mb-6">
 				<h1 className="text-2xl font-bold text-gray-800">
-					{category
-						? category.charAt(0).toUpperCase() + category.slice(1)
-						: "All Products"}
+					{category ? category.toUpperCase() : "All Products"}
 				</h1>
 				<nav className="mt-2">
 					<Breadcrumbs

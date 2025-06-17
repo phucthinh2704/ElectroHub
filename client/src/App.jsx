@@ -15,6 +15,7 @@ import {
 	ManageOrders,
 	ManageProducts,
 	ManageUsers,
+	ManageCategories
 } from "./pages/admin";
 import {
 	Checkout,
@@ -162,6 +163,10 @@ function App() {
 					<Route
 						path={path.MANAGE_USERS}
 						element={<ManageUsers />}
+					/>
+					<Route
+						path={path.MANAGE_CATEGORIES}
+						element={<ManageCategories />}
 					/>
 					<Route
 						path={path.MANAGE_PRODUCTS}

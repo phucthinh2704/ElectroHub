@@ -154,7 +154,8 @@ const Checkout = () => {
 										</label>
 										<input
 											type="text"
-											className="w-full p-3 outline-none border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+											disabled="true"
+											className="w-full p-3 outline-none border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed"
 											placeholder="Enter your full name"
 											{...register("name", {
 												required: "Name is required",
@@ -177,7 +178,8 @@ const Checkout = () => {
 										</label>
 										<input
 											type="tel"
-											className="w-full p-3 outline-none border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+											disabled="true"
+											className="w-full p-3 outline-none border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed"
 											placeholder="Enter your phone number"
 											{...register("mobile", {
 												required:
@@ -201,7 +203,8 @@ const Checkout = () => {
 										</label>
 										<input
 											type="email"
-											className="w-full p-3 outline-none border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+											disabled="true"
+											className="w-full p-3 outline-none border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed"
 											placeholder="Enter your email address"
 											{...register("email", {
 												required: "Email is required",

@@ -184,7 +184,7 @@ const ProductCard = ({ data, isNew, normal }) => {
 							"https://niteair.co.uk/wp-content/uploads/2023/08/default-product-image.png"
 						}
 						alt="image product"
-						className="h-[243px] object-cover display-block mx-auto"
+						className="h-[243px] object-contain display-block mx-auto"
 					/>
 					{!normal && (
 						<img

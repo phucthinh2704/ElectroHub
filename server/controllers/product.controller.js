@@ -24,6 +24,8 @@ const createProduct = asyncHandler(async (req, res) => {
 	const newProduct = await Product.create({
 		...req.body,
 		color: req.body.color.toUpperCase(),
+		title: req.body.title.toUpperCase(),
+		brand: req.body.brand.toUpperCase(),
 	});
 
 	res.status(201).json({

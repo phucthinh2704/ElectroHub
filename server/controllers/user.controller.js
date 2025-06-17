@@ -49,20 +49,6 @@ const register = asyncHandler(async (req, res) => {
 
 	const passwordHash = await hashPassword(password);
 	const token = createToken();
-
-	// Tam thời lưu thông tin người dùng vào cookie, nếu người dùng click vào link xác thực thì mới lưu vào db
-	// res.cookie(
-	// 	"dataRegister",
-	// 	{
-	// 		name,
-	// 		email,
-	// 		mobile,
-	// 		password: passwordHash,
-	// 		token,
-	// 		date: Date.now()
-	// 	},
-	// 	{ httpOnly: true, maxAge: 15 * 60 * 1000, sameSite: "none", secure: true } // Lưu cookie trong 15 phút
-	// ); // 15 phút
 	
 	pendingUser.set(token, {
 		name,

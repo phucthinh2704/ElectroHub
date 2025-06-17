@@ -66,3 +66,6 @@
 .slick-slide > div {
 	padding: 0 5px;
 }
+html {
+	scroll-behavior: smooth;
+ }

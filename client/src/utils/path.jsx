@@ -21,6 +21,7 @@ const path = {
 	MANAGE_USERS: "manage-users",
 	MANAGE_PRODUCTS: "manage-products",
 	MANAGE_ORDERS: "manage-orders",
+	MANAGE_CATEGORIES: "manage-categories",
 	CREATE_PRODUCT: "create-product",
 
 	// Member Routes
