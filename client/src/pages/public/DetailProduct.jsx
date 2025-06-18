@@ -11,8 +11,11 @@ import {
 import React, { useEffect, useState } from "react";
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import Slider from "react-slick";
+import { toast } from "react-toastify";
+import Swal from "sweetalert2";
 import {
 	apiGetProductById,
 	apiUpdateCart,
@@ -24,14 +27,11 @@ import {
 	OthersProduct,
 	RatingsReview,
 } from "../../components";
+import { getCurrent } from "../../store/user/asyncAction";
 import formatMoney from "../../utils/formatMoney";
+import path from "../../utils/path";
 import renderRatingStar from "../../utils/renderRatingStar";
 import settings from "../../utils/settingsSlider";
-import Swal from "sweetalert2";
-import { toast } from "react-toastify";
-import { getCurrent } from "../../store/user/asyncAction";
-import { useDispatch, useSelector } from "react-redux";
-import path from "../../utils/path";
 
 const DetailProduct = () => {
 	const { productId } = useParams();
@@ -710,7 +710,7 @@ const DetailProduct = () => {
 							</div>
 						</div>
 						<div className="mt-8">
-							<InformationDetail />
+							<InformationDetail description={product.description} />
 						</div>
 						<div className="mt-8">
 							<RatingsReview

@@ -57,7 +57,7 @@ const WishlistItem = ({
 		try {
 			const response = await apiUpdateWishlist(item._id);
 			if (response.success) {
-				toast.success("Item removed from wishlist");
+				toast.success(`Removed ${item.title} from wishlist`);
 				dispatch(getCurrent());
 				removeFromWishlist(item._id);
 				if (currentWishlistItem.length === 1 && currentPage > 1) {

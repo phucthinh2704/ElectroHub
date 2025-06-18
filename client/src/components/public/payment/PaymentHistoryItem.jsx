@@ -9,11 +9,16 @@ import {
 	Truck,
 	XCircle,
 } from "lucide-react";
-import React, { memo } from "react";
+import React, { memo, useState } from "react";
 import moment from "moment";
 import formatMoney from "../../../utils/formatMoney";
+import { toast } from "react-toastify";
+import { apiUpdateStatusOrders } from "../../../apis";
+import Swal from "sweetalert2";
+import OrderDetailsModal from "../order/OrderDetailsModal";
 
-const PaymentHistoryItem = ({ order }) => {
+const PaymentHistoryItem = ({ order, fetchOrders }) => {
+	const [showDetail, setShowDetail] = useState(false);
 	const getStatusColor = (status) => {
 		switch (status) {
 			case "delivered":
@@ -42,6 +47,38 @@ const PaymentHistoryItem = ({ order }) => {
 			default:
 				return <Package className="w-4 h-4" />;
 		}
+	};
+
+	const handleCancelOrder = async (orderId) => {
+		Swal.fire({
+			title: "Are you sure?",
+			text: "Do you really want to cancel this order?",
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#d33",
+			cancelButtonColor: "#3085d6",
+			confirmButtonText: "Yes, cancel it!",
+			cancelButtonText: "No, keep it",
+		}).then(async (result) => {
+			if (result.isConfirmed) {
+				try {
+					const response = await apiUpdateStatusOrders(orderId, {
+						status: "cancelled",
+					});
+					if (response.success) {
+						toast.success("Order cancelled successfully.");
+						fetchOrders();
+					} else {
+						toast.error(
+							"Failed to cancel order. " + response.message
+						);
+					}
+				} catch (error) {
+					console.error("Error cancelling order:", error);
+					toast.error("Failed to cancel order. Please try again.");
+				}
+			}
+		});
 	};
 
 	return (
@@ -144,18 +181,30 @@ const PaymentHistoryItem = ({ order }) => {
 			{/* Actions */}
 			<div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
 				<div className="flex flex-wrap gap-3">
-					<button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm">
+					<button
+						className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm cursor-pointer"
+						onClick={() => setShowDetail(true)}>
 						<Eye className="w-4 h-4" />
 						View Details
 					</button>
-					{order.status === "delivered" && (
-						<button className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm">
-							<Download className="w-4 h-4" />
-							Download Invoice
-						</button>
+					{showDetail && (
+						<div
+							className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+							onClick={(e) => {
+								if (e.target === e.currentTarget) {
+									setShowDetail(false);
+								}
+							}}>
+							<OrderDetailsModal
+								order={order}
+								setShowDetail={setShowDetail}
+							/>
+						</div>
 					)}
 					{order.status === "processing" && (
-						<button className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm">
+						<button
+							className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm cursor-pointer"
+							onClick={() => handleCancelOrder(order._id)}>
 							<XCircle className="w-4 h-4" />
 							Cancel Order
 						</button>

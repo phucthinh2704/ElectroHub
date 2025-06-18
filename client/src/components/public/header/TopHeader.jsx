@@ -101,25 +101,35 @@ const TopHeader = () => {
 								to={`/${path.MEMBER}/${path.PERSONAL}`}
 								className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm">
 								<User size={14} />
-								<span>My Profile</span>
+								<span className="p-1">My Profile</span>
 							</Link>
 							<Link
 								to={`/${path.MEMBER}/${path.MY_CART}`}
 								className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm">
 								<ShoppingCart size={14} />
-								<span>Cart</span>
+								<span className="relative block p-1">
+									Cart
+									<span className="absolute -right-7 top-1/2 transform -translate-y-1/2 bg-main w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs text-white">
+										{current.cart.length}
+									</span>
+								</span>
 							</Link>
 							<Link
 								to={`/${path.MEMBER}/${path.WISHLIST}`}
 								className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm">
 								<Heart size={14} />
-								<span>Wishlist</span>
+								<span className="relative block p-1">
+									Wishlist
+									<span className="absolute -right-7 top-1/2 transform -translate-y-1/2 bg-main w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs text-white">
+										{current.wishlist.length}
+									</span>
+								</span>
 							</Link>
 							<Link
 								to={`/${path.MEMBER}/${path.ORDER_HISTORY}`}
 								className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm">
 								<ShoppingBag size={14} />
-								<span>My Orders</span>
+								<span className="p-1">My Orders</span>
 							</Link>
 							<div className="border-t border-gray-100 my-1"></div>
 							<button

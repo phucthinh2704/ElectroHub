@@ -71,3 +71,9 @@ export const apiGetAllOrders = async (params) =>
 		url: `/order/admin/`,
 		params
 	});
+export const apiUpdateStatusOrders = async (id, data) =>
+	axios({
+		method: "PUT",
+		url: `/order/status/${id}`,
+		data
+	});

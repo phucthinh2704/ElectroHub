@@ -14,17 +14,17 @@ export { default as CartHeader } from "./public/header/CartHeader";
 export { default as Header } from "./public/header/Header";
 export { default as Navigation } from "./public/header/Navigation";
 export { default as TopHeader } from "./public/header/TopHeader";
+export { default as OrderDetailsModal } from "./public/order/OrderDetailsModal";
 export { default as Pagination } from "./public/pagination/Pagination";
-export { default as Paypal } from "./public/payment/Paypal";
 export { default as PaymentHistoryItem } from "./public/payment/PaymentHistoryItem";
+export { default as Paypal } from "./public/payment/Paypal";
 export { default as FeaturedProducts } from "./public/product/FeaturedProducts";
 export { default as FilterItem } from "./public/product/FilterItem";
 export { default as HotCollections } from "./public/product/HotCollections";
-export { default as WishlistItem } from "./public/wishlist/WishlistItem";
 export { default as NewArrivals } from "./public/product/NewArrivals";
 export { default as ProductCard } from "./public/product/ProductCard";
-export { default as ProductListItem } from "./public/product/ProductListItem";
 export { default as ProductFeaturedItem } from "./public/product/ProductFeaturedItem";
+export { default as ProductListItem } from "./public/product/ProductListItem";
 export { default as QuickView } from "./public/product/QuickView";
 export { default as RatingsReview } from "./public/rating/RatingsReview";
 export { default as Banner } from "./public/sidebar/Banner";
@@ -32,12 +32,13 @@ export { default as BestSeller } from "./public/sidebar/BestSeller";
 export { default as DealDaily } from "./public/sidebar/DealDaily";
 export { default as MemberSidebar } from "./public/sidebar/MemberSidebar";
 export { default as Sidebar } from "./public/sidebar/Sidebar";
+export { default as WishlistItem } from "./public/wishlist/WishlistItem";
 
 // ADMIN
 export { default as AddVariants } from "./admin/form/AddVariants";
+export { default as EditCategoryForm } from "./admin/form/EditCategoryForm";
 export { default as EditProductForm } from "./admin/form/EditProductForm";
 export { default as EditUserForm } from "./admin/form/EditUserForm";
-export { default as EditCategoryForm } from "./admin/form/EditCategoryForm";
-export { default as OrderDetailModal } from "./admin/form/OrderDetailModal ";
+export { default as OrderDetailModal } from "./admin/form/OrderDetailModal";
 export { default as AdminSidebar } from "./admin/sidebar/AdminSidebar";
 

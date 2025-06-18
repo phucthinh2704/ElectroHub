@@ -16,7 +16,7 @@ import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { apiGetAllOrders } from "../../apis";
+import { apiGetAllOrders, apiUpdateStatusOrders } from "../../apis";
 import { OrderDetailModal, Pagination } from "../../components";
 import avatarDefault from "../../assets/avatarDefault.png";
 import formatMoney from "../../utils/formatMoney";
@@ -102,9 +102,9 @@ const ManageOrders = () => {
 	const getStatusBadgeColor = (status) => {
 		switch (status) {
 			case "processing":
-				return "bg-blue-100 text-blue-800 border-blue-200";
+				return "bg-yellow-100 text-yellow-800 border-yellow-200";
 			case "shipped":
-				return "bg-purple-100 text-purple-800 border-purple-200";
+				return "bg-blue-100 text-blue-800 border-blue-200";
 			case "delivered":
 				return "bg-green-100 text-green-800 border-green-200";
 			case "cancelled":
@@ -129,19 +129,29 @@ const ManageOrders = () => {
 		}
 	};
 
-	const handleUpdateStatus = (orderId, newStatus) => {
-		setOrders(
-			orders.map((order) =>
-				order._id === orderId
-					? {
-							...order,
-							status: newStatus,
-							updatedAt: new Date().toISOString(),
-					  }
-					: order
-			)
-		);
-		toast.success(`Order status updated to ${newStatus}`);
+	const handleUpdateStatus = async (orderId, newStatus) => {
+		try {
+			const response = await apiUpdateStatusOrders(orderId, {
+				status: newStatus,
+			});
+			if(response.success) {
+				setOrders(
+					orders.map((order) =>
+						order._id === orderId
+							? {
+									...order,
+									status: newStatus,
+									updatedAt: new Date().toISOString(),
+							  }
+							: order
+					)
+				);
+				toast.success(`Order status updated to ${newStatus}`);
+			}
+		} catch (error) {
+			console.log("Failed to update order status:", error);
+			toast.error("Failed to update order status. Please try again.");
+		}
 	};
 
 	// Calculate stats
@@ -152,6 +162,9 @@ const ManageOrders = () => {
 	).length;
 	const deliveredOrders = orders.filter(
 		(o) => o.status === "delivered"
+	).length;
+	const cancelledOrders = orders.filter(
+		(o) => o.status === "cancelled"
 	).length;
 	const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
 
@@ -190,7 +203,7 @@ const ManageOrders = () => {
 						</div>
 
 						{/* Stats Cards */}
-						<div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-6">
+						<div className="grid grid-cols-1 md:grid-cols-6 gap-6 mb-6">
 							<div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
 								<div className="flex items-center justify-between">
 									<div>
@@ -213,12 +226,12 @@ const ManageOrders = () => {
 										<p className="text-slate-600 text-sm font-medium">
 											Processing
 										</p>
-										<p className="text-2xl font-bold text-blue-600">
+										<p className="text-2xl font-bold text-yellow-600">
 											{processingOrders}
 										</p>
 									</div>
-									<div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-										<Package className="w-6 h-6 text-blue-600" />
+									<div className="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
+										<Package className="w-6 h-6 text-yellow-600" />
 									</div>
 								</div>
 							</div>
@@ -229,12 +242,12 @@ const ManageOrders = () => {
 										<p className="text-slate-600 text-sm font-medium">
 											Shipped
 										</p>
-										<p className="text-2xl font-bold text-purple-600">
+										<p className="text-2xl font-bold text-blue-600">
 											{shippedOrders}
 										</p>
 									</div>
-									<div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-										<Truck className="w-6 h-6 text-purple-600" />
+									<div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+										<Truck className="w-6 h-6 text-blue-600" />
 									</div>
 								</div>
 							</div>
@@ -251,6 +264,22 @@ const ManageOrders = () => {
 									</div>
 									<div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
 										<CheckCircle className="w-6 h-6 text-green-600" />
+									</div>
+								</div>
+							</div>
+
+							<div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+								<div className="flex items-center justify-between">
+									<div>
+										<p className="text-slate-600 text-sm font-medium">
+											Cancelled
+										</p>
+										<p className="text-2xl font-bold text-red-600">
+											{cancelledOrders}
+										</p>
+									</div>
+									<div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
+										<XCircle className="w-6 h-6 text-red-600" />
 									</div>
 								</div>
 							</div>
@@ -328,9 +357,6 @@ const ManageOrders = () => {
 											#
 										</th>
 										<th className="p-4 text-center font-semibold text-slate-700">
-											Order ID
-										</th>
-										<th className="p-4 text-center font-semibold text-slate-700">
 											Customer
 										</th>
 										<th className="p-4 text-center font-semibold text-slate-700">
@@ -357,13 +383,6 @@ const ManageOrders = () => {
 											className="hover:bg-slate-50 transition-colors duration-150">
 											<td className="p-4 text-slate-600 font-semibold text-center">
 												{indexOfFirstOrder + index + 1}
-											</td>
-
-											{/* Order ID */}
-											<td className="p-4 max-w-[150px]">
-												<div className="text-sm font-mono line-clamp-1 text-blue-600 bg-blue-50 px-2 py-1 rounded">
-													#{order._id}
-												</div>
 											</td>
 
 											{/* Customer Info */}
@@ -421,7 +440,7 @@ const ManageOrders = () => {
 																			.product
 																			.title
 																	}
-																	className="w-8 h-8 object-cover rounded"
+																	className="w-12 h-12 object-contain rounded"
 																/>
 																<div className="min-w-0 flex-1">
 																	<p className="text-sm font-medium text-slate-800 truncate line-clamp-1">

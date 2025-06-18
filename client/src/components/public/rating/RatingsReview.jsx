@@ -172,7 +172,7 @@ const RatingsReview = ({ product = {}, onReviewSubmitted }) => {
 		if (sortBy === "oldest") return new Date(a.date) - new Date(b.date);
 		if (sortBy === "highest") return b.rating - a.rating;
 		if (sortBy === "lowest") return a.rating - b.rating;
-		if (sortBy === "helpful") return b.helpful - a.helpful;
+		// if (sortBy === "helpful") return b.helpful - a.helpful;
 		return 0;
 	});
 
@@ -267,7 +267,7 @@ const RatingsReview = ({ product = {}, onReviewSubmitted }) => {
 							<option value="oldest">Oldest</option>
 							<option value="highest">Highest score</option>
 							<option value="lowest">Lowest score</option>
-							<option value="helpful">Most useful</option>
+							{/* <option value="helpful">Most useful</option> */}
 						</select>
 					</div>
 				</div>

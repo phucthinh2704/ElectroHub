@@ -25,9 +25,9 @@ const OrderDetailModal = ({ onClose, order }) => {
 	const getStatusBadgeColor = (status) => {
 		switch (status) {
 			case "processing":
-				return "bg-blue-100 text-blue-800 border-blue-200";
+				return "bg-yellow-100 text-yellow-800 border-yellow-200";
 			case "shipped":
-				return "bg-purple-100 text-purple-800 border-purple-200";
+				return "bg-blue-100 text-blue-800 border-blue-200";
 			case "delivered":
 				return "bg-green-100 text-green-800 border-green-200";
 			case "cancelled":
@@ -104,14 +104,14 @@ const OrderDetailModal = ({ onClose, order }) => {
 							<div className="bg-slate-50 rounded-xl p-4">
 								<div className="flex items-center justify-around gap-4">
 									<div className="flex items-center gap-3">
-										<div className="p-2 bg-blue-100 rounded-lg">
+										<div className="p-3 bg-blue-100 rounded-lg">
 											<Hash className="w-5 h-5 text-blue-600" />
 										</div>
 										<div>
 											<p className="text-sm text-slate-600">
 												Order ID
 											</p>
-											<div className="flex items-center gap-2">
+											<div className="flex items-center gap-1">
 												<p className="font-mono text-sm font-semibold">
 													#{order._id}
 												</p>
@@ -126,7 +126,7 @@ const OrderDetailModal = ({ onClose, order }) => {
 									</div>
 
 									<div className="flex items-center gap-3">
-										<div className="p-2 bg-green-100 rounded-lg">
+										<div className="p-3 bg-green-100 rounded-lg">
 											<Calendar className="w-5 h-5 text-green-600" />
 										</div>
 										<div>
@@ -143,13 +143,15 @@ const OrderDetailModal = ({ onClose, order }) => {
 
 									<div className="flex items-center gap-3">
 										<div
-											className={`p-2 rounded-lg ${
+											className={`p-3 rounded-lg ${
 												order.status === "delivered"
 													? "bg-green-100"
 													: order.status ===
 													  "cancelled"
 													? "bg-red-100"
-													: "bg-blue-100"
+													: order.status === "shipped"
+													? "bg-blue-100"
+													: "bg-yellow-100"
 											}`}>
 											{getStatusIcon(order.status)}
 										</div>

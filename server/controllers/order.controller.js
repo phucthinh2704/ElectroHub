@@ -94,7 +94,8 @@ const getUserOrder = asyncHandler(async (req, res) => {
 	let formattedQueries = { orderBy: _id };
 
 	let queryCommand = Order.find(formattedQueries)
-		.populate("products.product", "title")
+		.populate("products.product", "title category brand")
+		.populate("orderBy", "name mobile email address")
 		.sort({ createdAt: -1 });
 
 	// Sorting
@@ -130,7 +131,8 @@ const getAllOrders = asyncHandler(async (req, res) => {
 
 	let queryCommand = Order.find(formattedQueries)
 		.populate("products.product")
-		.populate("orderBy", "name mobile email address").sort({ createdAt: -1 });
+		.populate("orderBy", "name mobile email address")
+		.sort({ createdAt: -1 });
 
 	// Pagination
 	const page = parseInt(req.query.page) || 1;

@@ -1,8 +1,8 @@
-import { Download, History, Package } from "lucide-react";
+import { History, Package } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { apiUserOrders } from "../../apis";
 import { CartHeader, Pagination, PaymentHistoryItem } from "../../components";
-import { useNavigate } from "react-router-dom";
 
 const OrderHistory = () => {
 	const [activeTab, setActiveTab] = useState("all");
@@ -12,14 +12,14 @@ const OrderHistory = () => {
 	const [ordersPerPage] = useState(2); // Number of orders per page
 
 	const navigate = useNavigate();
-
+	
+	const fetchOrders = async (params) => {
+		const response = await apiUserOrders(params);
+		if (response.success) {
+			setOrders(response.orders);
+		}
+	};
 	useEffect(() => {
-		const fetchOrders = async (params) => {
-			const response = await apiUserOrders(params);
-			if (response.success) {
-				setOrders(response.orders);
-			}
-		};
 		fetchOrders();
 
 		const params = new URLSearchParams(window.location.search);
@@ -101,12 +101,6 @@ const OrderHistory = () => {
 							className="w-full pl-4 pr-4 py-2 outline-none border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 						/>
 					</div>
-					<div className="flex gap-2">
-						<button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-							<Download className="w-4 h-4" />
-							Export
-						</button>
-					</div>
 				</div>
 			</div>
 
@@ -117,7 +111,7 @@ const OrderHistory = () => {
 						<button
 							key={tab.id}
 							onClick={() => handleTabsFilterChange(tab.id)}
-							className={`whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
+							className={`whitespace-nowrap cursor-pointer py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
 								activeTab === tab.id
 									? "border-blue-500 text-blue-600"
 									: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
@@ -148,6 +142,7 @@ const OrderHistory = () => {
 						<PaymentHistoryItem
 							key={order._id}
 							order={order}
+							fetchOrders={fetchOrders}
 						/>
 					))
 				)}

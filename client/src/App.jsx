@@ -12,10 +12,10 @@ import {
 	AdminDashboard,
 	AdminLayout,
 	CreateProduct,
+	ManageCategories,
 	ManageOrders,
 	ManageProducts,
 	ManageUsers,
-	ManageCategories
 } from "./pages/admin";
 import {
 	Checkout,
@@ -33,10 +33,10 @@ import {
 	Home,
 	Login,
 	Products,
+	ProductsPage,
 	PublicLayout,
 	ResetPassword,
 	Services,
-	ProductsPage
 } from "./pages/public";
 import { getCategories } from "./store/app/asyncActions";
 import { logout } from "./store/user/userSlice";
@@ -96,10 +96,10 @@ function App() {
 				<Route
 					path={path.PUBLIC}
 					element={<PublicLayout />}>
-				<Route
-					path={path.CHECKOUT}
-					element={<Checkout />}
-				/>
+					<Route
+						path={path.CHECKOUT}
+						element={<Checkout />}
+					/>
 					<Route
 						path={path.HOME}
 						element={<Home />}
