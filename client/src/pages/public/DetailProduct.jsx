@@ -232,7 +232,7 @@ const DetailProduct = () => {
 															] || variant.thumb
 														}
 														alt={product.title}
-														className="h-[560px] object-cover display-block mx-auto"
+														className="h-[560px] object-contain display-block mx-auto"
 													/>
 												</Zoom>
 											)
@@ -245,7 +245,7 @@ const DetailProduct = () => {
 														] || product.thumb
 													}
 													alt={product.title}
-													className="h-[560px] object-cover display-block mx-auto"
+													className="h-[560px] object-contain display-block mx-auto"
 												/>
 											</Zoom>
 										) : (
@@ -507,7 +507,7 @@ const DetailProduct = () => {
 													<img
 														src={product.thumb}
 														alt="thumb"
-														className="w-12 h-12 object-cover rounded-lg"
+														className="w-12 h-12 object-contain rounded-lg"
 													/>
 													<div>
 														<span className="font-semibold">
@@ -560,7 +560,7 @@ const DetailProduct = () => {
 																		variantItem.thumb
 																	}
 																	alt="thumb"
-																	className="w-12 h-12 object-cover rounded-lg"
+																	className="w-12 h-12 object-contain rounded-lg"
 																/>
 																<div>
 																	<span className="font-semibold">

@@ -1,13 +1,13 @@
 import {
+	Download,
+	Loader2,
 	ShieldUser,
 	UserCheck,
 	UserLock,
-	UserPlus,
 	UserRoundPen,
 	UserRoundSearch,
 	UserRoundX,
 	Users,
-	Loader2,
 } from "lucide-react";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
@@ -19,6 +19,7 @@ import avatarDefault from "../../assets/avatarDefault.png";
 import EditUserForm from "../../components/admin/form/EditUserForm";
 import Pagination from "../../components/public/pagination/Pagination";
 import getPaginationInfo from "../../utils/getPaginationInfo";
+import exportToExcel from "../../utils/exportToExcel";
 
 const ManageUsers = () => {
 	const [users, setUsers] = useState([]);
@@ -87,6 +88,19 @@ const ManageUsers = () => {
 			search: params.toString(),
 		});
 	};
+
+	const handleExportUsers = async () => {
+		exportToExcel("users", "Users List", users, [
+			"STT",
+			"ID",
+			"Name",
+			"Email",
+			"Mobile",
+			"Role",
+			"Status",
+			"Join Date",
+		]);
+	}
 
 	// Pagination
 	const indexOfLastUser = currentPage * usersPerPage;
@@ -200,9 +214,9 @@ const ManageUsers = () => {
 									Manage and monitor all users in your system
 								</p>
 							</div>
-							<button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2">
-								<UserPlus />
-								Add New User
+							<button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2 cursor-pointer" onClick={handleExportUsers}>
+								<Download />
+								Export Users
 							</button>
 						</div>
 

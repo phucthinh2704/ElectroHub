@@ -41,6 +41,8 @@ import {
 import { getCategories } from "./store/app/asyncActions";
 import { logout } from "./store/user/userSlice";
 import path from "./utils/path";
+import Dashboard1 from "./pages/admin/Dashboard1";
+import Dashboard2 from "./pages/admin/Dashboard2";
 
 function App() {
 	const dispatch = useDispatch();
@@ -103,6 +105,14 @@ function App() {
 					<Route
 						path={path.HOME}
 						element={<Home />}
+					/>
+					<Route
+						path={`/dashboard1`}
+						element={<Dashboard1  />}
+					/>
+					<Route
+						path={`/dashboard2`}
+						element={<Dashboard2  />}
 					/>
 					<Route
 						path={path.PRODUCTS_CATEGORY}

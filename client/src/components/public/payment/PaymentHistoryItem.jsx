@@ -3,21 +3,24 @@ import {
 	CheckCircle,
 	Clock,
 	CreditCard,
-	Download,
 	Eye,
+	HandCoins,
+	History,
 	Package,
 	Truck,
 	XCircle,
 } from "lucide-react";
-import React, { memo, useState } from "react";
 import moment from "moment";
-import formatMoney from "../../../utils/formatMoney";
+import React, { memo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { apiUpdateStatusOrders } from "../../../apis";
 import Swal from "sweetalert2";
+import { apiUpdateStatusOrders } from "../../../apis";
+import formatMoney from "../../../utils/formatMoney";
 import OrderDetailsModal from "../order/OrderDetailsModal";
 
 const PaymentHistoryItem = ({ order, fetchOrders }) => {
+	const navigate = useNavigate();
 	const [showDetail, setShowDetail] = useState(false);
 	const getStatusColor = (status) => {
 		switch (status) {
@@ -49,36 +52,84 @@ const PaymentHistoryItem = ({ order, fetchOrders }) => {
 		}
 	};
 
-	const handleCancelOrder = async (orderId) => {
-		Swal.fire({
-			title: "Are you sure?",
-			text: "Do you really want to cancel this order?",
-			icon: "warning",
-			showCancelButton: true,
-			confirmButtonColor: "#d33",
-			cancelButtonColor: "#3085d6",
-			confirmButtonText: "Yes, cancel it!",
-			cancelButtonText: "No, keep it",
-		}).then(async (result) => {
-			if (result.isConfirmed) {
-				try {
-					const response = await apiUpdateStatusOrders(orderId, {
-						status: "cancelled",
-					});
-					if (response.success) {
-						toast.success("Order cancelled successfully.");
-						fetchOrders();
-					} else {
+	const handleUpdateStatusOrder = async (orderId, type, product) => {
+		if (type === "received") {
+			Swal.fire({
+				title: "Are you sure?",
+				text: "Do you really want to mark this order as received?",
+				icon: "warning",
+				showCancelButton: true,
+				confirmButtonColor: "#3085d6",
+				cancelButtonColor: "#d33",
+				confirmButtonText: "Yes, mark as received!",
+				cancelButtonText: "No, keep it",
+			}).then(async (result) => {
+				if (result.isConfirmed) {
+					try {
+						const response = await apiUpdateStatusOrders(orderId, {
+							status: "delivered",
+						});
+						if (response.success) {
+							toast.success(
+								"Order marked as received successfully."
+							);
+							fetchOrders();
+						} else {
+							toast.error(
+								"Failed to mark order as received. " +
+									response.message
+							);
+						}
+					} catch (error) {
+						console.error(
+							"Error marking order as received:",
+							error
+						);
 						toast.error(
-							"Failed to cancel order. " + response.message
+							"Failed to mark order as received. Please try again."
 						);
 					}
-				} catch (error) {
-					console.error("Error cancelling order:", error);
-					toast.error("Failed to cancel order. Please try again.");
 				}
-			}
-		});
+			});
+		} else if (type === "cancelled") {
+			Swal.fire({
+				title: "Are you sure?",
+				text: "Do you really want to cancel this order?",
+				icon: "warning",
+				showCancelButton: true,
+				confirmButtonColor: "#d33",
+				cancelButtonColor: "#3085d6",
+				confirmButtonText: "Yes, cancel it!",
+				cancelButtonText: "No, keep it",
+			}).then(async (result) => {
+				if (result.isConfirmed) {
+					try {
+						const response = await apiUpdateStatusOrders(orderId, {
+							status: "cancelled",
+						});
+						if (response.success) {
+							toast.success("Order cancelled successfully.");
+							fetchOrders();
+						} else {
+							toast.error(
+								"Failed to cancel order. " + response.message
+							);
+						}
+					} catch (error) {
+						console.error("Error cancelling order:", error);
+						toast.error(
+							"Failed to cancel order. Please try again."
+						);
+					}
+				}
+			});
+		} else if (type === "buy-again") {
+			navigate(
+				`/products/${product.category.toLowerCase()}/${product._id}/${
+					product.slug
+				}`
+			);
+		}
 	};
 
 	return (
@@ -154,6 +205,20 @@ const PaymentHistoryItem = ({ order, fetchOrders }) => {
 								<p className="font-medium text-gray-900">
 									{formatMoney(product.price)} đ
 								</p>
+								{order.status === "delivered" && (
+									<button
+										className="flex items-center gap-2 px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-colors text-sm cursor-pointer"
+										onClick={() =>
+											handleUpdateStatusOrder(
+												order._id,
+												"buy-again",
+												product.product
+											)
+										}>
+										<History className="w-4 h-4" />
+										Buy Again
+									</button>
+								)}
 							</div>
 						))}
 					</div>
@@ -204,9 +269,21 @@ const PaymentHistoryItem = ({ order, fetchOrders }) => {
 					{order.status === "processing" && (
 						<button
 							className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm cursor-pointer"
-							onClick={() => handleCancelOrder(order._id)}>
+							onClick={() =>
+								handleUpdateStatusOrder(order._id, "cancelled")
+							}>
 							<XCircle className="w-4 h-4" />
 							Cancel Order
+						</button>
+					)}
+					{order.status === "shipped" && (
+						<button
+							className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm cursor-pointer"
+							onClick={() =>
+								handleUpdateStatusOrder(order._id, "received")
+							}>
+							<HandCoins className="w-4 h-4" />
+							Order Received
 						</button>
 					)}
 				</div>

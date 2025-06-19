@@ -18,6 +18,7 @@ export { default as OrderDetailsModal } from "./public/order/OrderDetailsModal";
 export { default as Pagination } from "./public/pagination/Pagination";
 export { default as PaymentHistoryItem } from "./public/payment/PaymentHistoryItem";
 export { default as Paypal } from "./public/payment/Paypal";
+export { default as PreviewInvoice } from "./public/invoice/PreviewInvoice";
 export { default as FeaturedProducts } from "./public/product/FeaturedProducts";
 export { default as FilterItem } from "./public/product/FilterItem";
 export { default as HotCollections } from "./public/product/HotCollections";

@@ -1,5 +1,6 @@
 import {
 	Calendar,
+	Download,
 	Edit3,
 	FolderOpen,
 	FolderPlus,
@@ -161,15 +162,26 @@ const ManageCategories = () => {
 									your system
 								</p>
 							</div>
-							<button
-								className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2 cursor-pointer"
-								onClick={() => {
-									setShowEditForm(true);
-									setMode("add");
-								}}>
-								<FolderPlus />
-								Add New Category
-							</button>
+							<div className="flex items-center gap-4">
+								<button
+									className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2 cursor-pointer"
+									onClick={() => {
+										setShowEditForm(true);
+										setMode("add");
+									}}>
+									<FolderPlus />
+									Add New Category
+								</button>
+								<button
+									className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2 cursor-pointer"	
+									onClick={() => {
+										setShowEditForm(true);
+										setMode("add");
+									}}>
+									<Download />
+									Export Categories
+								</button>
+							</div>
 						</div>
 
 						{/* Stats Cards */}

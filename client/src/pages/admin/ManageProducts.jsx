@@ -10,6 +10,7 @@ import {
 	Star,
 	Trash2,
 	Loader2,
+	Download,
 } from "lucide-react";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
@@ -22,6 +23,7 @@ import Pagination from "../../components/public/pagination/Pagination";
 import formatMoney from "../../utils/formatMoney";
 import getPaginationInfo from "../../utils/getPaginationInfo";
 import path from "../../utils/path";
+import exportToExcel from "../../utils/exportToExcel";
 
 const ManageProducts = () => {
 	const [products, setProducts] = useState([]);
@@ -209,6 +211,21 @@ const ManageProducts = () => {
 		);
 	};
 
+	const handleExportProducts = async () => {
+		exportToExcel("products", "Products List", products, [
+			"STT",
+			"ID",
+			"Name",
+			"Category",
+			"Brand",
+			"Price",
+			"Discount",
+			"Stock",
+			"Sold",
+			"Date Created",
+		]);
+	}
+
 	const getStockBadgeColor = (stock) => {
 		if (stock === 0) return "bg-red-100 text-red-800 border-red-200";
 		if (stock < 10)
@@ -238,6 +255,8 @@ const ManageProducts = () => {
 				return "bg-cyan-100 text-cyan-800 border-cyan-200";
 			case "television":
 				return "bg-teal-100 text-teal-800 border-teal-200";
+			case "printer":
+				return "bg-fuchsia-100 text-fuchsia-800 border-fuchsia-200";
 			default:
 				return "bg-gray-100 text-gray-800 border-gray-200";
 		}
@@ -275,12 +294,19 @@ const ManageProducts = () => {
 									inventory
 								</p>
 							</div>
-							<Link to={`/${path.ADMIN}/${path.CREATE_PRODUCT}`}>
-								<button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2 cursor-pointer">
-									<Plus />
-									Add New Product
+							<div className="flex items-center gap-4">
+								<Link
+									to={`/${path.ADMIN}/${path.CREATE_PRODUCT}`}>
+									<button className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2 cursor-pointer">
+										<Plus />
+										Add New Product
+									</button>
+								</Link>
+								<button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2 cursor-pointer" onClick={handleExportProducts}>
+									<Download />
+									Export Products
 								</button>
-							</Link>
+							</div>
 						</div>
 
 						{/* Stats Cards */}

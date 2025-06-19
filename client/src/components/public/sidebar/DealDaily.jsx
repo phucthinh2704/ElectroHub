@@ -180,7 +180,7 @@ const DealDaily = () => {
 									"https://niteair.co.uk/wp-content/uploads/2023/08/default-product-image.png"
 								}
 								alt="Product image"
-								className="object-cover"
+								className="object-contain"
 							/>
 
 							{/* Product details */}

@@ -14,10 +14,10 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import { apiLogout, apiRatings } from "../../../apis";
+import avatarDefault from "../../../assets/avatarDefault.png";
 import { logout } from "../../../store/user/userSlice";
 import { ratingLabels } from "../../../utils/constants";
 import path from "../../../utils/path";
-import avatarDefault from "../../../assets/avatarDefault.png";
 
 const RatingsReview = ({ product = {}, onReviewSubmitted }) => {
 	const [sortBy, setSortBy] = useState("newest");
@@ -274,7 +274,6 @@ const RatingsReview = ({ product = {}, onReviewSubmitted }) => {
 
 				{/* Reviews List */}
 				<div className="space-y-6">
-					{/* {console.log(displayedReviews)} */}
 					{displayedReviews.map((review) => (
 						<div
 							key={review._id}
@@ -435,7 +434,7 @@ const RatingsReview = ({ product = {}, onReviewSubmitted }) => {
 									<img
 										src={product.thumb}
 										alt={product.title}
-										className="w-full h-full object-cover rounded-lg"
+										className="w-full h-full object-contain rounded-lg"
 									/>
 								</div>
 								<h3 className="font-semibold text-gray-900 text-sm mb-2">

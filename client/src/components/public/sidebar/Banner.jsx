@@ -25,14 +25,14 @@ const Banner = () => {
 
 	settings.slidesToShow = 1;
 	return (
-		<div className="h-[455px] overflow-hidden">
+		<div className="overflow-hidden flex-1">
 			<Slider {...settings}>
 				{banners.map((banner) => (
-					<div key={banner.id} className="h-full w-full p-2.5">
+					<div key={banner.id} className="h-[500px]">
 						<img
 							src={banner.src}
 							alt={banner.alt}
-							className="rounded-lg"
+							className="rounded-lg h-full w-full object-cover"
 						/>
 					</div>
 				))}

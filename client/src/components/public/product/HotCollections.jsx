@@ -32,7 +32,7 @@ const HotCollections = ({ categories }) => {
 									<img
 										src={category.image}
 										alt={category.title}
-										className="h-[180px] object-cover transition-transform duration-500 group-hover:scale-105"
+										className="h-[180px] object-contain transition-transform duration-500 group-hover:scale-105"
 									/>
 								</div>
 

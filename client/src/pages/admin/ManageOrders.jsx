@@ -196,15 +196,15 @@ const ManageOrders = () => {
 									Track and manage all customer orders
 								</p>
 							</div>
-							<button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2">
+							<button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2 cursor-pointer">
 								<Package className="w-5 h-5" />
 								Export Orders
 							</button>
 						</div>
 
 						{/* Stats Cards */}
-						<div className="grid grid-cols-1 md:grid-cols-6 gap-6 mb-6">
-							<div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+						<div className="grid grid-cols-1 md:grid-cols-6 gap-2 mb-6">
+							<div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
 								<div className="flex items-center justify-between">
 									<div>
 										<p className="text-slate-600 text-sm font-medium">
@@ -220,7 +220,7 @@ const ManageOrders = () => {
 								</div>
 							</div>
 
-							<div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+							<div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
 								<div className="flex items-center justify-between">
 									<div>
 										<p className="text-slate-600 text-sm font-medium">
@@ -236,7 +236,7 @@ const ManageOrders = () => {
 								</div>
 							</div>
 
-							<div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+							<div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
 								<div className="flex items-center justify-between">
 									<div>
 										<p className="text-slate-600 text-sm font-medium">
@@ -252,7 +252,7 @@ const ManageOrders = () => {
 								</div>
 							</div>
 
-							<div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+							<div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
 								<div className="flex items-center justify-between">
 									<div>
 										<p className="text-slate-600 text-sm font-medium">
@@ -268,7 +268,7 @@ const ManageOrders = () => {
 								</div>
 							</div>
 
-							<div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+							<div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
 								<div className="flex items-center justify-between">
 									<div>
 										<p className="text-slate-600 text-sm font-medium">
@@ -284,14 +284,14 @@ const ManageOrders = () => {
 								</div>
 							</div>
 
-							<div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
-								<div className="flex items-center justify-between">
+							<div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
+								<div className="flex items-center justify-between ">
 									<div>
 										<p className="text-slate-600 text-sm font-medium">
 											Revenue
 										</p>
 										<p className="text-lg font-bold text-purple-600">
-											{formatMoney(totalRevenue)} đ
+											{formatMoney(totalRevenue)}đ
 										</p>
 									</div>
 									<div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
