@@ -36,6 +36,8 @@ const QuickView = ({ data, onClose }) => {
 						src={data.thumb}
 						alt={data.title}
 						className="block mx-auto h-44 object-contain rounded-xl shadow-lg transition-transform duration-300 group-hover:scale-[1.02]"
+						loading="lazy"
+						decoding="async"
 					/>
 				</div>
 

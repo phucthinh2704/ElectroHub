@@ -1,7 +1,13 @@
 // Public.js
 import React, { useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import { BackToTop, Footer, Header, Navigation, TopHeader } from "../../components";
+import {
+	BackToTop,
+	Footer,
+	Header,
+	Navigation,
+	TopHeader,
+} from "../../components";
 import path from "../../utils/path";
 
 const PublicLayout = () => {

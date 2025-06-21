@@ -45,21 +45,29 @@ const FeaturedProducts = () => {
 					src="https://digital-world-2.myshopify.com/cdn/shop/files/banner1-bottom-home2_b96bc752-67d4-45a5-ac32-49dc691b1958_600x.jpg?v=1613166661"
 					alt=""
 					className="w-full h-full object-cover col-span-2 row-span-2 rounded-lg shadow-sm border border-gray-200 hover:scale-105 transition-transform duration-300 ease-in-out transform hover:shadow-lg hover:border-amber-500 cursor-pointer"
+					loading="lazy"
+					decoding="async"
 				/>
 				<img
 					src="https://digital-world-2.myshopify.com/cdn/shop/files/banner2-bottom-home2_600x.jpg?v=1613166661"
 					alt=""
 					className="w-full h-full object-cover col-span-1 row-span-1 rounded-lg shadow-sm border border-gray-200 hover:scale-105 transition-transform duration-300 ease-in-out transform hover:shadow-lg hover:border-amber-500 cursor-pointer"
+					loading="lazy"
+					decoding="async"
 				/>
 				<img
 					src="https://digital-world-2.myshopify.com/cdn/shop/files/banner4-bottom-home2_92e12df0-500c-4897-882a-7d061bb417fd_400x.jpg?v=1613166661"
 					alt=""
 					className="w-full h-full object-cover col-span-1 row-span-2 rounded-lg shadow-sm border border-gray-200 hover:scale-105 transition-transform duration-300 ease-in-out transform hover:shadow-lg hover:border-amber-500 cursor-pointer"
+					loading="lazy"
+					decoding="async"
 				/>
 				<img
 					src="https://digital-world-2.myshopify.com/cdn/shop/files/banner3-bottom-home2_400x.jpg?v=1613166661"
 					alt=""
 					className="w-full h-full object-cover col-span-1 row-span-1 rounded-lg shadow-sm border border-gray-200 hover:scale-105 transition-transform duration-300 ease-in-out transform hover:shadow-lg hover:border-amber-500 cursor-pointer"
+					loading="lazy"
+					decoding="async"
 				/>
 			</div>
 		</>

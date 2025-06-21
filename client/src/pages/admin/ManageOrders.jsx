@@ -441,6 +441,7 @@ const ManageOrders = () => {
 																			.title
 																	}
 																	className="w-12 h-12 object-contain rounded"
+																	loading="lazy"
 																/>
 																<div className="min-w-0 flex-1">
 																	<p className="text-sm font-medium text-slate-800 truncate line-clamp-1">

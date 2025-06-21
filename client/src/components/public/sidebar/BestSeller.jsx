@@ -130,6 +130,8 @@ const BestSeller = () => {
 						src="https://digital-world-2.myshopify.com/cdn/shop/files/banner2-home2_2000x_crop_center.png?v=1613166657"
 						alt=""
 						className="flex-1 object-contain"
+						loading="lazy"
+						decoding="async"
 					/>
 				</Link>
 				<Link to={`/products/laptop/682348a77df1af2f60778941/apple-macbook-pro-13"`}>
@@ -137,6 +139,8 @@ const BestSeller = () => {
 						src="https://digital-world-2.myshopify.com/cdn/shop/files/banner1-home2_2000x_crop_center.png?v=1613166657"
 						alt=""
 						className="flex-1 object-contain"
+						loading="lazy"
+						decoding="async"
 					/>
 				</Link>
 			</div>

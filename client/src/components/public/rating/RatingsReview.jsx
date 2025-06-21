@@ -343,6 +343,8 @@ const RatingsReview = ({ product = {}, onReviewSubmitted }) => {
 											src={image}
 											alt={`Review image ${index + 1}`}
 											className="w-16 h-16 object-cover rounded-lg border"
+											loading="lazy"
+											decoding="async"
 										/>
 									))}
 								</div>
@@ -435,6 +437,8 @@ const RatingsReview = ({ product = {}, onReviewSubmitted }) => {
 										src={product.thumb}
 										alt={product.title}
 										className="w-full h-full object-contain rounded-lg"
+										loading="lazy"
+										decoding="async"
 									/>
 								</div>
 								<h3 className="font-semibold text-gray-900 text-sm mb-2">

@@ -185,12 +185,15 @@ const ProductCard = ({ data, isNew, normal }) => {
 						}
 						alt="image product"
 						className="h-[243px] object-contain display-block mx-auto"
+						loading="lazy"
+						decoding="async"
 					/>
 					{!normal && (
 						<img
 							src={isNew ? newLabel : trendingLabel}
 							alt="label"
 							className={`absolute top-[0px] right-[-17px] h-[30px] w-[90px] object-cover`}
+							loading="lazy"
 						/>
 					)}
 				</div>

@@ -256,6 +256,8 @@ const OrderDetailModal = ({ onClose, order }) => {
 												src={item.thumb}
 												alt={item.product.title}
 												className="w-16 h-16 object-contain rounded-lg border border-slate-200"
+												loading="lazy"
+												decoding="async"
 											/>
 											<div className="flex-1">
 												<h4 className="font-medium text-slate-800 mb-1">

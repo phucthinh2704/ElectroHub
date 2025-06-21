@@ -33,6 +33,8 @@ const HotCollections = ({ categories }) => {
 										src={category.image}
 										alt={category.title}
 										className="h-[180px] object-contain transition-transform duration-500 group-hover:scale-105"
+										loading="lazy"
+										decoding="async"
 									/>
 								</div>
 

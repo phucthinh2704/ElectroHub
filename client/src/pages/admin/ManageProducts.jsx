@@ -597,10 +597,7 @@ const ManageProducts = () => {
 															src={product.thumb}
 															alt={product.title}
 															className="w-full h-full object-cover"
-															onError={(e) => {
-																e.target.src =
-																	"https://via.placeholder.com/48x48/f3f4f6/9ca3af?text=No+Image";
-															}}
+															loading="lazy"
 														/>
 													</div>
 													<div className="min-w-0 flex-1">

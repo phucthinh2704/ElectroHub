@@ -64,6 +64,8 @@ const ProductFeaturedItem = ({ product }) => {
 						src={product.thumb}
 						alt={product.title || "Product image"}
 						className="w-full h-full object-contain block transition-transform duration-500 group-hover:scale-110"
+						loading="lazy"
+						decoding="async"
 					/>
 					{product.discount > 0 && (
 						<div className="absolute top-0 left-0 bg-main text-white text-xs font-medium py-1 px-2 rounded-br-md">

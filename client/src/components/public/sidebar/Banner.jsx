@@ -28,7 +28,7 @@ const Banner = () => {
 		<div className="overflow-hidden flex-1">
 			<Slider {...settings}>
 				{banners.map((banner) => (
-					<div key={banner.id} className="h-[500px]">
+					<div key={banner.id} className="h-[450px]">
 						<img
 							src={banner.src}
 							alt={banner.alt}

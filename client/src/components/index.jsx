@@ -17,6 +17,7 @@ export { default as TopHeader } from "./public/header/TopHeader";
 export { default as OrderDetailsModal } from "./public/order/OrderDetailsModal";
 export { default as Pagination } from "./public/pagination/Pagination";
 export { default as PaymentHistoryItem } from "./public/payment/PaymentHistoryItem";
+export { default as LoadingSpinner } from "./public/loading/LoadingSpinner";
 export { default as Paypal } from "./public/payment/Paypal";
 export { default as PreviewInvoice } from "./public/invoice/PreviewInvoice";
 export { default as FeaturedProducts } from "./public/product/FeaturedProducts";

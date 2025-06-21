@@ -189,6 +189,8 @@ const PaymentHistoryItem = ({ order, fetchOrders }) => {
 										src={product.thumb}
 										alt={product.product.title}
 										className="w-full h-full object-contain rounded-lg border border-gray-300"
+										loading="lazy"
+										decoding="async"
 									/>
 								</div>
 								<div className="flex-1">

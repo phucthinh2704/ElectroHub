@@ -181,6 +181,8 @@ const DealDaily = () => {
 								}
 								alt="Product image"
 								className="object-contain"
+								loading="lazy"
+								decoding="async"
 							/>
 
 							{/* Product details */}

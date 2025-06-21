@@ -86,6 +86,8 @@ const CartItem = ({ item, updateQuantity, removeItem }) => {
 								src={item.thumb}
 								alt={item.product.title}
 								className="w-full lg:w-40 h-40 object-contain rounded-xl group-hover:scale-105 transition-transform duration-500"
+								loading="lazy"
+								decoding="async"
 							/>
 						</div>
 					</Link>

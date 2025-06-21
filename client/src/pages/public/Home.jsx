@@ -11,15 +11,21 @@ import {
 } from "../../components";
 import { useDispatch, useSelector } from "react-redux";
 import { getNewProducts } from "../../store/products/asyncAction";
+import { useOutletContext } from 'react-router-dom';
 
 const Home = () => {
 	const dispatch = useDispatch();
+	const context = useOutletContext();
 	useEffect(() => {
 		dispatch(getNewProducts());
 	}, [dispatch]);
 	const { newProducts } = useSelector((state) => state.products);
 	const { categories } = useSelector((state) => state.app);
-	
+	useEffect(() => {
+		if (context && context.onReady) {
+			context.onReady();
+		}
+	}, [context]);
 	return (
 		<div className="w-(--main-width) mx-auto">
 			<div className=" flex gap-5">

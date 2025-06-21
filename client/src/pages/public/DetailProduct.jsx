@@ -508,6 +508,8 @@ const DetailProduct = () => {
 														src={product.thumb}
 														alt="thumb"
 														className="w-12 h-12 object-contain rounded-lg"
+														loading="lazy"
+														decoding="async"
 													/>
 													<div>
 														<span className="font-semibold">
@@ -561,6 +563,8 @@ const DetailProduct = () => {
 																	}
 																	alt="thumb"
 																	className="w-12 h-12 object-contain rounded-lg"
+																	loading="lazy"
+																	decoding="async"
 																/>
 																<div>
 																	<span className="font-semibold">

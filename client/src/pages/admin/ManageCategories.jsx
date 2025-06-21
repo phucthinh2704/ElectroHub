@@ -173,7 +173,7 @@ const ManageCategories = () => {
 									Add New Category
 								</button>
 								<button
-									className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2 cursor-pointer"	
+									className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2 cursor-pointer"
 									onClick={() => {
 										setShowEditForm(true);
 										setMode("add");
@@ -304,6 +304,7 @@ const ManageCategories = () => {
 											src={category.image}
 											alt={category.title}
 											className="h-full w-full object-contain"
+											loading="lazy"
 										/>
 									) : (
 										<div className="w-full h-full flex items-center justify-center text-slate-400">
