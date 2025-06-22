@@ -21,7 +21,8 @@ const Header = () => {
 			<Link to={`/${path.HOME}`}>
 				<img
 					src={logo}
-					alt="logo"
+					alt="Electro Hub Digital Logo"
+					loading="lazy"
 					className="w-[234px] object-cover"
 				/>
 			</Link>

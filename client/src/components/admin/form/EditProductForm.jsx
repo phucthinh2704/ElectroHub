@@ -540,7 +540,9 @@ const EditProductForm = ({
 									<Zoom>
 										<img
 											src={previewImage.thumb}
-											alt="Thumbnail Preview"
+											alt={selectedProduct.title}
+											loading="lazy"
+											decoding="async"
 											className="h-30 object-contain block rounded-lg shadow-md border-2 border-gray-200 hover:border-blue-500 transition-all duration-300"
 										/>
 									</Zoom>
@@ -582,7 +584,9 @@ const EditProductForm = ({
 									<Zoom key={index}>
 										<img
 											src={image}
-											alt="Image Preview"
+											alt={`Product Image ${selectedProduct.title} ${index + 1}`}
+											loading="lazy"
+											decoding="async"
 											className="h-30 object-contain block rounded-lg shadow-md border-2 border-gray-200 hover:border-blue-500 transition-all duration-300"
 										/>
 									</Zoom>

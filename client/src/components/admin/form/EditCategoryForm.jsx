@@ -339,7 +339,9 @@ const EditCategoryForm = ({
 									<Zoom>
 										<img
 											src={previewImage}
-											alt="Category Preview"
+											alt={selectedCategory.title || "Category Image"}
+											loading="lazy"
+											decoding="async"
 											className="h-40 object-contain block rounded-lg shadow-md border-2 border-gray-200 hover:border-blue-500 transition-all duration-300"
 										/>
 									</Zoom>

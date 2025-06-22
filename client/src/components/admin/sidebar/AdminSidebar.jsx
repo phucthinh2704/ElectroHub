@@ -126,12 +126,12 @@ const AdminSidebar = ({ admin }) => {
 							{admin.avatar ? (
 								<img
 									src={admin.avatar}
-									alt=""
+									alt="Admin Avatar"
 								/>
 							) : (
 								<img
 									src={avatarDefault}
-									alt=""
+									alt="Default Avatar"
 								/>
 							)}
 						</div>

@@ -143,7 +143,7 @@ const OrderDetailsModal = ({ order, setShowDetail }) => {
 									<div className="flex-shrink-0 w-23 h-23 bg-white rounded-lg overflow-hidden border border-gray-200">
 										<img
 											src={product.thumb}
-											alt="Product"
+											alt={product.product.title}
 											className="w-full h-full object-contain"
 										/>
 									</div>

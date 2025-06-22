@@ -232,6 +232,8 @@ const DetailProduct = () => {
 															] || variant.thumb
 														}
 														alt={product.title}
+														loading="lazy"
+														decoding="async"
 														className="h-[560px] object-contain display-block mx-auto"
 													/>
 												</Zoom>
@@ -245,6 +247,8 @@ const DetailProduct = () => {
 														] || product.thumb
 													}
 													alt={product.title}
+													loading="lazy"
+													decoding="async"
 													className="h-[560px] object-contain display-block mx-auto"
 												/>
 											</Zoom>
@@ -285,6 +289,8 @@ const DetailProduct = () => {
 																} thumbnail ${
 																	index + 1
 																}`}
+																loading="lazy"
+																decoding="async"
 																className="h-full object-contain display-block mx-auto"
 															/>
 														</div>
@@ -315,6 +321,8 @@ const DetailProduct = () => {
 																} thumbnail ${
 																	index + 1
 																}`}
+																loading="lazy"
+																decoding="async"
 																className="h-full object-contain display-block mx-auto"
 															/>
 														</div>
@@ -349,6 +357,8 @@ const DetailProduct = () => {
 															} thumbnail ${
 																index + 1
 															}`}
+															loading="lazy"
+															decoding="async"
 															className="h-full object-contain display-block mx-auto"
 														/>
 													</div>
@@ -379,6 +389,8 @@ const DetailProduct = () => {
 															} thumbnail ${
 																index + 1
 															}`}
+															loading="lazy"
+													decoding="async"
 															className="h-full object-contain display-block mx-auto"
 														/>
 													</div>
@@ -506,7 +518,7 @@ const DetailProduct = () => {
 													}>
 													<img
 														src={product.thumb}
-														alt="thumb"
+														alt={product.title}
 														className="w-12 h-12 object-contain rounded-lg"
 														loading="lazy"
 														decoding="async"
@@ -561,7 +573,9 @@ const DetailProduct = () => {
 																	src={
 																		variantItem.thumb
 																	}
-																	alt="thumb"
+																	alt={
+																		product.title
+																	}
 																	className="w-12 h-12 object-contain rounded-lg"
 																	loading="lazy"
 																	decoding="async"
@@ -714,7 +728,9 @@ const DetailProduct = () => {
 							</div>
 						</div>
 						<div className="mt-8">
-							<InformationDetail description={product.description} />
+							<InformationDetail
+								description={product.description}
+							/>
 						</div>
 						<div className="mt-8">
 							<RatingsReview

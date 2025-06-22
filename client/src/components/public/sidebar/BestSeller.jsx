@@ -124,21 +124,25 @@ const BestSeller = () => {
 					</Slider>
 				)}
 			</div>
-			<div className="w-full flex mt-4 gap-4">
-				<Link to={`/products/laptop/682348a77df1af2f6077893d/dell-inspiron-7460-q7xh6dt7`}>
+			<div className="w-full flex justify-between mt-2 gap-2">
+				<Link
+					className="flex-1"
+					to={`/products/laptop/682348a77df1af2f6077893d/dell-inspiron-7460-q7xh6dt7`}>
 					<img
 						src="https://digital-world-2.myshopify.com/cdn/shop/files/banner2-home2_2000x_crop_center.png?v=1613166657"
-						alt=""
-						className="flex-1 object-contain"
+						alt="Laptop Dell Inspiron 7460"
+						className="object-contain w-full"
 						loading="lazy"
 						decoding="async"
 					/>
 				</Link>
-				<Link to={`/products/laptop/682348a77df1af2f60778941/apple-macbook-pro-13"`}>
+				<Link
+					className="flex-1"
+					to={`/products/laptop/682348a77df1af2f60778941/apple-macbook-pro-13"`}>
 					<img
 						src="https://digital-world-2.myshopify.com/cdn/shop/files/banner1-home2_2000x_crop_center.png?v=1613166657"
-						alt=""
-						className="flex-1 object-contain"
+						alt="Laptop Apple MacBook Pro 13"
+						className="object-contain w-full"
 						loading="lazy"
 						decoding="async"
 					/>
