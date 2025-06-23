@@ -5,8 +5,6 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const createToken = require("uniqid");
 require("dotenv").config();
-// const { LocalStorage } = require('node-localstorage');
-// const localStorage = new LocalStorage('./scratch');
 const sendMail = require("../utils/sendMail");
 const {
 	generateAccessToken,
@@ -178,6 +176,7 @@ const login = asyncHandler(async (req, res) => {
 		secure: true, // Bắt buộc với HTTPS
 		sameSite: "none",
 		maxAge: 7 * 24 * 60 * 60 * 1000, // 7 ngày
+		expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 ngày
 	});
 
 	return res.status(200).json({
