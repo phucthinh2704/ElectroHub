@@ -125,6 +125,25 @@ const DetailProduct = () => {
 	};
 
 	const handleAddToCart = async () => {
+		if (!current) {
+			Swal.fire({
+				title: "Please login to continue",
+				icon: "warning",
+				showCancelButton: true,
+				confirmButtonText: "Login",
+				cancelButtonText: "Cancel",
+			}).then((result) => {
+				if (result.isConfirmed) {
+					window.scrollTo(0, 0);
+					navigate(`/${path.LOGIN}`, {
+						state: `/products/${product.category.toLowerCase()}/${
+							product._id
+						}/${product.slug}`,
+					});
+				}
+			});
+			return;
+		}
 		if (variant) {
 			try {
 				if (variant.stock <= 0) {
@@ -390,7 +409,7 @@ const DetailProduct = () => {
 																index + 1
 															}`}
 															loading="lazy"
-													decoding="async"
+															decoding="async"
 															className="h-full object-contain display-block mx-auto"
 														/>
 													</div>

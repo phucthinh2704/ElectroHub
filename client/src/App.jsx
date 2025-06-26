@@ -7,38 +7,6 @@ import "react-toastify/dist/ReactToastify.css";
 import Swal from "sweetalert2";
 import { apiGetCurrent, apiLogout } from "./apis";
 import { LoadingSpinner, ScrollToTop } from "./components";
-// import {
-// 	AdminDashboard,
-// 	AdminLayout,
-// 	CreateProduct,
-// 	ManageCategories,
-// 	ManageOrders,
-// 	ManageProducts,
-// 	ManageUsers,
-// } from "./pages/admin";
-// import {
-// 	Checkout,
-// 	MemberLayout,
-// 	MyCart,
-// 	OrderHistory,
-// 	Personal,
-// 	Wishlist,
-// } from "./pages/member";
-// import {
-// 	Blogs,
-// 	DetailProduct,
-// 	FAQ,
-// 	ForgotPassword,
-// 	Home,
-// 	Login,
-// 	Products,
-// 	ProductsPage,
-// 	PublicLayout,
-// 	ResetPassword,
-// 	Services,
-// } from "./pages/public";
-import Dashboard1 from "./pages/admin/Dashboard1";
-import Dashboard2 from "./pages/admin/Dashboard2";
 import { getCategories } from "./store/app/asyncActions";
 import { logout } from "./store/user/userSlice";
 import path from "./utils/path";
@@ -137,14 +105,6 @@ function App() {
 						<Route
 							path={path.HOME}
 							element={<Home />}
-						/>
-						<Route
-							path={`/dashboard1`}
-							element={<Dashboard1 />}
-						/>
-						<Route
-							path={`/dashboard2`}
-							element={<Dashboard2 />}
 						/>
 						<Route
 							path={path.PRODUCTS_CATEGORY}

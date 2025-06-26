@@ -250,7 +250,7 @@ const ProductsPage = () => {
 							</h4>
 							<div className="relative">
 								<select
-									className="w-full p-3 pr-10 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white cursor-pointer appearance-none"
+									className="w-full p-3 pr-10 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white cursor-pointer appearance-none uppercase"
 									value={selectedBrand}
 									onChange={(e) => {
 										window.scrollTo(0, 120);
@@ -297,7 +297,7 @@ const ProductsPage = () => {
 							</h4>
 							<div className="relative">
 								<select
-									className="w-full p-3 pr-10 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white cursor-pointer appearance-none"
+									className="w-full p-3 pr-10 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white cursor-pointer appearance-none uppercase"
 									value={selectedPriceRange.label}
 									onChange={(e) => {
 										window.scrollTo(0, 120);
