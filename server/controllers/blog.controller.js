@@ -17,8 +17,12 @@ const createNewBlog = asyncHandler(async (req, res) => {
 });
 
 const getAllBlogs = asyncHandler(async (req, res) => {
-	const blogs = await Blog.find();
-	if (!blogs) throw new Error("No blogs found");
+	const queryCommand = Blog.find();
+
+	const page = parseInt(req.query.page) || 1;
+	const limit = parseInt(req.query.limit) || 999999;
+	const skip = (page - 1) * limit; // tương tự như offset trong SQL
+	const blogs = await queryCommand.skip(skip).limit(limit);
 
 	return res.status(200).json({
 		success: true,

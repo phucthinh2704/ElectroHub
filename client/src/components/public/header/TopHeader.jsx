@@ -243,13 +243,10 @@ const TopHeader = () => {
 						) : (
 							<Link
 								to={`/${path.LOGIN}`}
-								className="flex items-center gap-2 bg-white/10 rounded-full px-3 sm:px-4 py-1.5 hover:bg-white/20 transition-all">
+								className="flex items-center gap-2 bg-white/20 rounded-full px-3 sm:px-4 py-1.5 hover:bg-white/20 transition-all">
 								<User size={14} />
-								<span className="text-xs sm:text-sm font-medium hidden xs:inline">
-									Sign In
-								</span>
-								<span className="text-xs sm:text-sm font-medium xs:hidden">
-									Login
+								<span className="text-xs sm:text-sm font-medium">
+									Sign In or <span className="hidden sm:inline">Register</span>
 								</span>
 							</Link>
 						)}

@@ -11,6 +11,10 @@ const blogSchema = new mongoose.Schema(
 			type: String,
 			required: true,
 		},
+		content: {
+			type: Array,
+			required: true,
+		},
 		category: {
 			type: String,
 			required: true,
@@ -39,6 +43,15 @@ const blogSchema = new mongoose.Schema(
 		author: {
 			type: String,
 			default: "Admin",
+		},
+		// authorId: {
+		// 	type: mongoose.Schema.Types.ObjectId,
+		// 	ref: "User",
+		// 	required: true,
+		// },
+		featured: {
+			type: Boolean,
+			default: false,
 		},
 	},
 	{
