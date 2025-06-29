@@ -1,6 +1,6 @@
 export { default as BlogPosts } from "./public/blog/BlogPosts";
 export { default as BlogCard } from "./public/blog/BlogCard";
-export { default as BlogDetail } from "./public/blog/BlogDetail";
+export { default as AddBlogModal } from "./public/blog/AddBlogModal";
 export { default as CartItem } from "./public/cart/CartItem";
 export { default as BackToTop } from "./public/common/BackToTop";
 export { default as Breadcrumbs } from "./public/common/Breadcrumbs";

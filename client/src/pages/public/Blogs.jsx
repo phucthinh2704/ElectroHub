@@ -2,126 +2,31 @@ import { ArrowRight, Filter, Pen, Search } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { apiGetAllBlogs } from "../../apis/blog";
-import { BlogDetail } from "../../components";
+import { AddBlogModal } from "../../components";
 import BlogCard from "../../components/public/blog/BlogCard";
+import { categoriesBlog } from "../../utils/constants";
 
 const Blogs = () => {
 	const [selectedCategory, setSelectedCategory] = useState("all");
 	const [searchTerm, setSearchTerm] = useState("");
 	const [sortBy, setSortBy] = useState("newest");
 	const [blogPosts, setBlogPosts] = useState([]);
-	const [showModalWritePost, setShowModalWritePost] = useState(false);
-	const [showDetailBlog, setShowDetailBlog] = useState(false);
-	const [selectedPost, setSelectedPost] = useState(null);
 
 	const { current } = useSelector((state) => state.user);
 
+	const fetchBlogs = async () => {
+		const response = await apiGetAllBlogs();
+		if (response.success) {
+			setBlogPosts(response.blogs);
+		}
+	};
 	useEffect(() => {
-		const fetchBlogs = async () => {
-			const response = await apiGetAllBlogs();
-			if (response.success) {
-				setBlogPosts(response.blogs);
-			}
-		};
-
 		fetchBlogs();
 	}, []);
 
-	// Sample blog data based on your schema
-	// const blogPosts = [
-	// 	{
-	// 		_id: "1",
-	// 		title: "iPhone 15 Pro Max: Đánh giá chi tiết camera và hiệu năng mới nhất",
-	// 		description:
-	// 			"Khám phá những tính năng đột phá của iPhone 15 Pro Max với camera 48MP Pro, chip A17 Pro mạnh mẽ và thiết kế titan cao cấp. Đây có thể là chiếc smartphone hoàn hảo nhất mà Apple từng tạo ra.",
-	// 		category: "Smartphone",
-	// 		numberViews: 2847,
-	// 		likes: ["user1", "user2", "user3", "user4", "user5"],
-	// 		dislikes: ["user6"],
-	// 		image: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=600&h=400&fit=crop",
-	// 		author: "Minh Tuấn",
-	// 		createdAt: "2024-06-15T10:30:00Z",
-	// 		featured: true,
-	// 	},
-	// 	{
-	// 		_id: "2",
-	// 		title: "Top 10 Laptop Gaming 2024: Lựa chọn tốt nhất cho game thủ chuyên nghiệp",
-	// 		description:
-	// 			"Danh sách chi tiết những laptop gaming mạnh mẽ nhất năm 2024 với GPU RTX 4090, CPU Intel thế hệ 13 và màn hình 240Hz. Phân tích từng sản phẩm để bạn chọn được chiếc máy phù hợp nhất.",
-	// 		category: "Laptop",
-	// 		numberViews: 3924,
-	// 		likes: ["user1", "user3", "user7", "user8"],
-	// 		dislikes: [],
-	// 		image: "https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?w=600&h=400&fit=crop",
-	// 		author: "Phương Anh",
-	// 		createdAt: "2024-06-12T14:20:00Z",
-	// 		featured: false,
-	// 	},
-	// 	{
-	// 		_id: "3",
-	// 		title: "Sony WH-1000XM5: Tai nghe chống ồn tốt nhất thế giới",
-	// 		description:
-	// 			"Trải nghiệm âm thanh Hi-Res đỉnh cao với công nghệ chống ồn thế hệ mới V1. Sony WH-1000XM5 không chỉ mang đến chất lượng âm thanh tuyệt vời mà còn có thiết kế sang trọng và pin 30 giờ.",
-	// 		category: "Audio",
-	// 		numberViews: 1687,
-	// 		likes: ["user2", "user4", "user9"],
-	// 		dislikes: ["user10"],
-	// 		image: "https://images.unsplash.com/photo-1484704849700-f032a568e944?w=600&h=400&fit=crop",
-	// 		author: "Hoàng Nam",
-	// 		createdAt: "2024-06-10T09:15:00Z",
-	// 		featured: false,
-	// 	},
-	// 	{
-	// 		_id: "4",
-	// 		title: "MacBook Pro M3: Hiệu năng vượt trội cho content creator và developer",
-	// 		description:
-	// 			"Apple M3 chip với CPU 8-core và GPU 10-core mang đến hiệu năng xử lý video 4K, rendering 3D và lập trình nhanh chóng hơn bao giờ hết. Đây là công cụ hoàn hảo cho các nhà sáng tạo nội dung chuyên nghiệp.",
-	// 		category: "Laptop",
-	// 		numberViews: 2156,
-	// 		likes: ["user1", "user5", "user11", "user12", "user13"],
-	// 		dislikes: [],
-	// 		image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&h=400&fit=crop",
-	// 		author: "Thu Hà",
-	// 		createdAt: "2024-06-08T11:45:00Z",
-	// 		featured: true,
-	// 	},
-	// 	{
-	// 		_id: "5",
-	// 		title: "Samsung Galaxy S24 Ultra: Camera zoom 100x và S Pen thế hệ mới",
-	// 		description:
-	// 			"Khám phá khả năng zoom xa đến 100x với AI Super Resolution và những tính năng độc đáo của S Pen trên Galaxy S24 Ultra. Màn hình Dynamic AMOLED 2X 6.8 inch với độ sáng 2600 nits đỉnh cao.",
-	// 		category: "Smartphone",
-	// 		numberViews: 1893,
-	// 		likes: ["user3", "user6", "user14"],
-	// 		dislikes: ["user15"],
-	// 		image: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=600&h=400&fit=crop",
-	// 		author: "Đức Minh",
-	// 		createdAt: "2024-06-05T16:30:00Z",
-	// 		featured: false,
-	// 	},
-	// 	{
-	// 		_id: "6",
-	// 		title: "Setup Gaming 2024: Từ chuột, bàn phím đến màn hình gaming 4K",
-	// 		description:
-	// 			"Hướng dẫn chi tiết cách setup bộ gaming hoàn hảo với chuột Logitech G Pro X, bàn phím cơ Cherry MX, và màn hình gaming 4K 144Hz. Tất cả những gì bạn cần để trở thành pro gamer.",
-	// 		category: "Gaming",
-	// 		numberViews: 1456,
-	// 		likes: ["user7", "user8", "user16"],
-	// 		dislikes: [],
-	// 		image: "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=600&h=400&fit=crop",
-	// 		author: "Văn Hưng",
-	// 		createdAt: "2024-06-03T13:20:00Z",
-	// 		featured: false,
-	// 	},
-	// ];
-
 	const categories = [
 		"all",
-		"Smartphone",
-		"Laptop",
-		"Audio",
-		"Gaming",
-		"Phụ kiện",
+		...categoriesBlog,
 	];
 
 	// Filter and sort posts
@@ -219,13 +124,8 @@ const Blogs = () => {
 								<option value="popular">Popular</option>
 								<option value="liked">Liked</option>
 							</select>
-							{current && (
-								<button
-									className="inline-flex items-center px-6 py-2.5 bg-green-600 text-white font-semibold rounded-xl transform hover:scale-105 transition-all duration-300 hover:shadow-lg cursor-pointer"
-									onClick={() => setShowModalWritePost(true)}>
-									Write Post
-									<Pen className="w-5 h-5 ml-3" />
-								</button>
+							{current?.role === "admin" && (
+								<AddBlogModal fetchBlogs={fetchBlogs} />
 							)}
 						</div>
 					</div>
@@ -239,7 +139,7 @@ const Blogs = () => {
 					<div className="mb-16">
 						<div className="flex items-center mb-8">
 							<h2 className="text-3xl font-bold text-gray-900">
-								Featured article
+								Featured Posts
 							</h2>
 							<div className="ml-4 h-1 flex-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"></div>
 						</div>
@@ -249,37 +149,16 @@ const Blogs = () => {
 									key={post._id}
 									post={post}
 									featured={true}
-									onClick={() => {
-										setSelectedPost(post);
-										setShowDetailBlog(true);
-									}}
 								/>
 							))}
 						</div>
-					</div>
-				)}
-				{showDetailBlog && selectedPost && (
-					<div
-						className="fixed inset-0 bg-black/70 bg-opacity-50 flex items-center justify-center z-50"
-						onClick={(e) => {
-							if (e.target === e.currentTarget) {
-								setShowDetailBlog(false);
-								setSelectedPost(null);
-							}
-						}}>
-						<BlogDetail
-							post={selectedPost}
-							onClose={() => {
-								setShowDetailBlog(false);
-								setSelectedPost(null);
-							}}></BlogDetail>
 					</div>
 				)}
 				{/* Regular Posts */}
 				<div>
 					<div className="flex items-center mb-8">
 						<h2 className="text-3xl font-bold text-gray-900">
-							Another articles
+							Another Posts
 						</h2>
 						<div className="ml-4 h-1 flex-1 bg-gradient-to-r from-green-500 to-blue-500 rounded-full"></div>
 					</div>
@@ -290,10 +169,6 @@ const Blogs = () => {
 								<BlogCard
 									key={post._id}
 									post={post}
-									onClick={() => {
-										setSelectedPost(post);
-										setShowDetailBlog(true);
-									}}
 								/>
 							))}
 						</div>

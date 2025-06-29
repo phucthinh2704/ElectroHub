@@ -17,7 +17,7 @@ const createNewBlog = asyncHandler(async (req, res) => {
 });
 
 const getAllBlogs = asyncHandler(async (req, res) => {
-	const queryCommand = Blog.find();
+	const queryCommand = Blog.find().populate("author", "name avatar email");
 
 	const page = parseInt(req.query.page) || 1;
 	const limit = parseInt(req.query.limit) || 999999;
@@ -32,10 +32,11 @@ const getAllBlogs = asyncHandler(async (req, res) => {
 });
 
 const getBlogById = asyncHandler(async (req, res) => {
-	const fields = "firstName lastName email";
+	const fields = "name email avatar";
 	const blog = await Blog.findById(req.params.blogId)
 		.populate("likes", fields)
-		.populate("dislikes", fields);
+		.populate("dislikes", fields)
+		.populate("author", fields);
 	if (!blog) throw new Error("No blog found");
 
 	blog.numberViews += 1;

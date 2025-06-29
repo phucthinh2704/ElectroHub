@@ -31,6 +31,7 @@ const Wishlist = lazy(() => import("./pages/member/Wishlist"));
 
 // PUBLIC
 const Blogs = lazy(() => import("./pages/public/Blogs"));
+const DetailBlog = lazy(() => import("./pages/public/DetailBlog"));
 const DetailProduct = lazy(() => import("./pages/public/DetailProduct"));
 const FAQ = lazy(() => import("./pages/public/FAQ"));
 const ForgotPassword = lazy(() => import("./pages/public/ForgotPassword"));
@@ -41,6 +42,7 @@ const ProductsPage = lazy(() => import("./pages/public/ProductsPage"));
 const PublicLayout = lazy(() => import("./pages/public/PublicLayout"));
 const ResetPassword = lazy(() => import("./pages/public/ResetPassword"));
 const Services = lazy(() => import("./pages/public/Services"));
+const NotFound = lazy(() => import("./pages/public/NotFound"));
 
 function App() {
 	const dispatch = useDispatch();
@@ -115,6 +117,10 @@ function App() {
 							element={<Blogs />}
 						/>
 						<Route
+							path={path.DETAIL_BLOGS}
+							element={<DetailBlog />}
+						/>
+						<Route
 							path={path.OUR_SERVICES}
 							element={<Services />}
 						/>
@@ -144,7 +150,7 @@ function App() {
 						/>
 						<Route
 							path={path.ALL}
-							element={<Home />}
+							element={<NotFound />}
 						/>
 					</Route>
 					<Route

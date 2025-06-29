@@ -1,15 +1,12 @@
 import { ArrowRight, Newspaper } from "lucide-react";
 import React, { memo, useEffect, useState } from "react";
-import { apiGetAllBlogs } from "../../../apis/blog";
-import BlogCard from "./BlogCard";
-import BlogDetail from "./BlogDetail";
 import { Link } from "react-router-dom";
+import { apiGetAllBlogs } from "../../../apis/blog";
 import path from "../../../utils/path";
+import BlogCard from "./BlogCard";
 
 const BlogPosts = () => {
 	const [blogPosts, setBlogPosts] = useState([]);
-	const [selectedPost, setSelectedPost] = useState(null);
-	const [showDetailBlog, setShowDetailBlog] = useState(false);
 
 	useEffect(() => {
 		const fetchBlogs = async () => {
@@ -43,36 +40,17 @@ const BlogPosts = () => {
 					<BlogCard
 						key={post._id}
 						post={post}
-						onClick={() => {
-							setSelectedPost(post);
-							setShowDetailBlog(true);
-						}}
 					/>
 				))}
 			</div>
-			<Link to={`/${path.BLOGS}`} className="flex justify-center">
+			<Link
+				to={`/${path.BLOGS}`}
+				className="flex justify-center">
 				<button className="flex items-center justify-center px-8 py-3 bg-blue-600 text-white text-xl font-medium rounded-xl transform hover:scale-105 transition-all duration-300 hover:shadow-lg cursor-pointer mx-auto mt-6">
 					See more
 					<ArrowRight className="w-4 h-4 ml-1" />
 				</button>
 			</Link>
-			{showDetailBlog && selectedPost && (
-				<div
-					className="fixed inset-0 bg-black/70 bg-opacity-50 flex items-center justify-center z-50"
-					onClick={(e) => {
-						if (e.target === e.currentTarget) {
-							setShowDetailBlog(false);
-							setSelectedPost(null);
-						}
-					}}>
-					<BlogDetail
-						post={selectedPost}
-						onClose={() => {
-							setShowDetailBlog(false);
-							setSelectedPost(null);
-						}}></BlogDetail>
-				</div>
-			)}
 		</div>
 	);
 };

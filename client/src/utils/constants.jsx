@@ -147,6 +147,17 @@ export const services = [
 	},
 ];
 
+export const categoriesBlog = [
+	"Web Development",
+	"Mobile Development",
+	"AI & Machine Learning",
+	"DevOps",
+	"UI/UX Design",
+	"Cybersecurity",
+	"Data Science",
+	"Cloud Computing",
+];
+
 export const categoriesFAQ = [
 	{ id: "all", name: "All Questions", icon: Users },
 	{ id: "orders", name: "Orders & Shipping", icon: Truck },
