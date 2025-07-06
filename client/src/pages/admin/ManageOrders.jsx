@@ -196,7 +196,7 @@ const ManageOrders = () => {
 									Track and manage all customer orders
 								</p>
 							</div>
-							<button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2 cursor-pointer">
+							<button className="bg-rose-500 hover:bg-rose-600 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2 cursor-pointer">
 								<Package className="w-5 h-5" />
 								Export Orders
 							</button>

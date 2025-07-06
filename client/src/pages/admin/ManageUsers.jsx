@@ -214,7 +214,7 @@ const ManageUsers = () => {
 									Manage and monitor all users in your system
 								</p>
 							</div>
-							<button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2 cursor-pointer" onClick={handleExportUsers}>
+							<button className="bg-rose-500 hover:bg-rose-600 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2 cursor-pointer" onClick={handleExportUsers}>
 								<Download />
 								Export Users
 							</button>
@@ -330,7 +330,7 @@ const ManageUsers = () => {
 													e.target.value
 												)
 											}
-											className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+											className="w-full pl-10 pr-4 py-3 outline-none border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
 										/>
 									</div>
 								</div>

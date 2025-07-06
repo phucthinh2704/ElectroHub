@@ -16,3 +16,13 @@ export const apiCreateBlog = async (data) =>
 		url: `/blog/`,
 		data,
 	});
+export const apiLikeBlog = async (id) =>
+	axios({
+		method: "PUT",
+		url: `/blog/like/${id}`,
+	});
+export const apiDislikeBlog = async (id) =>
+	axios({
+		method: "PUT",
+		url: `/blog/dislike/${id}`,
+	});

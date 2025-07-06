@@ -302,7 +302,7 @@ const ManageProducts = () => {
 										Add New Product
 									</button>
 								</Link>
-								<button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2 cursor-pointer" onClick={handleExportProducts}>
+								<button className="bg-rose-500 hover:bg-rose-600 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2 cursor-pointer" onClick={handleExportProducts}>
 									<Download />
 									Export Products
 								</button>

@@ -9,18 +9,21 @@ import {
 } from "lucide-react";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { apiBlogById } from "../../apis/blog";
+import { apiBlogById, apiDislikeBlog, apiLikeBlog } from "../../apis/blog";
 import avatarDefault from "../../assets/avatarDefault.png";
+import Swal from "sweetalert2";
 
 const DetailBlog = () => {
 	const [isLiked, setIsLiked] = useState(false);
 	const [isDisliked, setIsDisliked] = useState(false);
-	const [likeCount, setLikeCount] = useState(245);
-	const [dislikeCount, setDislikeCount] = useState(12);
+	const [likeCount, setLikeCount] = useState(0);
+	const [dislikeCount, setDislikeCount] = useState(0);
 	const [readingProgress, setReadingProgress] = useState(0);
 	const [blog, setBlog] = useState(null);
 
+	const { current } = useSelector((state) => state.user);
 	const { blogId } = useParams();
 
 	useEffect(() => {
@@ -28,13 +31,23 @@ const DetailBlog = () => {
 			const response = await apiBlogById(blogId);
 			if (response.success) {
 				setBlog(response.blog);
-            setLikeCount(response.blog.likes.length);
-            setDislikeCount(response.blog.dislikes.length);
-				console.log(response.blog);
+				setIsLiked(
+					response.blog.likes.find(
+						(user) => current._id.toString() === user._id.toString()
+					) !== undefined
+				);
+				setIsDisliked(
+					response.blog.dislikes.find(
+						(user) => current._id.toString() === user._id.toString()
+					) !== undefined
+				);
+				setLikeCount(response.blog.likes.length);
+				setDislikeCount(response.blog.dislikes.length);
 			}
 		};
 		fetchBlogById();
-	}, [blogId]);
+	}, [blogId, current]);
+
 	// Sample blog data
 	const blogData = blog || {
 		_id: "64f8b2c3d1a2b3c4e5f6g7h8",
@@ -100,22 +113,48 @@ const DetailBlog = () => {
 		return () => window.removeEventListener("scroll", handleScroll);
 	}, []);
 
-	const handleLike = () => {
-		if (isDisliked) {
-			setIsDisliked(false);
-			setDislikeCount((prev) => prev - 1);
+	const handleLike = async () => {
+		try {
+			const response = await apiLikeBlog(blogData._id);
+			if (response.success) {
+				if (isDisliked) {
+					setIsDisliked(false);
+					setDislikeCount((prev) => prev - 1);
+				}
+				setIsLiked(!isLiked);
+				setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
+			} else {
+				Swal.fire({
+					icon: "warning",
+					title: "",
+					text: "Please login to like this blog!",
+				});
+			}
+		} catch (error) {
+			console.log("Error liking blog:", error);
 		}
-		setIsLiked(!isLiked);
-		setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
 	};
 
-	const handleDislike = () => {
-		if (isLiked) {
-			setIsLiked(false);
-			setLikeCount((prev) => prev - 1);
+	const handleDislike = async () => {
+		try {
+			const response = await apiDislikeBlog(blogData._id);
+			if (response.success) {
+				if (isLiked) {
+					setIsLiked(false);
+					setLikeCount((prev) => prev - 1);
+				}
+				setIsDisliked(!isDisliked);
+				setDislikeCount((prev) => (isDisliked ? prev - 1 : prev + 1));
+			} else {
+				Swal.fire({
+					icon: "warning",
+					title: "",
+					text: "Please login to dislike this blog!",
+				});
+			}
+		} catch (error) {
+			console.log("Error disliking blog:", error);
 		}
-		setIsDisliked(!isDisliked);
-		setDislikeCount((prev) => (isDisliked ? prev - 1 : prev + 1));
 	};
 
 	const renderContent = (contentArray) => {

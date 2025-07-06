@@ -148,12 +148,12 @@ const login = asyncHandler(async (req, res) => {
 	const user = await User.findOne({ email }).populate("cart.product");
 	if (!user)
 		throw new Error(
-			"Login failed: User not found. Please check your username and try again."
+			"Invalid credentials. Please check your email or password and try again."
 		);
 
 	const isMatch = await bcrypt.compare(password, user.password);
 	if (!isMatch)
-		throw new Error("The password that you've entered is incorrect.");
+		throw new Error("Invalid credentials. Please check your email or password and try again.");
 
 	if (user.isBlocked) {
 		throw new Error(
