@@ -1,6 +1,7 @@
 const Blog = require("../models/blog");
 const asyncHandler = require("express-async-handler");
 
+// [POST] /blog
 const createNewBlog = asyncHandler(async (req, res) => {
 	if (!req.body) throw new Error("Missing request body");
 
@@ -16,6 +17,7 @@ const createNewBlog = asyncHandler(async (req, res) => {
 	});
 });
 
+// [GET] /blog
 const getAllBlogs = asyncHandler(async (req, res) => {
 	const queryCommand = Blog.find().populate("author", "name avatar email");
 
@@ -31,12 +33,20 @@ const getAllBlogs = asyncHandler(async (req, res) => {
 	});
 });
 
+// [GET] /blog/:blogId
 const getBlogById = asyncHandler(async (req, res) => {
 	const fields = "name email avatar";
 	const blog = await Blog.findById(req.params.blogId)
 		.populate("likes", fields)
 		.populate("dislikes", fields)
-		.populate("author", fields);
+		.populate("author", fields)
+		.populate({
+			path: "comments",
+			populate: {
+				path: "postedBy",
+				select: "name avatar",
+			},
+		});
 	if (!blog) throw new Error("No blog found");
 
 	blog.numberViews += 1;
@@ -49,6 +59,7 @@ const getBlogById = asyncHandler(async (req, res) => {
 	});
 });
 
+// [PUT] /blog/:blogId
 const updateBlog = asyncHandler(async (req, res) => {
 	const { blogId } = req.params;
 
@@ -64,6 +75,7 @@ const updateBlog = asyncHandler(async (req, res) => {
 	});
 });
 
+// [DELETE] /blog/:blogId
 const deleteBlog = asyncHandler(async (req, res) => {
 	const { blogId } = req.params;
 
@@ -77,6 +89,7 @@ const deleteBlog = asyncHandler(async (req, res) => {
 	});
 });
 
+// [PUT] /blog/like/:blogId
 const likeBlog = asyncHandler(async (req, res) => {
 	const { blogId } = req.params;
 	const { _id } = req.user;
@@ -106,6 +119,7 @@ const likeBlog = asyncHandler(async (req, res) => {
 	});
 });
 
+// [PUT] /blog/dislike/:blogId
 const dislikeBlog = asyncHandler(async (req, res) => {
 	const { blogId } = req.params;
 	const { _id } = req.user;
@@ -135,6 +149,82 @@ const dislikeBlog = asyncHandler(async (req, res) => {
 	});
 });
 
+// [POST] /blog/comment/:blogId
+const commentBlog = asyncHandler(async (req, res) => {
+	const { blogId } = req.params;
+	const { _id } = req.user;
+
+	const blog = await Blog.findById(blogId);
+	if (!blog) throw new Error("No blog found");
+
+	if (!req.body.comment) throw new Error("Comment is required");
+	blog.comments.push({
+		postedBy: _id,
+		comment: req.body.comment,
+	});
+
+	await blog.save();
+
+	return res.status(200).json({
+		success: true,
+		message: "Comment added successfully",
+	});
+});
+
+// [POST] /blog/comment/:blogId
+const deleteCommentBlog = asyncHandler(async (req, res) => {
+	const { blogId } = req.params;
+	const { commentId } = req.params;
+
+	const blog = await Blog.findById(blogId);
+	if (!blog) throw new Error("No blog found");
+
+	if (!commentId) throw new Error("Comment ID is required");
+
+	const comment = blog.comments.id(commentId);
+	if (!comment) throw new Error("No comment found");
+	
+	blog.comments = blog.comments.filter((c) => c._id.toString() !== commentId);
+
+	await blog.save();
+
+	return res.status(200).json({
+		success: true,
+		message: "Comment deleted successfully",
+	});
+});
+
+// [PUT] /blog/like-comment/:blogId/:commentId
+const likeCommentBlog = asyncHandler(async (req, res) => {
+	const { blogId } = req.params;
+	const { commentId } = req.params;
+	const { _id } = req.user;
+
+	const blog = await Blog.findById(blogId);
+	if (!blog) throw new Error("No blog found");
+
+	const comment = blog.comments.id(commentId);
+	if (!comment) throw new Error("No comment found");
+
+	const isLiked = comment.likes.includes(_id);
+	if (isLiked) {
+		comment.likes = comment.likes.filter((id) => id.toString() !== _id);
+	} else {
+		comment.likes.push(_id);
+	}
+	blog.comments = blog.comments.map((c) =>
+		c._id.toString() === commentId ? comment : c
+	);
+
+	await blog.save();
+
+	return res.status(200).json({
+		success: true,
+		message: "Comment liked successfully",
+	});
+});
+
+// [PUT] /blog/upload-image/:blogId
 const uploadImageBlog = asyncHandler(async (req, res) => {
 	if (!req.file) throw new Error("Please upload image");
 	const blog = await Blog.findByIdAndUpdate(
@@ -159,4 +249,7 @@ module.exports = {
 	likeBlog,
 	dislikeBlog,
 	uploadImageBlog,
+	commentBlog,
+	likeCommentBlog,
+	deleteCommentBlog
 };

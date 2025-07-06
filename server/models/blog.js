@@ -11,10 +11,7 @@ const contentBlockSchema = new mongoose.Schema(
 		text: {
 			type: String,
 			required: function () {
-				return (
-					this.type === "paragraph" ||
-					this.type === "heading"
-				);
+				return this.type === "paragraph" || this.type === "heading";
 			},
 			trim: true,
 		},
@@ -120,6 +117,12 @@ const blogSchema = new mongoose.Schema(
 					trim: true,
 					maxlength: [500, "Comment cannot exceed 500 characters"],
 				},
+				likes: [
+					{
+						type: mongoose.Schema.Types.ObjectId,
+						ref: "User",
+					},
+				],
 				date: {
 					type: Date,
 					default: Date.now,

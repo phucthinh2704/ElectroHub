@@ -26,3 +26,19 @@ export const apiDislikeBlog = async (id) =>
 		method: "PUT",
 		url: `/blog/dislike/${id}`,
 	});
+export const apiCommentBlog = async (id, data) =>
+	axios({
+		method: "POST",
+		url: `/blog/comment/${id}`,
+		data,
+	});
+export const apiDeleteCommentBlog = async (blogId, commentId) =>
+	axios({
+		method: "DELETE",
+		url: `/blog/comment/${blogId}/${commentId}`,
+	});
+export const apiLikeCommentBlog = async (blogId, commentId) =>
+	axios({
+		method: "PUT",
+		url: `/blog/like-comment/${blogId}/${commentId}`,
+	});

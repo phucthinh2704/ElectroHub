@@ -1,19 +1,32 @@
 import {
 	Calendar,
 	Eye,
+	Heart,
 	MessageCircle,
+	Reply,
+	Send,
 	Share2,
 	Tag,
 	ThumbsDown,
 	ThumbsUp,
+	Trash2,
 } from "lucide-react";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { apiBlogById, apiDislikeBlog, apiLikeBlog } from "../../apis/blog";
-import avatarDefault from "../../assets/avatarDefault.png";
 import Swal from "sweetalert2";
+import {
+	apiBlogById,
+	apiCommentBlog,
+	apiDeleteCommentBlog,
+	apiDislikeBlog,
+	apiGetAllBlogs,
+	apiLikeBlog,
+	apiLikeCommentBlog,
+} from "../../apis/blog";
+import avatarDefault from "../../assets/avatarDefault.png";
+import BlogCard from "../../components/public/blog/BlogCard";
 
 const DetailBlog = () => {
 	const [isLiked, setIsLiked] = useState(false);
@@ -22,31 +35,60 @@ const DetailBlog = () => {
 	const [dislikeCount, setDislikeCount] = useState(0);
 	const [readingProgress, setReadingProgress] = useState(0);
 	const [blog, setBlog] = useState(null);
+	const [relatedBlogs, setRelatedBlogs] = useState([]);
+
+	const [showComments, setShowComments] = useState(false);
+	const [newComment, setNewComment] = useState("");
+	const [comments, setComments] = useState([]);
 
 	const { current } = useSelector((state) => state.user);
 	const { blogId } = useParams();
 
+	const fetchBlogById = async () => {
+		const response = await apiBlogById(blogId);
+		if (response.success) {
+			setBlog(response.blog);
+			setIsLiked(
+				response.blog.likes.find(
+					(user) => current?._id?.toString() === user._id.toString()
+				) !== undefined
+			);
+			setIsDisliked(
+				response.blog.dislikes.find(
+					(user) => current?._id?.toString() === user._id.toString()
+				) !== undefined
+			);
+			setLikeCount(response.blog.likes.length);
+			setDislikeCount(response.blog.dislikes.length);
+			setComments(response.blog.comments.filter(
+				(comment) => comment.postedBy?._id
+			));
+		}
+	};
 	useEffect(() => {
-		const fetchBlogById = async () => {
-			const response = await apiBlogById(blogId);
-			if (response.success) {
-				setBlog(response.blog);
-				setIsLiked(
-					response.blog.likes.find(
-						(user) => current._id.toString() === user._id.toString()
-					) !== undefined
-				);
-				setIsDisliked(
-					response.blog.dislikes.find(
-						(user) => current._id.toString() === user._id.toString()
-					) !== undefined
-				);
-				setLikeCount(response.blog.likes.length);
-				setDislikeCount(response.blog.dislikes.length);
+		fetchBlogById();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	useEffect(() => {
+		const fetchRelatedBlogs = async () => {
+			if (blog) {
+				// Assuming you have an API to fetch related blogs by category
+				const response = await apiGetAllBlogs({
+					category: blog.category,
+					limit: 4,
+				});
+				if (response.success) {
+					setRelatedBlogs(
+						response.blogs
+							.map((blog) => (blog._id !== blogId ? blog : null))
+							.filter(Boolean)
+					);
+				}
 			}
 		};
-		fetchBlogById();
-	}, [blogId, current]);
+		fetchRelatedBlogs();
+	}, [blog, blogId]);
 
 	// Sample blog data
 	const blogData = blog || {
@@ -154,6 +196,71 @@ const DetailBlog = () => {
 			}
 		} catch (error) {
 			console.log("Error disliking blog:", error);
+		}
+	};
+
+	const handleComment = () => {
+		setShowComments(!showComments);
+	};
+
+	const handleSubmitComment = async (e) => {
+		if (e) e.preventDefault();
+		if (newComment.trim()) {
+			const comment = {
+				comment: newComment.trim(),
+			};
+			try {
+				const response = await apiCommentBlog(blogData._id, comment);
+				if (response.success) {
+					setNewComment("");
+					fetchBlogById();
+				}
+			} catch (error) {
+				console.log("Error submitting comment:", error);
+			}
+		}
+	};
+	const handleDeleteComment = async (commentId) => {
+		Swal.fire({
+			title: "Delete Comment",
+			text: "Are you sure you want to delete this comment?",
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonText: "Delete",
+			cancelButtonText: "Cancel",
+			confirmButtonColor: "#d33",
+			cancelButtonColor: "#3085d6",
+		}).then(async (result) => {
+			if (result.isConfirmed) {
+				try {
+					const response = await apiDeleteCommentBlog(
+						blogData._id,
+						commentId
+					);
+					if (response.success) {
+						fetchBlogById();
+					}
+				} catch (error) {
+					console.log("Error deleting comment:", error);
+				}
+			}
+		});
+	};
+
+	const handleLikeComment = async (commentId) => {
+		try {
+			const response = await apiLikeCommentBlog(blogData._id, commentId);
+			if (response.success) {
+				fetchBlogById();
+			} else {
+				Swal.fire({
+					icon: "warning",
+					title: "",
+					text: "Please login to like this comment!",
+				});
+			}
+		} catch (error) {
+			console.log("Error liking comment:", error);
 		}
 	};
 
@@ -344,9 +451,17 @@ const DetailBlog = () => {
 						</div>
 
 						<div className="flex items-center gap-3">
-							<button className="flex items-center gap-2 px-4 py-2 bg-green-100 text-green-700 rounded-full hover:bg-green-200 transition-colors">
+							<button
+								onClick={handleComment}
+								className={`flex items-center gap-2 px-4 py-2 rounded-full transition-colors cursor-pointer ${
+									showComments
+										? "bg-green-500 text-white shadow-lg"
+										: "bg-green-100 text-green-700 hover:bg-green-200"
+								}`}>
 								<MessageCircle className="w-5 h-5" />
-								<span className="font-medium">Comment</span>
+								<span className="font-medium">
+									Comment ({comments.length})
+								</span>
 							</button>
 							<button className="flex items-center gap-2 px-4 py-2 bg-purple-100 text-purple-700 rounded-full hover:bg-purple-200 transition-colors">
 								<Share2 className="w-5 h-5" />
@@ -356,13 +471,159 @@ const DetailBlog = () => {
 					</div>
 				</div>
 
+				{/* Comments Section */}
+				{showComments && (
+					<div className="bg-white rounded-xl shadow-lg p-6">
+						<h3 className="text-lg font-semibold text-gray-900 mb-6">
+							Comments ({comments.length})
+						</h3>
+
+						{/* Comment Form */}
+						<div className="mb-6">
+							<div className="flex gap-3">
+								<img
+									src={current?.avatar || avatarDefault}
+									alt={current?.name}
+									className="w-10 h-10 rounded-full object-cover"
+								/>
+								<div className="flex-1">
+									<textarea
+										value={newComment}
+										onChange={(e) =>
+											setNewComment(e.target.value)
+										}
+										placeholder="Write your feeling about this post..."
+										className="w-full p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+										rows="3"
+										maxLength="500"
+										onKeyDown={(e) => {
+											if (
+												e.key === "Enter" &&
+												(e.ctrlKey || e.metaKey)
+											) {
+												e.preventDefault();
+												handleSubmitComment(e);
+											}
+										}}
+									/>
+									<div className="flex items-center justify-between mt-2">
+										<span className="text-sm text-gray-500">
+											{newComment.length}/500 characters
+										</span>
+										<button
+											onClick={handleSubmitComment}
+											disabled={!newComment.trim()}
+											className="flex items-center cursor-pointer gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+											<Send className="w-4 h-4" />
+											Submit
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						{/* Comments List */}
+						<div className="space-y-4">
+							{comments.map((comment) => (
+								<div
+									key={comment._id}
+									className="flex gap-3 p-4 bg-gray-50 rounded-lg">
+									<div className="flex-shrink-0">
+										<img
+											src={
+												comment.postedBy?.avatar ||
+												avatarDefault
+											}
+											alt={comment.postedBy?.name}
+											className="w-10 h-10 rounded-full object-cover"
+										/>
+									</div>
+
+									<div className="flex-1">
+										<div className="flex items-center gap-2 mb-1">
+											<h5 className="font-medium text-gray-900">
+												{comment.postedBy?.name}
+											</h5>
+											<span className="text-sm text-gray-500">
+												{moment(comment.date).format(
+													"DD/MM/YYYY HH:mm"
+												)}
+											</span>
+										</div>
+
+										<p className="text-gray-700 mb-3 leading-relaxed">
+											{comment.comment}
+										</p>
+
+										<div className="flex items-center gap-4">
+											<button
+												onClick={() =>
+													handleLikeComment(
+														comment._id
+													)
+												}
+												className={`flex items-center gap-1 text-sm transition-colors cursor-pointer ${
+													comment.likes.includes(
+														current?._id
+													)
+														? "text-red-500"
+														: "text-gray-500 hover:text-red-500"
+												}`}>
+												<Heart
+													className={`w-4 h-4 ${
+														comment.likes.includes(
+															current?._id
+														)
+															? "fill-current"
+															: ""
+													}`}
+												/>
+												<span>
+													{comment.likes.length}
+												</span>
+											</button>
+
+											<button className="flex gap-1 text-sm text-gray-500 hover:text-blue-500 transition-colors cursor-pointer">
+												Reply
+												<Reply className="w-4 h-4" />
+											</button>
+											{console.log(comment.postedBy)}
+											{(comment.postedBy?._id ===
+												current?._id ||
+												current?.role === "admin") && (
+												<button
+													className="flex gap-1 text-sm text-red-500 hover:text-red-700 hover:scale-105 transition-all cursor-pointer"
+													onClick={() =>
+														handleDeleteComment(
+															comment._id
+														)
+													}>
+													<Trash2 className="w-4 h-4" />
+													Delete
+												</button>
+											)}
+										</div>
+									</div>
+								</div>
+							))}
+						</div>
+
+						{comments.length === 0 && (
+							<div className="text-center py-8 text-gray-500">
+								<MessageCircle className="w-12 h-12 mx-auto mb-3 opacity-50" />
+								<p>No comments yet. Be the first to comment!</p>
+							</div>
+						)}
+					</div>
+				)}
+
 				{/* Related Articles Preview */}
-				<div className="bg-white rounded-xl shadow-lg p-6">
+				<div className="bg-white rounded-xl shadow-lg p-6 mt-6">
 					<h3 className="text-2xl font-bold text-gray-900 mb-6">
 						Related Post
 					</h3>
 					<div className="grid md:grid-cols-2 gap-6">
-						{[1, 2].map((item) => (
+						{/* {[1, 2].map((item) => (
 							<div
 								key={item}
 								className="group cursor-pointer">
@@ -370,12 +631,18 @@ const DetailBlog = () => {
 									<div className="w-full h-full bg-gradient-to-br from-blue-200 to-purple-200 group-hover:scale-105 transition-transform duration-300" />
 								</div>
 								<h4 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2">
-									Bài viết công nghệ thú vị khác {item}
+									Another interesting technology posts {item}
 								</h4>
 								<p className="text-gray-600 text-sm mt-2">
-									5 phút đọc • 1,234 lượt xem
+									1,234 views
 								</p>
 							</div>
+						))} */}
+						{relatedBlogs.map((relatedBlog) => (
+							<BlogCard
+								key={relatedBlog._id}
+								post={relatedBlog}
+							/>
 						))}
 					</div>
 				</div>

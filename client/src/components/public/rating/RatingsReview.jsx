@@ -37,7 +37,7 @@ const RatingsReview = ({ product = {}, onReviewSubmitted }) => {
 	const totalReviews = product.ratingCount;
 	const averageRating = product.totalRatings;
 
-	const ratings = product.ratings;
+	const ratings = product.ratings.filter((review) => review.postedBy !== null);
 
 	const ratingDistribution = {
 		5: ratings?.reduce(
@@ -61,7 +61,6 @@ const RatingsReview = ({ product = {}, onReviewSubmitted }) => {
 			0
 		),
 	};
-
 	// interactive: allows users to hover and select ratings
 	// hoverRating: for showing the rating on hover
 	const renderStars = (rating, size = "w-4 h-4", interactive = false) => {
@@ -162,7 +161,7 @@ const RatingsReview = ({ product = {}, onReviewSubmitted }) => {
 	};
 
 	const filteredReviews =
-		product.ratings?.filter((review) => {
+		ratings.filter((review) => {
 			if (filterRating === "all") return true;
 			return review.star === parseInt(filterRating);
 		}) || [];

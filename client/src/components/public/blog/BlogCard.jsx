@@ -60,7 +60,7 @@ const BlogCard = ({ post, featured = false }) => {
 						}`}>
 						{post.title}
 					</h3>
-	
+
 					<p
 						className={`text-gray-600 mb-4 line-clamp-3 leading-relaxed ${
 							featured ? "text-base" : "text-sm"
@@ -98,12 +98,11 @@ const BlogCard = ({ post, featured = false }) => {
 									<Heart className="w-4 h-4 mr-1 text-red-500" />
 									<span>{post.likes.length}</span>
 								</div>
-								{post.dislikes.length > 0 && (
-									<div className="flex items-center">
-										<ThumbsDown className="w-4 h-4 mr-1 text-gray-400" />
-										<span>{post.dislikes.length}</span>
-									</div>
-								)}
+
+								<div className="flex items-center">
+									<ThumbsDown className="w-4 h-4 mr-1 text-gray-400" />
+									<span>{post.dislikes.length}</span>
+								</div>
 							</div>
 						</div>
 

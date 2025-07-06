@@ -7,6 +7,9 @@ router.get("/", blog.getAllBlogs);
 router.get("/:blogId", blog.getBlogById);
 router.put("/like/:blogId", verifyAccessToken, blog.likeBlog);
 router.put("/dislike/:blogId", verifyAccessToken, blog.dislikeBlog);
+router.post("/comment/:blogId", verifyAccessToken, blog.commentBlog);
+router.delete("/comment/:blogId/:commentId", verifyAccessToken, blog.deleteCommentBlog);
+router.put("/like-comment/:blogId/:commentId", verifyAccessToken, blog.likeCommentBlog);
 
 // Admin routes
 router.post("/", [verifyAccessToken, isAdmin], blog.createNewBlog);
