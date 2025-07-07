@@ -22,6 +22,7 @@ app.use(
 
 const corsOptions = {
 	origin: process.env.CLIENT_URL,
+	credentials: true,
 	optionsSuccessStatus: 200,
 	methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 	allowedHeaders: [
