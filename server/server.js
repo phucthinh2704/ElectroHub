@@ -20,22 +20,19 @@ app.use(
 	})
 );
 
-app.all("*", (req, res, next) => {
-	res.header("Access-Control-Allow-Origin", process.env.CLIENT_URL);
-	res.header(
-		"Access-Control-Allow-Headers",
-		"Origin, X-Requested-With, Content-Type, Accept, Authorization"
-	);
-	next();
-});
-
-app.use(
-	cors({
-		origin: process.env.CLIENT_URL,
-		methods: ["GET", "POST", "PUT", "DELETE"],
-		credentials: true,
-	})
-);
+const corsOptions = {
+	origin: process.env.CLIENT_URL,
+	optionsSuccessStatus: 200,
+	methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+	allowedHeaders: [
+		"Content-Type",
+		"Authorization",
+		"X-Requested-With",
+		"Accept",
+		"Origin",
+	],
+};
+app.use(cors(corsOptions));
 
 app.use(cookieParser());
 app.use(express.json());
