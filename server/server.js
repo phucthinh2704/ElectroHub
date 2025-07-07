@@ -19,6 +19,16 @@ app.use(
 		},
 	})
 );
+
+app.all("*", (req, res, next) => {
+	res.header("Access-Control-Allow-Origin", process.env.CLIENT_URL);
+	res.header(
+		"Access-Control-Allow-Headers",
+		"Origin, X-Requested-With, Content-Type, Accept, Authorization"
+	);
+	next();
+});
+
 app.use(
 	cors({
 		origin: process.env.CLIENT_URL,
@@ -26,6 +36,7 @@ app.use(
 		credentials: true,
 	})
 );
+
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
