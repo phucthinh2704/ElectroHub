@@ -183,7 +183,18 @@ const DetailBlog = () => {
 				Swal.fire({
 					icon: "warning",
 					title: "",
-					text: "Please login to like this blog!",
+					text: "Please login to like on this blog!",
+					showCancelButton: true,
+					confirmButtonText: "Login",
+					cancelButtonText: "Cancel",
+					confirmButtonColor: "#3085d6",
+					cancelButtonColor: "#d33",
+				}).then((result) => {
+					if (result.isConfirmed) {
+						navigate(`/${path.LOGIN}`, {
+							state: window.location.pathname,
+						});
+					}
 				});
 			}
 		} catch (error) {
@@ -205,7 +216,18 @@ const DetailBlog = () => {
 				Swal.fire({
 					icon: "warning",
 					title: "",
-					text: "Please login to dislike this blog!",
+					text: "Please login to dislike on this blog!",
+					showCancelButton: true,
+					confirmButtonText: "Login",
+					cancelButtonText: "Cancel",
+					confirmButtonColor: "#3085d6",
+					cancelButtonColor: "#d33",
+				}).then((result) => {
+					if (result.isConfirmed) {
+						navigate(`/${path.LOGIN}`, {
+							state: window.location.pathname,
+						});
+					}
 				});
 			}
 		} catch (error) {
@@ -232,25 +254,19 @@ const DetailBlog = () => {
 					Swal.fire({
 						icon: "warning",
 						title: "",
-						text: "Please login to comment this blog!",
+						text: "Please login to comment on this blog!",
+						showCancelButton: true,
+						confirmButtonText: "Login",
+						cancelButtonText: "Cancel",
+						confirmButtonColor: "#3085d6",
+						cancelButtonColor: "#d33",
+					}).then((result) => {
+						if (result.isConfirmed) {
+							navigate(`/${path.LOGIN}`, {
+								state: window.location.pathname,
+							});
+						}
 					});
-					// Swal.fire({
-					// 	icon: "warning",
-					// 	title: "",
-					// 	text: "Please login to comment on this blog!",
-					// 	showCancelButton: true,
-					// 	confirmButtonText: "Login",
-					// 	cancelButtonText: "Cancel",
-					// 	confirmButtonColor: "#3085d6",
-					// 	cancelButtonColor: "#d33",
-					// }).then((result) => {
-					// 	if (result.isConfirmed) {
-					// 		navigate(`/${path.LOGIN}`, {
-					// 			state: window.location.pathname,
-					// 		});
-					// 		scrollTo(0, 0);
-					// 	}
-					// });
 				}
 			} catch (error) {
 				console.log("Error submitting comment:", error);

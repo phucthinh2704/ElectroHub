@@ -75,7 +75,6 @@ function App() {
 									dispatch(logout());
 								}
 								if (result.isConfirmed) {
-									scrollTo(0, 0);
 									navigate(`/${path.LOGIN}`);
 								}
 							});
@@ -91,10 +90,11 @@ function App() {
 
 		checkToken();
 	}, [dispatch, isLoggedIn, navigate, token]);
+	const isLoginPage = location.pathname === `/${path.LOGIN}`;
 
 	return (
 		<div className="min-h-screen font-main">
-			<ScrollToTop />
+			<ScrollToTop isLoginPage={isLoginPage} />
 			<Suspense fallback={<LoadingSpinner />}>
 				<Routes>
 					<Route

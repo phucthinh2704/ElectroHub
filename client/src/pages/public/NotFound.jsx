@@ -1,19 +1,12 @@
 import {
 	ArrowLeft,
-	Camera,
 	Cpu,
-	Headphones,
 	Home,
-	Laptop,
-	Printer,
 	Search,
 	ShoppingCart,
 	Smartphone,
-	Speaker,
-	Tablet,
-	Tv,
 	Wifi,
-	Zap,
+	Zap
 } from "lucide-react";
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -26,29 +19,6 @@ export default function NotFoundPage() {
 
 	const handleGoBack = () => {
 		window.history.back();
-	};
-
-	// Hàm để lấy icon dựa trên tiêu đề danh mục
-	const getCategoryIcon = (title) => {
-		const titleLower = title.toLowerCase();
-
-		if (titleLower.includes("tablet")) return Tablet;
-		if (titleLower.includes("laptop")) return Laptop;
-		if (titleLower.includes("smartphone") || titleLower.includes("phone"))
-			return Smartphone;
-		if (titleLower.includes("television") || titleLower.includes("tv"))
-			return Tv;
-		if (titleLower.includes("printer")) return Printer;
-		if (titleLower.includes("speaker")) return Speaker;
-		if (titleLower.includes("camera")) return Camera;
-		if (
-			titleLower.includes("accessory") ||
-			titleLower.includes("accessories")
-		)
-			return Headphones;
-
-		// Default icon for other categories
-		return Headphones;
 	};
 
 	return (
@@ -183,29 +153,34 @@ export default function NotFoundPage() {
 							{
 								name: "Smartphone",
 								color: "bg-blue-100 text-blue-700 border-blue-200",
-							},
-							{
-								name: "Laptop",
-								color: "bg-purple-100 text-purple-700 border-purple-200",
+								gif: "https://digital-world-2.myshopify.com/cdn/shop/files/wifi_300x.gif?v=1750770575",
 							},
 							{
 								name: "Tablet",
+								color: "bg-purple-100 text-purple-700 border-purple-200",
+								gif: "https://digital-world-2.myshopify.com/cdn/shop/files/tablet_300x.gif?v=1750770574",
+							},
+							{
+								name: "Laptop",
 								color: "bg-cyan-100 text-cyan-700 border-cyan-200",
+								gif: "https://digital-world-2.myshopify.com/cdn/shop/files/laptop_300x.gif?v=1750770574",
 							},
 							{
 								name: "Accessories",
 								color: "bg-orange-100 text-orange-700 border-orange-200",
+								gif: "https://digital-world-2.myshopify.com/cdn/shop/files/music_300x.gif?v=1750770575",
 							},
 							{
 								name: "Television",
 								color: "bg-green-100 text-green-700 border-green-200",
+								gif: "https://digital-world-2.myshopify.com/cdn/shop/files/applications_300x.gif?v=1750770575",
 							},
 							{
-								name: "Camera",
+								name: "Printer",
 								color: "bg-pink-100 text-pink-700 border-pink-200",
+								gif: "https://digital-world-2.myshopify.com/cdn/shop/files/printer_300x.gif?v=1750770574",
 							},
 						].map((category) => {
-							const CategoryIcon = getCategoryIcon(category.name);
 							return (
 								<Link
 									key={category.name}
@@ -213,7 +188,13 @@ export default function NotFoundPage() {
 									className="flex items-center justify-center">
 									<button
 										className={`${category.color} flex items-center justify-center gap-2 hover:scale-105 px-4 py-2 rounded-lg border font-medium transition-all duration-300 text-sm shadow-sm hover:shadow-md cursor-pointer`}>
-										<CategoryIcon size={18} />{" "}
+										<img
+											src={category.gif}
+											alt={category.name}
+											className="w-10 h-10 rounded-lg object-cover"
+											loading="lazy"
+											decoding="async"
+										/>
 										{category.name}
 									</button>
 								</Link>

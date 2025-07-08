@@ -42,7 +42,6 @@ const ProductCard = ({ data, isNew, normal }) => {
 						cancelButtonText: "Cancel",
 					}).then((result) => {
 						if (result.isConfirmed) {
-							window.scrollTo(0, 0);
 							navigate(`/${path.LOGIN}`, {
 								state: `/products/${data.category.toLowerCase()}/${
 									data._id
@@ -80,7 +79,6 @@ const ProductCard = ({ data, isNew, normal }) => {
 						cancelButtonText: "Cancel",
 					}).then((result) => {
 						if (result.isConfirmed) {
-							window.scrollTo(0, 0);
 							navigate(`/${path.LOGIN}`, {
 								state: `/products/${data.category.toLowerCase()}/${
 									data._id

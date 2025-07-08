@@ -632,8 +632,10 @@ const Checkout = () => {
 								)} */}
 							</div>
 						)}
-
-						{activeStep >= 2 && (
+						<div
+							className={`bg-white rounded-2xl p-6 pb-0 shadow-lg border border-gray-100 ${
+								activeStep >= 2 ? "block" : "hidden"
+							}`}>
 							<Paypal
 								amount={Math.round(finalTotal / 25000)}
 								payload={{
@@ -642,7 +644,7 @@ const Checkout = () => {
 									orderBy: current._id,
 									address: watch("deliveryAddress"),
 								}}></Paypal>
-						)}
+						</div>
 
 						{/* Action Buttons */}
 						<div className="flex gap-4">

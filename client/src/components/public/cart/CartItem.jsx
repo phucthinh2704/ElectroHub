@@ -3,13 +3,15 @@ import React, { memo } from "react";
 import { Link } from "react-router-dom";
 import formatMoney from "../../../utils/formatMoney";
 import renderRatingStar from "../../../utils/renderRatingStar";
-import { apiUpdateCart } from "../../../apis";
+import { apiUpdateCart, apiUpdateWishlist } from "../../../apis";
 import { toast } from "react-toastify";
 import { getCurrent } from "../../../store/user/asyncAction";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const CartItem = ({ item, updateQuantity, removeItem }) => {
 	const dispatch = useDispatch();
+	const { current } = useSelector((state) => state.user);
+
 	const discountPercentage = Math.round(
 		((item.product.originalPrice - item.price) /
 			item.product.originalPrice) *
@@ -58,7 +60,26 @@ const CartItem = ({ item, updateQuantity, removeItem }) => {
 			console.log("Error adding to cart:", error);
 			toast.error("Failed to add to cart. Please try again later.");
 		}
-	}
+	};
+
+	const handleAddWishlist = async () => {
+		try {
+			const response = await apiUpdateWishlist(item.product._id);
+			if (response.success) {
+				toast.success(response.message);
+				dispatch(getCurrent());
+			} else {
+				toast.error(response.message || "Failed to update wishlist");
+			}
+		} catch (error) {
+			console.log("Error adding to wishlist:", error);
+			toast.error("Failed to add to wishlist. Please try again later.");
+		}
+	};
+
+	const isFavorite = current?.wishlist?.some(
+		(itemCurrent) => itemCurrent._id === item.product._id
+	);
 
 	return (
 		<div className="group bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-500 py-4 px-6 border border-gray-100 hover:border-gray-200 relative overflow-hidden">
@@ -70,8 +91,15 @@ const CartItem = ({ item, updateQuantity, removeItem }) => {
 			)}
 
 			{/* Heart Icon */}
-			<button className="absolute top-4 right-4 p-2 rounded-full bg-white shadow-md hover:shadow-lg transition-all duration-300 hover:scale-110 z-10 cursor-pointer">
-				<Heart className="w-5 h-5 text-gray-400 hover:text-red-500 transition-colors duration-300" />
+			<button
+				className="absolute top-4 right-4 p-2 rounded-full bg-white shadow-md hover:shadow-lg transition-all duration-300 hover:scale-110 z-10 cursor-pointer"
+				onClick={handleAddWishlist}>
+					<Heart
+						className={`w-5 h-5 text-gray-400 hover:text-red-500 transition-colors duration-300`}
+						fill={isFavorite ? "red" : "none"}
+						stroke={isFavorite ? "none" : "red"}
+						strokeWidth={isFavorite ? 0 : 2}
+					/>
 			</button>
 
 			<div className="flex flex-col lg:flex-row gap-4">

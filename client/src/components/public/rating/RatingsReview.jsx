@@ -9,13 +9,11 @@ import {
 } from "lucide-react";
 import moment from "moment";
 import React, { memo, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import Swal from "sweetalert2";
-import { apiLogout, apiRatings } from "../../../apis";
+import { apiRatings } from "../../../apis";
 import avatarDefault from "../../../assets/avatarDefault.png";
-import { logout } from "../../../store/user/userSlice";
 import { ratingLabels } from "../../../utils/constants";
 import path from "../../../utils/path";
 
@@ -28,7 +26,6 @@ const RatingsReview = ({ product = {}, onReviewSubmitted }) => {
 	const [hoverRating, setHoverRating] = useState(0);
 	const [reviewComment, setReviewComment] = useState("");
 
-	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
 	const { isLoggedIn } = useSelector((state) => state.user);
@@ -88,8 +85,8 @@ const RatingsReview = ({ product = {}, onReviewSubmitted }) => {
 		if (!isLoggedIn) {
 			Swal.fire({
 				// title: "Error",
-				text: "You need to log in to proceed.",
-				icon: "error",
+				text: "Please log in to write a review.",
+				icon: "warning",
 				showCancelButton: true,
 				confirmButtonText: "Login",
 				cancelButtonText: "Cancel",
@@ -99,7 +96,6 @@ const RatingsReview = ({ product = {}, onReviewSubmitted }) => {
 				},
 			}).then((result) => {
 				if (result.isConfirmed) {
-					scrollTo(0, 0);
 					navigate(`/${path.LOGIN}`, {
 						state: window.location.pathname,
 					});
@@ -143,19 +139,8 @@ const RatingsReview = ({ product = {}, onReviewSubmitted }) => {
 		} else {
 			Swal.fire({
 				title: "Error",
-				text: "Your session has expired. Please log in again to continue.",
+				text: response.message || "Failed to submit review.",
 				icon: "error",
-				confirmButtonText: "Login",
-			}).then(async (result) => {
-				const response = await apiLogout();
-				if (!response.success) {
-					return toast.error(response.message);
-				}
-				dispatch(logout());
-				if (result.isConfirmed) {
-					scrollTo(0, 0);
-					navigate(`/${path.LOGIN}`);
-				}
 			});
 		}
 	};

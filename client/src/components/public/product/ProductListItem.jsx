@@ -30,7 +30,6 @@ const ProductListItem = ({ product }) => {
 						cancelButtonText: "Cancel",
 					}).then((result) => {
 						if (result.isConfirmed) {
-							window.scrollTo(0, 0);
 							navigate(`/${path.LOGIN}`, {
 								state: `/products/${product.category.toLowerCase()}/${
 									product._id
@@ -75,7 +74,6 @@ const ProductListItem = ({ product }) => {
 						cancelButtonText: "Cancel",
 					}).then((result) => {
 						if (result.isConfirmed) {
-							window.scrollTo(0, 0);
 							navigate(`/${path.LOGIN}`, {
 								state: `/products/${product.category.toLowerCase()}/${
 									product._id

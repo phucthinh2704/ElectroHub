@@ -1,24 +1,24 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation, Link, Navigate  } from "react-router-dom";
-import { 
-  Mail, 
-  Lock, 
-  User, 
-  CheckCircle, 
-  Loader2, 
-  Github, 
-  Facebook, 
-  Eye, 
-  EyeOff,
+import {
   ArrowRight,
-  Phone
+  CheckCircle,
+  Eye,
+  EyeOff,
+  Facebook,
+  Github,
+  Loader2,
+  Lock,
+  Mail,
+  Phone,
+  User
 } from "lucide-react";
-import Swal from "sweetalert2";
-import path from "../../utils/path";
-import { apiLogin, apiRegister } from "../../apis/user";
-import { login } from "../../store/user/userSlice"
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import Swal from "sweetalert2";
+import { apiLogin, apiRegister } from "../../apis/user";
+import { login } from "../../store/user/userSlice";
+import path from "../../utils/path";
 
 const Login = () => {
   const navigate = useNavigate();

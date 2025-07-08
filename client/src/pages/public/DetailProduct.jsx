@@ -8,7 +8,7 @@ import {
 	ShoppingCart,
 	Truck,
 } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
 import { useDispatch, useSelector } from "react-redux";
@@ -44,7 +44,7 @@ const DetailProduct = () => {
 	const { current } = useSelector((state) => state.user);
 	const navigate = useNavigate();
 
-	const fetchProduct = async () => {
+	const fetchProduct = useCallback(async () => {
 		setLoading(true);
 		try {
 			const response = await apiGetProductById({ pid: productId });
@@ -54,11 +54,11 @@ const DetailProduct = () => {
 			console.error("Error fetching product:", error);
 			setLoading(false);
 		}
-	};
+	}, [productId]);
+
 	useEffect(() => {
 		fetchProduct();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [fetchProduct]);
 
 	const handleReviewSubmitted = () => {
 		// Refresh product data sau khi submit review
@@ -100,7 +100,6 @@ const DetailProduct = () => {
 				cancelButtonText: "Cancel",
 			}).then((result) => {
 				if (result.isConfirmed) {
-					window.scrollTo(0, 0);
 					navigate(`/${path.LOGIN}`, {
 						state: `/products/${product.category.toLowerCase()}/${
 							product._id
@@ -134,7 +133,6 @@ const DetailProduct = () => {
 				cancelButtonText: "Cancel",
 			}).then((result) => {
 				if (result.isConfirmed) {
-					window.scrollTo(0, 0);
 					navigate(`/${path.LOGIN}`, {
 						state: `/products/${product.category.toLowerCase()}/${
 							product._id
