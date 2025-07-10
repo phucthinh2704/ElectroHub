@@ -9,5 +9,5 @@ export { default as Products } from "./Products";
 export { default as ProductsPage } from "./ProductsPage";
 export { default as PublicLayout } from "./PublicLayout";
 export { default as ResetPassword } from "./ResetPassword";
-export { default as Services } from "./Services";
+// export { default as Services } from "./Services";
 
