@@ -60,9 +60,9 @@ const DetailProduct = () => {
 		fetchProduct();
 	}, [fetchProduct]);
 
-	useEffect(() => {
-		document.title = `${product.title || "Loading..."}`;
-	}, [product]);
+	// useEffect(() => {
+	// 	document.title = `${product.title || "Loading..."}`;
+	// }, [product]);
 
 	const handleReviewSubmitted = () => {
 		// Refresh product data sau khi submit review
