@@ -1,6 +1,6 @@
 import Quill from "quill";
 import "quill/dist/quill.snow.css";
-import React, { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
@@ -24,33 +24,84 @@ const CreateProduct = () => {
 	});
 
 	const { categories } = useSelector((state) => state.app);
-	const modules = {
-		toolbar: [
-			// Font chữ và kích cỡ
-			[{ size: ["small", false, "large", "huge"] }],
+	// const modules = {
+	// 	toolbar: [
+	// 		// Font chữ và kích cỡ
+	// 		[{ size: ["small", false, "large", "huge"] }],
 
-			// Tiêu đề, đậm, nghiêng, gạch chân, gạch ngang
-			["bold", "italic", "underline", "strike"],
+	// 		// Tiêu đề, đậm, nghiêng, gạch chân, gạch ngang
+	// 		["bold", "italic", "underline", "strike"],
 
-			// Màu chữ và màu nền
-			[{ color: [] }, { background: [] }],
+	// 		// Màu chữ và màu nền
+	// 		[{ color: [] }, { background: [] }],
 
-			// Căn lề và căn giữa
-			[{ align: [] }],
+	// 		// Căn lề và căn giữa
+	// 		[{ align: [] }],
 
-			// Chèn link, hình ảnh, video
-			["link", "image", "video"],
+	// 		// Chèn link, hình ảnh, video
+	// 		["link", "image", "video"],
 
-			// Xoá định dạng
-			["clean"],
-		],
-	};
+	// 		// Xoá định dạng
+	// 		["clean"],
+	// 	],
+	// };
 
-	const { quill, quillRef } = useQuill({
-		placeholder: "Enter product description...",
-		modules,
-	});
+	// const { quill, quillRef } = useQuill({
+	// 	placeholder: "Enter product description...",
+	// 	modules,
+	// });
 
+	// Setup Quill sau khi component mount trên client
+	const [quill, setQuill] = useState(null);
+	const [isClient, setIsClient] = useState(false);
+	const quillRef = useRef(null);
+	useEffect(() => {
+		setIsClient(true);
+	}, []);
+	useEffect(() => {
+		if (isClient && quillRef.current && !quill) {
+			// Dynamic import để tránh SSR issues
+			const initQuill = async () => {
+				try {
+					// Import Quill dynamically
+					const QuillModule = await import('quill');
+					const Quill = QuillModule.default;
+					
+					// Import CSS dynamically
+					await import('quill/dist/quill.snow.css');
+
+					// Setup Size format
+					const Size = Quill.import("formats/size");
+					Size.whitelist = ["small", "normal", "large", "huge"];
+					Quill.register(Size, true);
+
+					const modules = {
+						toolbar: [
+							[{ size: ["small", false, "large", "huge"] }],
+							["bold", "italic", "underline", "strike"],
+							[{ color: [] }, { background: [] }],
+							[{ align: [] }],
+							["link", "image", "video"],
+							["clean"],
+						],
+					};
+
+					const quillInstance = new Quill(quillRef.current, {
+						theme: 'snow',
+						placeholder: 'Enter product description...',
+						modules
+					});
+
+					setQuill(quillInstance);
+				} catch (error) {
+					console.error('Failed to load Quill:', error);
+				}
+			};
+
+			initQuill();
+		}
+	}, [isClient, quill]);
+	
 	const {
 		register,
 		handleSubmit,
