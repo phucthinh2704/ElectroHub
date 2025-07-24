@@ -85,7 +85,6 @@ const CreateProduct = () => {
 			});
 		}
 	}, [clearErrors, quill, setError, setValue]);
-	console.log(watch("description"));
 
 	const handlePreviewImage = async (file) => {
 		if (file) {
@@ -156,7 +155,6 @@ const CreateProduct = () => {
 
 	const onSubmit = async (data) => {
 		setSubmitMessage("");
-		console.log({ data });
 
 		const formData = new FormData();
 
@@ -174,7 +172,6 @@ const CreateProduct = () => {
 					data[key].trim() === "" ||
 					isDescriptionEmpty(data[key])
 				) {
-					console.log(data[key]);
 					setError("description", {
 						type: "manual",
 						message:
