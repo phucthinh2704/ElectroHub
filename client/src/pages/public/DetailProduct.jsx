@@ -1,4 +1,3 @@
-import DOMPurify from "dompurify";
 import {
 	Heart,
 	Loader2,
@@ -27,6 +26,7 @@ import {
 	OthersProduct,
 	RatingsReview,
 } from "../../components";
+import ProductDescription from "../../components/public/common/ProductDescription ";
 import { getCurrent } from "../../store/user/asyncAction";
 import formatMoney from "../../utils/formatMoney";
 import path from "../../utils/path";
@@ -489,37 +489,9 @@ const DetailProduct = () => {
 									</div>
 
 									{/* Product Description */}
-									<div className="border-t border-b border-gray-200 py-4 my-4">
-										<h3 className="text-2xl font-semibold mb-2">
-											Description
-										</h3>
-										<ul className="space-y-1 text-gray-600 overflow-y-auto max-h-80">
-											{Array.isArray(
-												product.description
-											) ? (
-												product.description.map(
-													(desc, index) => (
-														<li
-															key={index}
-															className="flex items-start">
-															<span className="mr-2 mt-1 text-blue-500">
-																•
-															</span>
-															<span
-																dangerouslySetInnerHTML={{
-																	__html: DOMPurify.sanitize(
-																		desc
-																	),
-																}}
-															/>
-														</li>
-													)
-												)
-											) : (
-												<li>{product.description}</li>
-											)}
-										</ul>
-									</div>
+									<ProductDescription
+										description={product.description}
+									/>
 
 									{/* Color */}
 									{product.color && (

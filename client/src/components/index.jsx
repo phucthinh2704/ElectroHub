@@ -5,6 +5,7 @@ export { default as CartItem } from "./public/cart/CartItem";
 export { default as BackToTop } from "./public/common/BackToTop";
 export { default as Breadcrumbs } from "./public/common/Breadcrumbs";
 export { default as CountDown } from "./public/common/CountDown";
+export { default as ProductDescription } from "./public/common/ProductDescription ";
 export { default as FAQItem } from "./public/common/FAQItem";
 export { default as HoverOption } from "./public/common/HoverOption";
 export { default as ScrollToTop } from "./public/common/ScrollToTop";

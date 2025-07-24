@@ -16,47 +16,6 @@ A comprehensive management system for electronics retail stores, built with mode
 - **Responsive Design**: TailwindCSS-powered interface that works on all devices
 - **Vietnamese Localization**: Support for Vietnamese provinces and regions
 
-## 🛠️ Tech Stack
-
-### Frontend (React.js)
-- **React 19** - Latest version of UI library for building interactive interfaces
-- **React Router DOM** - Client-side routing and navigation
-- **Redux Toolkit** - Modern Redux for state management
-- **Redux Persist** - Persist Redux state across sessions
-- **Axios** - HTTP client for API requests
-- **TailwindCSS** - Utility-first CSS framework for styling
-- **Chart.js & React-ChartJS-2** - Interactive data visualization charts
-- **Recharts** - Composable charting library built on React components
-- **React Hook Form** - Performant forms with easy validation
-- **PayPal React SDK** - Integrated PayPal payment processing
-- **Lucide React** - Beautiful & consistent icon pack
-- **React Icons** - Popular icon library collection
-- **React Toastify** - Elegant toast notifications
-- **SweetAlert2** - Beautiful, responsive popup boxes
-- **React Slick** - Carousel/slider component
-- **React Medium Image Zoom** - Image zoom functionality
-- **Moment.js** - Date and time manipulation
-- **ExcelJS & XLSX** - Excel file generation and processing
-- **jsPDF & html2canvas-pro** - PDF generation from HTML
-- **DOMPurify** - XSS sanitizer for HTML content
-- **Vietnam Provinces** - Vietnamese administrative divisions data
-- **Use React Router Breadcrumbs** - Automatic breadcrumb generation
-
-### Backend (Node.js + Express.js)
-- **Express.js 5** - Fast, unopinionated web framework
-- **MongoDB & Mongoose** - NoSQL database with elegant object modeling
-- **JWT (JsonWebToken)** - Secure token-based authentication
-- **Bcrypt** - Password hashing and salting
-- **Cloudinary** - Cloud-based image and video management
-- **Multer & Multer-Storage-Cloudinary** - File upload handling with cloud storage
-- **Nodemailer** - Email sending functionality
-- **Cookie Parser** - Parse HTTP request cookies
-- **CORS** - Cross-Origin Resource Sharing middleware
-- **Express Async Handler** - Simple middleware for handling async express routes
-- **Slugify** - Generate URL-friendly slugs
-- **Uniqid** - Generate unique identifiers
-- **Dotenv** - Environment variables management
-
 ## 📋 Prerequisites
 
 Before running this application, make sure you have the following installed:
@@ -122,7 +81,6 @@ PAYPAL_CLIENT_SECRET=your-paypal-client-secret
 Create a `.env` file in the frontend directory:
 ```env
 VITE_API_BASE_URL=http://localhost:5000/api
-VITE_TINYMCE_API_KEY=your-tinymce-api-key
 VITE_PAYPAL_CLIENT_ID=your-paypal-client-id
 ```
 

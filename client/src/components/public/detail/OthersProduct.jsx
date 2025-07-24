@@ -27,6 +27,7 @@ const OthersProduct = ({ category }) => {
 		};
 		fetchRelatedProducts();
 	}, [category, productId]);
+
 	return (
 		<div>
 			<div className="mb-4 flex items-center">
@@ -43,7 +44,7 @@ const OthersProduct = ({ category }) => {
 					<div className="text-center text-gray-700 bg-white rounded-lg p-4 shadow-md">
 						<p>No related products found.</p>
 					</div>
-				) : (
+				) : relatedProducts.length > 4 ? (
 					<Slider
 						{...settings}
 						slidesToShow={4}>
@@ -59,6 +60,20 @@ const OthersProduct = ({ category }) => {
 							</div>
 						))}
 					</Slider>
+				) : (
+					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+						{relatedProducts.map((product) => (
+							<div
+								key={product._id}
+								className="bg-white overflow-hidden rounded-lg shadow-md p-2">
+								<ProductCard
+									data={product}
+									isNew={false}
+									normal
+								/>
+							</div>
+						))}
+					</div>
 				)}
 			</div>
 		</div>

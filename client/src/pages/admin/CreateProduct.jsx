@@ -1,12 +1,19 @@
+import Quill from "quill";
+import "quill/dist/quill.snow.css";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
+import { useQuill } from "react-quilljs";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import { apiCreateProduct } from "../../apis/product";
+import isDescriptionEmpty from "../../utils/isDescriptionEmpty ";
 import toBase64 from "../../utils/toBase64";
+const Size = Quill.import("formats/size");
+Size.whitelist = ["small", "normal", "large", "huge"];
+Quill.register(Size, true);
 
 const CreateProduct = () => {
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -17,6 +24,32 @@ const CreateProduct = () => {
 	});
 
 	const { categories } = useSelector((state) => state.app);
+	const modules = {
+		toolbar: [
+			// Font chữ và kích cỡ
+			[{ size: ["small", false, "large", "huge"] }],
+
+			// Tiêu đề, đậm, nghiêng, gạch chân, gạch ngang
+			["bold", "italic", "underline", "strike"],
+
+			// Màu chữ và màu nền
+			[{ color: [] }, { background: [] }],
+
+			// Căn lề và căn giữa
+			[{ align: [] }],
+
+			// Chèn link, hình ảnh, video
+			["link", "image", "video"],
+
+			// Xoá định dạng
+			["clean"],
+		],
+	};
+
+	const { quill, quillRef } = useQuill({
+		placeholder: "Enter product description...",
+		modules,
+	});
 
 	const {
 		register,
@@ -24,6 +57,8 @@ const CreateProduct = () => {
 		reset,
 		watch,
 		setValue,
+		setError,
+		clearErrors,
 		formState: { errors },
 	} = useForm({
 		defaultValues: {},
@@ -31,6 +66,26 @@ const CreateProduct = () => {
 	});
 
 	const watchedValues = watch();
+	useEffect(() => {
+		if (quill) {
+			quill.on("text-change", () => {
+				setValue("description", quill.root.innerHTML);
+				clearErrors("description");
+				if (
+					!quill.root.innerHTML ||
+					quill.root.innerHTML.trim() === "" ||
+					isDescriptionEmpty(quill.root.innerHTML)
+				) {
+					setError("description", {
+						type: "manual",
+						message:
+							"Description cannot be empty or contain only whitespace",
+					});
+				}
+			});
+		}
+	}, [clearErrors, quill, setError, setValue]);
+	console.log(watch("description"));
 
 	const handlePreviewImage = async (file) => {
 		if (file) {
@@ -85,7 +140,10 @@ const CreateProduct = () => {
 		) {
 			handlePreviewMultipleImage(watch("images"));
 		} else {
-			if(watch("images") instanceof FileList && watch("images").length > 5) {
+			if (
+				watch("images") instanceof FileList &&
+				watch("images").length > 5
+			) {
 				setValue("images", []);
 			}
 			setPreviewImage((prev) => ({
@@ -98,10 +156,11 @@ const CreateProduct = () => {
 
 	const onSubmit = async (data) => {
 		setSubmitMessage("");
+		console.log({ data });
 
 		const formData = new FormData();
 
-		const description = data.description.split("\n") || [];
+		data.description = watch("description");
 		for (const key in data) {
 			if (key === "thumb" && data[key]) {
 				formData.append("thumb", data[key][0]);
@@ -110,6 +169,27 @@ const CreateProduct = () => {
 					formData.append("images", image);
 				}
 			} else if (key === "description") {
+				if (
+					!data[key] ||
+					data[key].trim() === "" ||
+					isDescriptionEmpty(data[key])
+				) {
+					console.log(data[key]);
+					setError("description", {
+						type: "manual",
+						message:
+							"Description cannot be empty or contain only whitespace",
+					});
+					return;
+				}
+				const tempDiv = document.createElement("div");
+				tempDiv.innerHTML = data[key];
+
+				const paragraphs = tempDiv.querySelectorAll("p");
+				const description = Array.from(paragraphs)
+					.map((p) => p.innerHTML.trim())
+					.filter((text) => text !== "");
+
 				for (let i = 0; i < description.length; i++) {
 					if (description[i].trim() !== "") {
 						formData.append(`description`, description[i].trim());
@@ -147,7 +227,7 @@ const CreateProduct = () => {
 				});
 			}
 			setIsSubmitting(false);
-		}, 300);
+		}, 100);
 	};
 
 	const handleReset = () => {
@@ -202,7 +282,9 @@ const CreateProduct = () => {
 			</div>
 
 			<div className="max-w-7xl mx-auto py-4">
-				<div className="space-y-8">
+				<form
+					onSubmit={handleSubmit(onSubmit)}
+					className="space-y-8">
 					{/* Basic Information Card */}
 					<div className="bg-white/70 backdrop-blur-sm rounded-3xl shadow-xl border border-gray-200/50 overflow-hidden">
 						<div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 px-8 py-6 border-b border-gray-200/50">
@@ -688,7 +770,7 @@ const CreateProduct = () => {
 										features, specifications, and any other
 										relevant information.
 									</div>
-									<textarea
+									{/* <textarea
 										className="w-full min-h-[200px] p-4 border-none outline-none bg-white text-sm leading-relaxed text-gray-700 resize-y transition-all duration-300 placeholder:text-gray-400 focus:bg-gray-50"
 										{...register("description", {
 											required:
@@ -700,23 +782,33 @@ const CreateProduct = () => {
 											},
 										})}
 										placeholder="Enter detailed product description..."
-									/>
-								</div>
-								{errors.description && (
-									<div className="text-red-500 text-sm mt-2 flex items-center">
-										<svg
-											className="w-4 h-4 mr-1"
-											fill="currentColor"
-											viewBox="0 0 20 20">
-											<path
-												fillRule="evenodd"
-												d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-												clipRule="evenodd"
-											/>
-										</svg>
-										{errors.description.message}
+									/> */}
+									<div
+										style={{
+											width: "100%",
+											height: 250,
+										}}>
+										<div
+											ref={quillRef}
+											className="my-quill-editor"
+										/>
 									</div>
-								)}
+									{errors.description && (
+										<div className="text-red-500 text-sm mt-2 flex items-center">
+											<svg
+												className="w-4 h-4 mr-1"
+												fill="currentColor"
+												viewBox="0 0 20 20">
+												<path
+													fillRule="evenodd"
+													d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+													clipRule="evenodd"
+												/>
+											</svg>
+											{errors.description.message}
+										</div>
+									)}
+								</div>
 							</div>
 						</div>
 					</div>
@@ -767,7 +859,7 @@ const CreateProduct = () => {
 						<button
 							type="submit"
 							disabled={isSubmitting}
-							onClick={handleSubmit(onSubmit)}
+							// onClick={handleSubmit(onSubmit)}
 							className={`flex-1 sm:flex-none px-8 py-4 rounded-2xl font-semibold transition-all duration-300 flex items-center justify-center ${
 								isSubmitting
 									? "bg-gray-200 text-gray-600 cursor-not-allowed"
@@ -832,7 +924,7 @@ const CreateProduct = () => {
 							Reset Form
 						</button>
 					</div>
-				</div>
+				</form>
 			</div>
 		</div>
 	);
