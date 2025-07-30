@@ -20,6 +20,10 @@ var orderSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
+	recipientInfo: {
+		name: { type: String, required: true, trim: true },
+		mobile: { type: String, required: true, trim: true },
+	},
 	total: {
 		type: Number,
 		default: 0,

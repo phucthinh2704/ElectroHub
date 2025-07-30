@@ -6,7 +6,7 @@ const asyncHandler = require("express-async-handler");
 
 const createNewOrder = asyncHandler(async (req, res) => {
 	const { _id } = req.user;
-	const { products, total, address, status } = req.body;
+	const { products, total, address, status, recipientInfo } = req.body;
 	// let totalPrice = user.cart.reduce((acc, item) => {
 	// 	return acc + item.product.price * item.quantity;
 	// }, 0);
@@ -55,6 +55,7 @@ const createNewOrder = asyncHandler(async (req, res) => {
 		total,
 		status,
 		orderBy: _id,
+		recipientInfo
 	});
 
 	return res.status(201).json({

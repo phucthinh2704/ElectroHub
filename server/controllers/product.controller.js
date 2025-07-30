@@ -1,7 +1,6 @@
 const Product = require("../models/product");
 const asyncHandler = require("express-async-handler");
 const slugify = require("slugify");
-const convertQueryFormat = require("../utils/convertQuery");
 const createSKU = require("uniqid");
 require("dotenv").config();
 

@@ -4,9 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
-import { useQuill } from "react-quilljs";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import slugify from "slugify";
 import Swal from "sweetalert2";
 import { apiCreateProduct } from "../../apis/product";
 import isDescriptionEmpty from "../../utils/isDescriptionEmpty ";
@@ -24,51 +24,27 @@ const CreateProduct = () => {
 	});
 
 	const { categories } = useSelector((state) => state.app);
-	// const modules = {
-	// 	toolbar: [
-	// 		// Font chữ và kích cỡ
-	// 		[{ size: ["small", false, "large", "huge"] }],
-
-	// 		// Tiêu đề, đậm, nghiêng, gạch chân, gạch ngang
-	// 		["bold", "italic", "underline", "strike"],
-
-	// 		// Màu chữ và màu nền
-	// 		[{ color: [] }, { background: [] }],
-
-	// 		// Căn lề và căn giữa
-	// 		[{ align: [] }],
-
-	// 		// Chèn link, hình ảnh, video
-	// 		["link", "image", "video"],
-
-	// 		// Xoá định dạng
-	// 		["clean"],
-	// 	],
-	// };
-
-	// const { quill, quillRef } = useQuill({
-	// 	placeholder: "Enter product description...",
-	// 	modules,
-	// });
 
 	// Setup Quill sau khi component mount trên client
 	const [quill, setQuill] = useState(null);
 	const [isClient, setIsClient] = useState(false);
 	const quillRef = useRef(null);
+
 	useEffect(() => {
 		setIsClient(true);
 	}, []);
+
 	useEffect(() => {
 		if (isClient && quillRef.current && !quill) {
 			// Dynamic import để tránh SSR issues
 			const initQuill = async () => {
 				try {
 					// Import Quill dynamically
-					const QuillModule = await import('quill');
+					const QuillModule = await import("quill");
 					const Quill = QuillModule.default;
-					
+
 					// Import CSS dynamically
-					await import('quill/dist/quill.snow.css');
+					await import("quill/dist/quill.snow.css");
 
 					// Setup Size format
 					const Size = Quill.import("formats/size");
@@ -87,21 +63,21 @@ const CreateProduct = () => {
 					};
 
 					const quillInstance = new Quill(quillRef.current, {
-						theme: 'snow',
-						placeholder: 'Enter product description...',
-						modules
+						theme: "snow",
+						placeholder: "Enter product description...",
+						modules,
 					});
 
 					setQuill(quillInstance);
 				} catch (error) {
-					console.error('Failed to load Quill:', error);
+					console.error("Failed to load Quill:", error);
 				}
 			};
 
 			initQuill();
 		}
 	}, [isClient, quill]);
-	
+
 	const {
 		register,
 		handleSubmit,
@@ -285,11 +261,15 @@ const CreateProduct = () => {
 			stock: "",
 			category: "",
 			brand: "",
-			description: "",
 			color: "",
 			thumb: "",
 			images: [],
 		});
+		if (quill) {
+			quill.setText("");
+			setValue("description", "");
+			clearErrors("description");
+		}
 		setPreviewImage({
 			thumb: "",
 			images: [],
@@ -354,49 +334,102 @@ const CreateProduct = () => {
 						</div>
 
 						<div className="p-8 space-y-6">
-							{/* Product Name */}
-							<div className="space-y-2">
-								<label className="block text-sm font-semibold text-gray-700">
-									Product Name *
-								</label>
-								<div className="relative">
-									<input
-										{...register("title", {
-											required:
-												"Please enter product name",
-											minLength: {
-												value: 2,
-												message:
-													"Product name must be at least 2 characters",
-											},
-											maxLength: {
-												value: 100,
-												message:
-													"Product name must not exceed 100 characters",
-											},
-										})}
-										className={`w-full px-4 py-4 bg-gray-50/50 border-2 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white transition-all duration-300 ${
-											errors.title
-												? "border-red-400 bg-red-50/50"
-												: "border-gray-200"
-										}`}
-										placeholder="Enter product name"
-									/>
-									{errors.title && (
-										<div className="absolute -bottom-6 left-0 flex items-center text-red-500 text-sm">
-											<svg
-												className="w-4 h-4 mr-1"
-												fill="currentColor"
-												viewBox="0 0 20 20">
-												<path
-													fillRule="evenodd"
-													d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-													clipRule="evenodd"
-												/>
-											</svg>
-											{errors.title.message}
-										</div>
-									)}
+							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+								{/* Product Name */}
+								<div className="space-y-2">
+									<label className="block text-sm font-semibold text-gray-700">
+										Product Name *
+									</label>
+									<div className="relative">
+										<input
+											{...register("title", {
+												required:
+													"Please enter product name",
+												minLength: {
+													value: 2,
+													message:
+														"Product name must be at least 2 characters",
+												},
+												maxLength: {
+													value: 100,
+													message:
+														"Product name must not exceed 100 characters",
+												},
+											})}
+											className={`w-full px-4 py-4 bg-gray-50/50 border-2 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white transition-all duration-300 ${
+												errors.title
+													? "border-red-400 bg-red-50/50"
+													: "border-gray-200"
+											}`}
+											placeholder="Enter product name"
+											onChange={(e) => {
+												setValue(
+													"slug",
+													slugify(e.target.value)
+												);
+											}}
+										/>
+										{errors.title && (
+											<div className="absolute -bottom-6 left-0 flex items-center text-red-500 text-sm">
+												<svg
+													className="w-4 h-4 mr-1"
+													fill="currentColor"
+													viewBox="0 0 20 20">
+													<path
+														fillRule="evenodd"
+														d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+														clipRule="evenodd"
+													/>
+												</svg>
+												{errors.title.message}
+											</div>
+										)}
+									</div>
+								</div>
+								<div className="space-y-2">
+									<label className="block text-sm font-semibold text-gray-700">
+										Slug *
+									</label>
+									<div className="relative">
+										<input
+											{...register("slug", {
+												required:
+													"Please enter product slug",
+												minLength: {
+													value: 2,
+													message:
+														"Product slug must be at least 2 characters",
+												},
+												maxLength: {
+													value: 100,
+													message:
+														"Product slug must not exceed 100 characters",
+												},
+											})}
+											className={`w-full px-4 py-4 bg-gray-50/50 border-2 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white transition-all duration-300 disabled:bg-gray-100 disabled:cursor-not-allowed ${
+												errors.slug
+													? "border-red-400 bg-red-50/50"
+													: "border-gray-200"
+											}`}
+											placeholder="Enter product slug"
+											disabled
+										/>
+										{errors.slug && (
+											<div className="absolute -bottom-6 left-0 flex items-center text-red-500 text-sm">
+												<svg
+													className="w-4 h-4 mr-1"
+													fill="currentColor"
+													viewBox="0 0 20 20">
+													<path
+														fillRule="evenodd"
+														d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+														clipRule="evenodd"
+													/>
+												</svg>
+												{errors.slug.message}
+											</div>
+										)}
+									</div>
 								</div>
 							</div>
 

@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { tabsDetail } from "../../../utils/constants";
 import formatContent from "../../../utils/formatContent";
 
@@ -44,9 +44,13 @@ const InformationDetail = ({ description = [] }) => {
               `}>
 							<div
 								className={`
-                transition-transform duration-300
-                ${activeTab === tab.id ? "scale-110" : "group-hover:scale-105"}
-              `}>
+                  transition-transform duration-300
+                  ${
+						activeTab === tab.id
+							? "scale-110"
+							: "group-hover:scale-105"
+					}
+                `}>
 								{tab.icon}
 							</div>
 							<span className="font-semibold">{tab.title}</span>
@@ -92,7 +96,7 @@ const InformationDetail = ({ description = [] }) => {
 						</div>
 					</div>
 
-					{/* Content Body */}
+					{/* Content Body với CSS cho HTML content */}
 					<div className="prose prose-lg max-w-none">
 						<div className="space-y-4">{getActiveTabContent()}</div>
 					</div>
@@ -119,4 +123,5 @@ const InformationDetail = ({ description = [] }) => {
 		</div>
 	);
 };
+
 export default memo(InformationDetail);

@@ -35,9 +35,12 @@ const ButtonWrapper = ({ currency, showSpinner, amount, payload }) => {
 			products: payload.products,
 			total: payload.total * 25000,
 			orderBy: payload.orderBy,
-			// status: "delivered",
 			status: "processing",
 			address: payload.address,
+			recipientInfo: {
+				name: payload.recipientInfo.name,
+				mobile: payload.recipientInfo.mobile,
+			},
 		};
 		const response = await apiCreateOrder(orderData);
 		if (response.success) {
@@ -51,7 +54,6 @@ const ButtonWrapper = ({ currency, showSpinner, amount, payload }) => {
 				confirmButtonColor: "#d33",
 			}).then(() => {
 				navigate("/");
-				// window.close();
 			});
 		}
 	};

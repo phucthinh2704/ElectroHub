@@ -343,130 +343,281 @@ export const memberSidebar = [
 
 export const tabsDetail = [
 	{
-	  id: 1,
-	  title: "DESCRIPTION",
-	  icon: (
-		 <svg
-			xmlns="http://www.w3.org/2000/svg"
-			className="h-5 w-5"
-			viewBox="0 0 20 20"
-			fill="currentColor">
-			<path
-			  fillRule="evenodd"
-			  d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"
-			  clipRule="evenodd"
-			/>
-		 </svg>
-	  ),
-	  content: `Technology: GSM / HSPA / LTE
-		Dimensions: 153.8 x 75.5 x 7.6 mm
-		Weight: 154 g
-		Display: IPS LCD 5.5 inches
-		Resolution: 720 x 1280
-		OS: Android OS, v6.0 (Marshmallow)
-		Chipset: Octa-core
-		CPU: Octa-core
-		Internal: 32 GB, 4 GB RAM
-		Camera: 13MB - 20 MP`,
+		id: 1,
+		title: "DESCRIPTION",
+		icon: (
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				className="h-5 w-5"
+				viewBox="0 0 20 20"
+				fill="currentColor">
+				<path
+					fillRule="evenodd"
+					d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"
+					clipRule="evenodd"
+				/>
+			</svg>
+		),
+		content: [
+			`<div class="product-description">
+				<h2>📋 Product Overview</h2>
+				<p>Discover the exceptional features and specifications of this premium product. Our detailed description provides you with all the information you need to make an informed decision.</p>
+				
+				<div class="highlight-box">
+					<p><strong>✨ Key Features:</strong></p>
+					<ul>
+						<li>Premium quality materials and construction</li>
+						<li>Modern design that complements any space</li>
+						<li>Built for durability and long-lasting performance</li>
+						<li>Easy maintenance and care instructions included</li>
+					</ul>
+				</div>
+				
+				<p><em>Product description will be dynamically loaded based on the selected item.</em></p>
+			</div>`,
+		],
 	},
 	{
-	  id: 2,
-	  title: "WARRANTY",
-	  icon: (
-		 <svg
-			xmlns="http://www.w3.org/2000/svg"
-			className="h-5 w-5"
-			viewBox="0 0 20 20"
-			fill="currentColor">
-			<path
-			  fillRule="evenodd"
-			  d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-			  clipRule="evenodd"
-			/>
-		 </svg>
-	  ),
-	  content: `Warranty Information
-			LIMITED WARRANTIES
-			Limited Warranties are non-transferable. The following Limited Warranties are given to the original retail purchaser of the following Ashley Furniture Industries, Inc.Products:
- 
-			Frames Used In Upholstered and Leather Products
-			Limited Lifetime Warranty
-			A Limited Lifetime Warranty applies to all frames used in sofas, couches, love seats, upholstered chairs, ottomans, sectionals, and sleepers. Ashley Furniture Industries,Inc. warrants these components to you, the original retail purchaser, to be free from material manufacturing defects.`,
+		id: 2,
+		title: "WARRANTY",
+		icon: (
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				className="h-5 w-5"
+				viewBox="0 0 20 20"
+				fill="currentColor">
+				<path
+					fillRule="evenodd"
+					d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+					clipRule="evenodd"
+				/>
+			</svg>
+		),
+		content: [
+			`<div class="warranty-info">
+				<h2>🛡️ Comprehensive Warranty Coverage</h2>
+				
+				<div class="warranty-section">
+					<h3>📋 LIMITED WARRANTIES</h3>
+					<p><strong>Important:</strong> Limited Warranties are <u>non-transferable</u>. The following Limited Warranties are given to the original retail purchaser of Ashley Furniture Industries, Inc. Products:</p>
+				</div>
+
+				<div class="warranty-highlight">
+					<h3>🏗️ Frames Used In Upholstered and Leather Products</h3>
+					<div class="lifetime-badge">
+						<strong>🔒 LIMITED LIFETIME WARRANTY</strong>
+					</div>
+					
+					<p>A Limited Lifetime Warranty applies to all frames used in:</p>
+					<ul>
+						<li>🛋️ Sofas and couches</li>
+						<li>💺 Love seats</li>
+						<li>🪑 Upholstered chairs</li>
+						<li>🦶 Ottomans</li>
+						<li>🛋️ Sectionals</li>
+						<li>🛏️ Sleepers</li>
+					</ul>
+					
+					<p><strong>Coverage Details:</strong> Ashley Furniture Industries, Inc. warrants these components to you, the original retail purchaser, to be free from material manufacturing defects.</p>
+				</div>
+
+				<div class="warranty-footer">
+					<p><em>📞 For warranty claims or questions, please contact our customer service team with your original purchase receipt.</em></p>
+				</div>
+			</div>`,
+		],
 	},
 	{
-	  id: 3,
-	  title: "DELIVERY",
-	  icon: (
-		 <svg
-			xmlns="http://www.w3.org/2000/svg"
-			className="h-5 w-5"
-			viewBox="0 0 20 20"
-			fill="currentColor">
-			<path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
-			<path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z" />
-		 </svg>
-	  ),
-	  content: `# 📦 Purchasing & Delivery
- 
-	  ## 📏 Before Making Your Purchase
- 
-	  Before completing your purchase, you should:
-	  - Measure the area where you plan to place the furniture
-	  - Measure doorways and hallways through which the furniture will pass to reach its final destination
- 
-	  ---
- 
-	  ## 🚛 Delivery Service
- 
-	  ### 📅 Delivery Scheduling
-	  - Customers can choose the next available delivery day that fits their schedule
-	  - Delivery time frame will be provided by Shopify Shop to route stops efficiently
-	  - Customers cannot choose specific times
-	  - You will be notified in advance of your scheduled time frame
-  
-	  ### 🏠 Delivery Preparation
- 
-	  Please ensure:
-	  - ✅ Remove existing furniture, pictures, mirrors, accessories, etc. to prevent damage
-	  - ✅ Clear the area where you want your new furniture placed
-	  - ✅ Remove any items that may obstruct the delivery team's pathway
- 
-	  ### 🔧 Services Included
- 
-	  Shopify Shop will:
-	  - 🚚 Deliver to your location
-	  - 🔨 Assemble and set up your new furniture
-	  - 🗑️ Remove all packing materials from your home
- 
-	  ---
- 
-	  ## 📞 Support
- 
-	  If you have any questions about delivery, please contact us before your scheduled delivery date.`,
+		id: 3,
+		title: "DELIVERY",
+		icon: (
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				className="h-5 w-5"
+				viewBox="0 0 20 20"
+				fill="currentColor">
+				<path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
+				<path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z" />
+			</svg>
+		),
+		content: [
+			`<div class="delivery-info">
+				<h2>📦 Purchasing & Delivery Information</h2>
+				
+				<div class="section-card">
+					<h3>📏 Before Making Your Purchase</h3>
+					<p>To ensure a smooth delivery experience, please:</p>
+					<ul>
+						<li>📐 <strong>Measure the area</strong> where you plan to place the furniture</li>
+						<li>🚪 <strong>Measure doorways and hallways</strong> through which the furniture will pass to reach its final destination</li>
+						<li>📋 <strong>Check ceiling height</strong> for tall items</li>
+						<li>🪜 <strong>Consider stairs</strong> and any tight corners</li>
+					</ul>
+				</div>
+
+				<div class="section-card highlight">
+					<h3>🚛 Delivery Service Details</h3>
+					
+					<div class="subsection">
+						<h4>📅 Delivery Scheduling</h4>
+						<ul>
+							<li>✅ Choose the next available delivery day that fits your schedule</li>
+							<li>⏰ Delivery time frame will be provided by Shopify Shop to route stops efficiently</li>
+							<li>⚠️ <strong>Note:</strong> Customers cannot choose specific times</li>
+							<li>📱 You will be notified in advance of your scheduled time frame</li>
+						</ul>
+					</div>
+
+					<div class="subsection">
+						<h4>🏠 Delivery Preparation Checklist</h4>
+						<p><strong>Please ensure the following before our team arrives:</strong></p>
+						<ul>
+							<li>✅ <strong>Remove existing furniture</strong>, pictures, mirrors, accessories, etc. to prevent damage</li>
+							<li>✅ <strong>Clear the delivery path</strong> where you want your new furniture placed</li>
+							<li>✅ <strong>Remove obstructions</strong> that may block the delivery team's pathway</li>
+							<li>✅ <strong>Secure pets</strong> in a safe area during delivery</li>
+							<li>✅ <strong>Have someone present</strong> who is 18+ to receive the delivery</li>
+						</ul>
+					</div>
+
+					<div class="subsection services-included">
+						<h4>🔧 Services Included in Your Delivery</h4>
+						<p><strong>Our professional team will:</strong></p>
+						<ul>
+							<li>🚚 <strong>Deliver to your location</strong> - We bring it right to your door</li>
+							<li>🔨 <strong>Assemble and set up</strong> your new furniture professionally</li>
+							<li>🗑️ <strong>Remove all packing materials</strong> from your home</li>
+							<li>🔍 <strong>Inspect items</strong> with you to ensure satisfaction</li>
+							<li>💡 <strong>Provide care instructions</strong> for your new furniture</li>
+						</ul>
+					</div>
+				</div>
+
+				<div class="contact-section">
+					<h3>📞 Need Support?</h3>
+					<p>If you have any questions about delivery, please <strong>contact us before your scheduled delivery date</strong>. Our customer service team is here to help make your delivery experience smooth and hassle-free!</p>
+					
+					<div class="contact-highlight">
+						<p>📧 <strong>Email:</strong> electrohub-digital@support.com</p>
+						<p>📱 <strong>Phone:</strong> (+84) 8000 8080</p>
+						<p>🕒 <strong>Hours:</strong> Monday - Saturday, 9AM - 8PM</p>
+					</div>
+				</div>
+			</div>`,
+		],
 	},
 	{
-	  id: 4,
-	  title: "PAYMENT",
-	  icon: (
-		 <svg
-			xmlns="http://www.w3.org/2000/svg"
-			className="h-5 w-5"
-			viewBox="0 0 20 20"
-			fill="currentColor">
-			<path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
-			<path
-			  fillRule="evenodd"
-			  d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"
-			  clipRule="evenodd"
-			/>
-		 </svg>
-	  ),
-	  content: `We accept various payment methods for your convenience, including major credit cards (Visa, Mastercard, American Express, Discover), debit cards with Visa or Mastercard, and digital wallets like PayPal, Apple Pay, Google Pay, and Samsung Pay.
+		id: 4,
+		title: "PAYMENT",
+		icon: (
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				className="h-5 w-5"
+				viewBox="0 0 20 20"
+				fill="currentColor">
+				<path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
+				<path
+					fillRule="evenodd"
+					d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"
+					clipRule="evenodd"
+				/>
+			</svg>
+		),
+		content: [
+			`<div class="payment-info">
+				<h2>💳 Payment Methods & Policies</h2>
+				
+				<div class="payment-section">
+					<h3>💰 Accepted Payment Methods</h3>
+					<p>We accept various payment methods for your convenience:</p>
+					
+					<div class="payment-grid">
+						<div class="payment-category">
+							<h4>💳 Credit & Debit Cards</h4>
+							<ul>
+								<li>🔵 Visa</li>
+								<li>🔴 Mastercard</li>
+								<li>🟢 American Express</li>
+								<li>🟠 Discover</li>
+								<li>💳 Debit cards with Visa or Mastercard logos</li>
+							</ul>
+						</div>
+						
+						<div class="payment-category">
+							<h4>📱 Digital Wallets</h4>
+							<ul>
+								<li>💙 PayPal</li>
+								<li>🍎 Apple Pay</li>
+								<li>📊 Google Pay</li>
+								<li>📱 Samsung Pay</li>
+								<li>🛡️ Shop Pay</li>
+							</ul>
+						</div>
+						
+						<div class="payment-category">
+							<h4>💵 Cash Options</h4>
+							<ul>
+								<li>🏪 In-store purchases</li>
+								<li>🚚 Local cash-on-delivery orders</li>
+								<li>⚠️ <em>Exact change preferred</em></li>
+							</ul>
+						</div>
+					</div>
+				</div>
 
-		Online payments are secured with SSL encryption and PCI DSS compliance. Cash payments are accepted in-store and for local cash-on-delivery orders, with exact change preferred.
+				<div class="security-section highlight">
+					<h3>🔒 Payment Security</h3>
+					<p>Your payment information is protected with:</p>
+					<ul>
+						<li>🛡️ <strong>SSL Encryption</strong> - All transactions are encrypted</li>
+						<li>🏆 <strong>PCI DSS Compliance</strong> - Industry-standard security protocols</li>
+						<li>🔐 <strong>Tokenization</strong> - Card details are never stored on our servers</li>
+						<li>🔍 <strong>Fraud Protection</strong> - Advanced monitoring systems</li>
+					</ul>
+				</div>
 
-		We offer installment plans and buy-now-pay-later options for eligible purchases, subject to credit approval. Payments are processed immediately upon order confirmation, with card charges appearing on statements within 1-3 business days.
+				<div class="processing-section">
+					<h3>⚡ Payment Processing</h3>
+					<div class="processing-details">
+						<div class="processing-item">
+							<h4>🚀 Processing Times</h4>
+							<ul>
+								<li>💳 <strong>Credit/Debit Cards:</strong> Immediate processing</li>
+								<li>📱 <strong>Digital Wallets:</strong> Instant confirmation</li>
+								<li>🏦 <strong>Bank Transfer:</strong> 1-3 business days</li>
+								<li>📄 <strong>Statement Appearance:</strong> 1-3 business days</li>
+							</ul>
+						</div>
+						
+						<div class="processing-item">
+							<h4>🔄 Refund Policy</h4>
+							<ul>
+								<li>💰 Refunds issued to original payment method</li>
+								<li>⏱️ Processing time: 5-7 business days after inspection</li>
+								<li>📦 Items must be returned in original condition</li>
+								<li>📧 Email confirmation sent for all refunds</li>
+							</ul>
+						</div>
+					</div>
+				</div>
 
-		Refunds are issued to the original payment method within 5-7 business days after we receive and inspect returned items. Large or special orders may require a deposit, with the remaining balance due before delivery or pickup, which will be communicated clearly.`,
+				<div class="contact-payment">
+					<h3>❓ Payment Questions?</h3>
+					<p>Our payment support team is here to help with any questions about:</p>
+					<ul>
+						<li>💳 Payment method issues</li>
+						<li>🔄 Refund status</li>
+						<li>📊 Financing applications</li>
+						<li>🧾 Billing inquiries</li>
+					</ul>
+					
+					<div class="contact-info">
+						<p>📧 <strong>Email:</strong> billing@shopifyshop.com</p>
+						<p>📱 <strong>Phone:</strong> 1-800-PAY-HELP</p>
+						<p>🕒 <strong>Hours:</strong> Monday - Sunday, 7AM - 10PM</p>
+					</div>
+				</div>
+			</div>`,
+		],
 	},
- ];
+];

@@ -15,7 +15,6 @@ const Checkout = () => {
 	const [activeStep, setActiveStep] = useState(1);
 	// const [paymentMethod, setPaymentMethod] = useState("card");
 	const [addressType, setAddressType] = useState("new"); // 'new' hoặc 'existing'
-	// const [selectedExistingAddress, setSelectedExistingAddress] = useState("");
 
 	const [provinces] = useState(Object.values(getProvincesWithDetail()) || []);
 	const [districts, setDistricts] = useState([]);
@@ -61,6 +60,7 @@ const Checkout = () => {
 			const ward = wards.find((w) => w.code === data.ward)?.full_name;
 			setValue("deliveryAddress", `${data.address}, ${ward}`);
 		}
+		console.log(data);
 		if (activeStep < 3) setActiveStep(activeStep + 1);
 	};
 
@@ -154,7 +154,7 @@ const Checkout = () => {
 										</label>
 										<input
 											type="text"
-											disabled="true"
+											disabled={activeStep !== 1}
 											className="w-full p-3 outline-none border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed"
 											placeholder="Enter your full name"
 											{...register("name", {
@@ -178,7 +178,7 @@ const Checkout = () => {
 										</label>
 										<input
 											type="tel"
-											disabled="true"
+											disabled={activeStep !== 1}
 											className="w-full p-3 outline-none border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed"
 											placeholder="Enter your phone number"
 											{...register("mobile", {
@@ -197,7 +197,7 @@ const Checkout = () => {
 											</p>
 										)}
 									</div>
-									<div className="md:col-span-2">
+									{/* <div className="md:col-span-2">
 										<label className="block text-sm font-medium text-gray-700 mb-1">
 											Email *
 										</label>
@@ -220,7 +220,7 @@ const Checkout = () => {
 												{errors.email.message}
 											</p>
 										)}
-									</div>
+									</div> */}
 									<div className="md:col-span-2 flex flex-col gap-4">
 										{current?.address?.length > 0 && (
 											<div className="border border-gray-200 rounded-lg p-3 bg-gray-50">
@@ -643,6 +643,10 @@ const Checkout = () => {
 									total: finalTotal / 25000,
 									orderBy: current._id,
 									address: watch("deliveryAddress"),
+									recipientInfo: {
+										name: watch("name"),
+										mobile: watch("mobile"),
+									},
 								}}></Paypal>
 						</div>
 
