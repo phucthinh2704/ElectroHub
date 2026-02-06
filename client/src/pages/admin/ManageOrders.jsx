@@ -3,22 +3,23 @@ import {
 	Clock,
 	DollarSign,
 	Eye,
+	Loader2,
+	Mail,
 	Package,
 	Phone,
 	Search,
 	ShoppingCart,
 	Truck,
-	Mail,
 	XCircle,
-	Loader2,
 } from "lucide-react";
 import moment from "moment";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { apiGetAllOrders, apiUpdateStatusOrders } from "../../apis";
-import { OrderDetailModal, Pagination } from "../../components";
 import avatarDefault from "../../assets/avatarDefault.png";
+import { OrderDetailModal, Pagination } from "../../components";
+import exportToExcel from "../../utils/exportToExcel";
 import formatMoney from "../../utils/formatMoney";
 import getPaginationInfo from "../../utils/getPaginationInfo";
 
@@ -67,7 +68,9 @@ const ManageOrders = () => {
 				.includes(searchTerm.toLowerCase()) ||
 			order._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
 			order.products.some((p) =>
-				p.product.title.toLowerCase().includes(searchTerm.toLowerCase())
+				p.product.title
+					.toLowerCase()
+					.includes(searchTerm.toLowerCase()),
 			);
 
 		const matchesStatus =
@@ -81,7 +84,7 @@ const ManageOrders = () => {
 	const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
 	const currentOrders = filteredOrders.slice(
 		indexOfFirstOrder,
-		indexOfLastOrder
+		indexOfLastOrder,
 	);
 
 	const handleFilterChange = (field, value) => {
@@ -134,7 +137,7 @@ const ManageOrders = () => {
 			const response = await apiUpdateStatusOrders(orderId, {
 				status: newStatus,
 			});
-			if(response.success) {
+			if (response.success) {
 				setOrders(
 					orders.map((order) =>
 						order._id === orderId
@@ -142,9 +145,9 @@ const ManageOrders = () => {
 									...order,
 									status: newStatus,
 									updatedAt: new Date().toISOString(),
-							  }
-							: order
-					)
+								}
+							: order,
+					),
 				);
 				toast.success(`Order status updated to ${newStatus}`);
 			}
@@ -158,21 +161,63 @@ const ManageOrders = () => {
 	const totalOrders = orders.length;
 	const shippedOrders = orders.filter((o) => o.status === "shipped").length;
 	const processingOrders = orders.filter(
-		(o) => o.status === "processing"
+		(o) => o.status === "processing",
 	).length;
 	const deliveredOrders = orders.filter(
-		(o) => o.status === "delivered"
+		(o) => o.status === "delivered",
 	).length;
 	const cancelledOrders = orders.filter(
-		(o) => o.status === "cancelled"
+		(o) => o.status === "cancelled",
 	).length;
-	const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
+
+	const totalRevenue = orders.reduce(
+		(sum, order) =>
+			order.status === "delivered" ? sum + order.total : sum,
+		0,
+	);
 
 	const { startItem, endItem } = getPaginationInfo(
 		currentPage,
 		ordersPerPage,
-		filteredOrders.length
+		filteredOrders.length,
 	);
+
+	const handleExportOrders = () => {
+		// 1. Chuẩn bị dữ liệu để xuất
+		// Vì order chứa nhiều object lồng nhau (orderBy, products), ta cần làm phẳng dữ liệu
+		const formattedData = orders.map((order, index) => ({
+			stt: index + 1,
+			orderId: order._id,
+			customerName: order.orderBy?.name || "Unknown",
+			email: order.orderBy?.email || "Unknown",
+			phone: order.orderBy?.mobile || "",
+			address: order.shippingAddress,
+			// Gom danh sách sản phẩm thành 1 chuỗi string để hiển thị trong 1 ô Excel
+			products: order.products
+				.map((p) => `${p.product?.title} (${p.color}) x${p.quantity}`)
+				.join(", \n"), // Xuống dòng giữa các sản phẩm (tùy viewer excel)
+			total: order.total,
+			status: order.status,
+			date: moment(order.createdAt).format("DD/MM/YYYY HH:mm"),
+		}));
+
+		// 2. Định nghĩa tên các cột (Header) trong file Excel
+		const headers = [
+			"STT",
+			"Order ID",
+			"Customer Name",
+			"Email",
+			"Phone Number",
+			"Shipping Address",
+			"Products List",
+			"Total Amount (VND)",
+			"Status",
+			"Created At",
+		];
+
+		// 3. Gọi hàm xuất file
+		exportToExcel("orders", "Orders List", formattedData, headers);
+	};
 
 	return (
 		<div className="p-6 bg-slate-100 min-h-screen text-slate-900">
@@ -196,7 +241,9 @@ const ManageOrders = () => {
 									Track and manage all customer orders
 								</p>
 							</div>
-							<button className="bg-rose-500 hover:bg-rose-600 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2 cursor-pointer">
+							<button
+								onClick={handleExportOrders}
+								className="bg-rose-500 hover:bg-rose-600 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2 cursor-pointer">
 								<Package className="w-5 h-5" />
 								Export Orders
 							</button>
@@ -317,7 +364,7 @@ const ManageOrders = () => {
 											onChange={(e) =>
 												handleFilterChange(
 													"search",
-													e.target.value
+													e.target.value,
 												)
 											}
 											className="w-full pl-10 pr-4 py-3 outline-none border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
@@ -331,7 +378,7 @@ const ManageOrders = () => {
 									onChange={(e) =>
 										handleFilterChange(
 											"status",
-											e.target.value
+											e.target.value,
 										)
 									}
 									className="px-4 py-3 outline-none border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white cursor-pointer">
@@ -480,10 +527,10 @@ const ManageOrders = () => {
 											<td className="p-4 text-center">
 												<span
 													className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border uppercase ${getStatusBadgeColor(
-														order.status
+														order.status,
 													)}`}>
 													{getStatusIcon(
-														order.status
+														order.status,
 													)}
 													{order.status}
 												</span>
@@ -501,12 +548,12 @@ const ManageOrders = () => {
 												<div className="text-sm">
 													<p className="text-slate-800">
 														{moment(
-															order.createdAt
+															order.createdAt,
 														).format("DD/MM/YYYY")}
 													</p>
 													<p className="text-slate-500">
 														{moment(
-															order.createdAt
+															order.createdAt,
 														).format("HH:mm")}
 													</p>
 												</div>
@@ -520,10 +567,10 @@ const ManageOrders = () => {
 														title="View Order"
 														onClick={() => {
 															setShowOrderDetailModal(
-																true
+																true,
 															);
 															setSelectedOrder(
-																order
+																order,
 															);
 														}}>
 														<Eye className="w-4 h-4" />
@@ -535,7 +582,7 @@ const ManageOrders = () => {
 															}
 															onClose={() =>
 																setShowOrderDetailModal(
-																	false
+																	false,
 																)
 															}
 														/>
@@ -545,10 +592,16 @@ const ManageOrders = () => {
 														onChange={(e) =>
 															handleUpdateStatus(
 																order._id,
-																e.target.value
+																e.target.value,
 															)
 														}
-														className="text-xs px-2 py-1 border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+														disabled={
+															order.status ===
+																"delivered" ||
+															order.status ===
+																"cancelled"
+														}
+														className={`text-xs px-2 py-1 border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 ${order.status === "delivered" || order.status === "cancelled" ? "opacity-50 cursor-not-allowed bg-gray-100" : "cursor-pointer bg-white"}`}>
 														<option value="processing">
 															Processing
 														</option>

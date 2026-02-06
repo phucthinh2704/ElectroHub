@@ -1,27 +1,16 @@
 const Order = require("../models/order");
 const User = require("../models/user");
 const Product = require("../models/product");
-const Coupon = require("../models/coupon");
 const asyncHandler = require("express-async-handler");
 
 const createNewOrder = asyncHandler(async (req, res) => {
 	const { _id } = req.user;
 	const { products, total, address, status, recipientInfo } = req.body;
-	// let totalPrice = user.cart.reduce((acc, item) => {
-	// 	return acc + item.product.price * item.quantity;
-	// }, 0);
-	// if (req.body?.coupon) {
-	// 	const couponDiscount = await Coupon.findById(req.body.coupon);
-	// 	if (couponDiscount) {
-	// 		totalPrice =
-	// 			totalPrice - (totalPrice * couponDiscount.discount) / 100;
-	// 	}
-	// }
 	const user = await User.findById(_id);
 
 	// Kiểm tra địa chỉ đã tồn tại trong mảng address của người dùng
 	const addressExists = user.address?.some(
-		(addr) => addr.toLowerCase() === address.toLowerCase()
+		(addr) => addr.toLowerCase() === address.toLowerCase(),
 	);
 
 	const updateData = { cart: [] };
@@ -39,7 +28,7 @@ const createNewOrder = asyncHandler(async (req, res) => {
 			await productUpdate.save();
 		} else {
 			const variantProductUpdate = productUpdate.variants.find(
-				(variant) => variant.color === product.color
+				(variant) => variant.color === product.color,
 			);
 			if (variantProductUpdate) {
 				variantProductUpdate.stock -= product.quantity;
@@ -55,7 +44,7 @@ const createNewOrder = asyncHandler(async (req, res) => {
 		total,
 		status,
 		orderBy: _id,
-		recipientInfo
+		recipientInfo,
 	});
 
 	return res.status(201).json({
@@ -67,22 +56,59 @@ const createNewOrder = asyncHandler(async (req, res) => {
 
 const updateStatusOrder = asyncHandler(async (req, res) => {
 	const { orderId } = req.params;
-
-	if (!req.body) throw new Error("Missing status");
 	const { status } = req.body;
 
-	const updatedOrder = await Order.findByIdAndUpdate(
-		orderId,
-		{ status },
-		{ new: true }
-	);
+	if (!status) throw new Error("Missing status");
 
-	if (!updatedOrder) throw new Error("No order found");
+	const order = await Order.findById(orderId);
+	if (!order) throw new Error("No order found");
+
+	// 1. Logic chặn cập nhật nếu đơn hàng đã hoàn thành hoặc đã hủy
+	if (order.status === "delivered" || order.status === "cancelled") {
+		return res.status(400).json({
+			success: false,
+			message: "Cannot update status of a completed or cancelled order",
+		});
+	}
+
+	// 2. Logic hoàn trả kho (Stock) nếu Admin hủy đơn hàng
+	// Nếu trạng thái mới là 'cancelled', ta cần cộng lại stock và trừ đi sold
+	if (status === "cancelled") {
+		// Lặp qua từng sản phẩm trong đơn hàng để trả kho
+		for (const item of order.products) {
+			const product = await Product.findById(item.product);
+			if (product) {
+				// Nếu sản phẩm không có biến thể hoặc màu trùng với màu gốc (xử lý logic giống createOrder)
+				if (product.color === item.color) {
+					product.stock += item.quantity;
+					product.sold = Math.max(0, product.sold - item.quantity); // Đảm bảo không âm
+					await product.save();
+				} else {
+					// Xử lý cho biến thể (variants)
+					const variantIndex = product.variants.findIndex(
+						(v) => v.color === item.color,
+					);
+					if (variantIndex !== -1) {
+						product.variants[variantIndex].stock += item.quantity;
+						product.variants[variantIndex].sold = Math.max(
+							0,
+							product.variants[variantIndex].sold - item.quantity,
+						);
+						await product.save();
+					}
+				}
+			}
+		}
+	}
+
+	// Cập nhật trạng thái mới
+	order.status = status;
+	await order.save();
 
 	return res.status(200).json({
 		success: true,
 		message: "Order updated successfully",
-		updatedOrder,
+		updatedOrder: order,
 	});
 });
 

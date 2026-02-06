@@ -60,7 +60,6 @@ const Checkout = () => {
 			const ward = wards.find((w) => w.code === data.ward)?.full_name;
 			setValue("deliveryAddress", `${data.address}, ${ward}`);
 		}
-		console.log(data);
 		if (activeStep < 3) setActiveStep(activeStep + 1);
 	};
 

@@ -41,7 +41,7 @@ const DealDaily = () => {
 
 	// Lấy productId từ localStorage
 	const [productId, setProductId] = useState(
-		() => localStorage.getItem(STORAGE_KEYS.PRODUCT_ID) || null
+		() => localStorage.getItem(STORAGE_KEYS.PRODUCT_ID) || null,
 	);
 
 	const [loading, setLoading] = useState(true);
@@ -115,10 +115,10 @@ const DealDaily = () => {
 			// Nếu thời gian còn lại lớn hơn 0 (nghĩa là còn ở tương lai) => cập nhật countdown
 			if (distance > 0) {
 				const hours = Math.floor(
-					(distance % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000)
+					(distance % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000),
 				);
 				const minutes = Math.floor(
-					(distance % (60 * 60 * 1000)) / (60 * 1000)
+					(distance % (60 * 60 * 1000)) / (60 * 1000),
 				);
 				const seconds = Math.floor((distance % (60 * 1000)) / 1000);
 
@@ -169,7 +169,7 @@ const DealDaily = () => {
 			) : (
 				<>
 					<Link
-						to={`/products/${dealDaily?.category.toLowerCase()}/${
+						to={`/products/${dealDaily?.category?.toLowerCase()}/${
 							dealDaily?._id
 						}/${dealDaily?.slug}`}>
 						<div className="flex flex-col gap-2 border-t border-gray-400 pt-6">
@@ -193,7 +193,7 @@ const DealDaily = () => {
 								<p className="flex justify-center items-center">
 									{renderRatingStar(
 										dealDaily?.totalRatings,
-										21
+										21,
 									)}{" "}
 									<span className="text-[15px] ml-1">
 										({dealDaily?.totalRatings})
