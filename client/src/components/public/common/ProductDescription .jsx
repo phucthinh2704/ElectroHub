@@ -57,7 +57,7 @@ const ProductDescription = ({ description }) => {
 						key={index}
 						className="flex items-start group">
 						<div className="mr-4 mt-2">
-							<div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full group-hover:scale-110 transition-transform duration-200"></div>
+							<div className="w-3 h-3 bg-linear-to-r from-blue-500 to-purple-500 rounded-full group-hover:scale-110 transition-transform duration-200"></div>
 						</div>
 						<p
 							className="text-gray-700 leading-relaxed flex-1 group-hover:text-gray-900 transition-colors duration-200"

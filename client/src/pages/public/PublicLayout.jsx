@@ -1,4 +1,3 @@
-// Public.js
 import React, { useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import {
@@ -7,6 +6,7 @@ import {
 	Header,
 	Navigation,
 	TopHeader,
+	Chatbot
 } from "../../components";
 import path from "../../utils/path";
 
@@ -33,6 +33,7 @@ const PublicLayout = () => {
 				<Outlet />
 			</div>
 			<Footer />
+			<Chatbot />
 			<BackToTop />
 		</div>
 	);

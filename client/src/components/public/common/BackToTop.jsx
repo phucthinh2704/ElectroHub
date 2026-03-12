@@ -21,7 +21,7 @@ const BackToTop = () => {
 		<button
 			onClick={scrollToTop}
 			className={`
-          fixed bottom-8 right-8 w-14 h-14
+          fixed bottom-24 right-6 w-14 h-14
           bg-gradient-to-r from-blue-500 to-purple-600
           hover:from-blue-600 hover:to-purple-700
           text-white rounded-full shadow-lg
